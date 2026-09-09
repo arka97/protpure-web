@@ -1,0 +1,40 @@
+# Local development stack: Postgres + the app in dev mode (hot reload).
+# Production on Dokploy uses the Dockerfile and your shared Postgres — see README.
+services:
+  db:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_USER: protpure
+      POSTGRES_PASSWORD: protpure
+      POSTGRES_DB: protpure
+    ports:
+      - '5432:5432'
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U protpure']
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  web:
+    image: node:22-alpine
+    working_dir: /app
+    command: sh -c "corepack enable pnpm && pnpm install && pnpm dev"
+    environment:
+      DATABASE_URL: postgres://protpure:protpure@db:5432/protpure
+      PAYLOAD_SECRET: ${PAYLOAD_SECRET:-dev-secret-change-me}
+      NEXT_PUBLIC_SERVER_URL: http://localhost:3000
+    ports:
+      - '3000:3000'
+    volumes:
+      - .:/app
+      - node_modules:/app/node_modules
+      - .next:/app/.next
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  pgdata:
+  node_modules:
