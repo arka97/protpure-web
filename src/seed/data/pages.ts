@@ -1,4 +1,5 @@
 import { rt } from '../richtext'
+import { siteSettings } from './content'
 
 /**
  * Page definitions. `link` values use { slug } for internal pages, { href } for custom URLs;
@@ -103,7 +104,10 @@ To develop and manufacture affordable, reliable and scalable chromatography medi
         { icon: 'handshake', title: 'Customer deployment', text: 'Commercial implementation of Protpure media in customer processes, including BPG 200 process columns.' },
         { icon: 'shield', title: 'Alignment to GMP', text: 'Reproducibility over aggressive customisation; long-term view toward GMP-compliant production.' },
       ] },
+      { blockType: 'logoWall', eyebrow: 'Customers', heading: 'Who uses Protpure resins', source: 'all', fallbackStatement: siteSettings.proof.customersStatement },
       { blockType: 'teamGrid', eyebrow: 'Leadership', heading: 'Founder-led innovation' },
+      { blockType: 'publications', eyebrow: 'Publications', heading: 'Peer-reviewed work behind the platform' },
+      { blockType: 'gallery', eyebrow: 'Facility', heading: 'Inside the Anand facility', layout: 'grid', items: [] },
       { blockType: 'featureGrid', eyebrow: 'What we look for', heading: 'How we work with customers', columns: '3', items: [
         { icon: 'scale', title: 'Evaluation under your SOPs', text: 'Lab- or bench-scale evaluation, side-by-side comparison if desired, feedback-driven iteration. Outcome: technical data only — you decide.' },
         { icon: 'globe', title: 'Second sourcing', text: 'Process development teams evaluating alternatives and organisations seeking India-based or non-traditional second sourcing.' },
@@ -160,6 +164,8 @@ Reproducibility often begins during column packing itself. We evaluate every res
         { icon: 'shield', title: 'No cold chain', text: 'Resins travel as a 20% ethanol slurry at ambient temperature and are non-hazardous for transport.' },
         { icon: 'cost', title: 'Quotes in your currency', text: 'USD, EUR or INR invoicing; bank transfer and letters of credit for larger orders.' },
       ] },
+      { blockType: 'proofBar', showStatement: true, style: 'light' },
+      { blockType: 'certificationsStrip', heading: 'Quality & documentation you can reference', limit: 8 },
       { blockType: 'richText', width: 'narrow', content: rt(`## Regions
 
 - **India** — direct supply, GST invoicing, domestic dispatch from Gujarat.
