@@ -88,6 +88,8 @@ export function RangeBars({
           const length = range ? (range[1] - range[0]) / max : 0
           const mean = d50 != null ? d50 / max : range ? (range[0] + range[1]) / 2 / max : 0
           const rangeLabel = [g.sizeRange, g.d50 ? `d50V ${g.d50}` : null].filter(Boolean).join(' · ')
+          // Numerals in mono, words/units in sans: "100–240 µm · d50V ~163 µm".
+          const labelParts = rangeLabel.split(/(\d[\d.,]*(?:\s*[–—-]\s*\d[\d.,]*)?|~\d[\d.,]*)/g).filter(Boolean)
           return (
             <li key={g.id ?? i} className={cn('grid min-h-[106px] grid-cols-[minmax(0,1fr)_94px] items-center gap-x-3 gap-y-2 border-b border-rule-dark py-5 lg:gap-8', cols)}>
               <div className="flex items-center gap-3 lg:gap-4">
@@ -97,7 +99,11 @@ export function RangeBars({
                 <h3 className="serif-sm text-[27px] leading-tight lg:text-[24px]">{g.name}</h3>
               </div>
               <div className="range-plot col-span-2 row-start-2 mt-3 lg:col-span-1 lg:row-start-auto lg:mt-0" style={{ '--start': pct(start), '--length': pct(length), '--mean': pct(mean) } as React.CSSProperties} role="img" aria-label={range ? `Particle size ${g.sizeRange}${g.d50 ? `, d50V ${g.d50}` : ''}` : 'Range not supplied'}>
-                {rangeLabel ? <span className="range-label">{rangeLabel}</span> : null}
+                {rangeLabel ? (
+                  <span className="range-label">
+                    {labelParts.map((part, k) => (/^[~\d]/.test(part) ? <span key={k} className="mono">{part}</span> : <React.Fragment key={k}>{part}</React.Fragment>))}
+                  </span>
+                ) : null}
                 {range ? (
                   <>
                     <span className="range-bar" />
@@ -109,9 +115,9 @@ export function RangeBars({
               </div>
               <div className="col-start-2 row-start-1 text-right lg:col-start-auto lg:row-start-auto lg:text-left">
                 {flow ? (
-                  <p className="num text-[26px] leading-[1.1] text-teal-lum lg:text-[27px]">
+                  <p className="mono text-[26px] leading-[1.1] text-teal-lum lg:text-[27px]">
                     {flow.value}
-                    <span className="mt-1.5 block text-[9px] normal-case text-text-2-dark lg:text-[11px]">{[flow.unit, flow.prefix].filter(Boolean).join(' · ')}</span>
+                    <span className="mt-1.5 block font-sans text-[9px] normal-case text-text-2-dark lg:text-[11px]">{[flow.unit, flow.prefix].filter(Boolean).join(' · ')}</span>
                   </p>
                 ) : (
                   <p className="mono text-[11px] text-text-2-dark">[flow: to confirm]</p>
@@ -124,13 +130,20 @@ export function RangeBars({
       </ol>
       <div className={cn('grid grid-cols-1 gap-x-3 lg:gap-8', cols)} aria-hidden>
         <div className="hidden lg:block" />
-        <div className="mt-3 flex justify-between text-[9px] text-text-2-dark lg:text-[10px]">
-          {ticks.map((t, i) => (
-            <span key={t} className="num">
-              {t}
-              {i === ticks.length - 1 ? ` ${unit}` : ''}
-            </span>
-          ))}
+        <div className="range-axis">
+          {ticks.map((t, i) => {
+            const x = `${(t / max) * 100}%`
+            const edge = i === 0 ? 'start' : i === ticks.length - 1 ? 'end' : undefined
+            return (
+              <React.Fragment key={t}>
+                <span className="range-axis-tick" style={{ left: x }} />
+                <span className="range-axis-label" data-edge={edge} style={{ left: x }}>
+                  {t}
+                  {i === ticks.length - 1 ? <span className="font-sans"> {unit}</span> : null}
+                </span>
+              </React.Fragment>
+            )
+          })}
         </div>
       </div>
     </div>

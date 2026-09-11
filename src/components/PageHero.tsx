@@ -7,22 +7,45 @@ import type { Media, Page } from '@/payload-types'
 
 type Hero = NonNullable<Page['hero']>
 
+/** CMS text with `\n` rendered as deliberate line breaks (segments still wrap naturally when narrow). */
+export function Lines({ text }: { text: string }) {
+  const parts = text.split('\n')
+  return (
+    <>
+      {parts.map((p, i) => (
+        <React.Fragment key={i}>
+          {i > 0 ? <br /> : null}
+          {p}
+        </React.Fragment>
+      ))}
+    </>
+  )
+}
+
 /**
  * Serif headline with the `highlight` words set in italic luminous teal. When the highlight closes
  * the heading it takes its own line — the short scientific proposition ("From the bead up.").
+ * Line breaks typed into the CMS heading are kept, inside or outside the highlight.
  */
 export function Highlighted({ text, highlight, className }: { text: string; highlight?: string | null; className?: string }) {
-  if (!highlight || !text.includes(highlight)) return <>{text}</>
-  const idx = text.indexOf(highlight)
-  const before = text.slice(0, idx).trimEnd()
-  const after = text.slice(idx + highlight.length)
-  const ownLine = after.trim() === '' && before !== ''
+  const src = text.trim()
+  const hl = highlight?.trim()
+  // The highlight may span a typed line break: match its words across any whitespace.
+  const re = hl ? new RegExp(hl.split(/\s+/).map((w) => w.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('\\s+')) : null
+  const m = re ? src.match(re) : null
+  if (!m || m.index === undefined) return <Lines text={src} />
+  const before = src.slice(0, m.index).replace(/[ \t]+$/, '')
+  const inner = m[0]
+  const after = src.slice(m.index + inner.length)
+  const ownLine = after.trim() === '' && before.trim() !== '' && !before.endsWith('\n')
   return (
     <>
-      {before}
-      {ownLine ? <br /> : before ? ' ' : null}
-      <em className={cn('italic text-teal-lum', className)}>{highlight}</em>
-      {after}
+      {before ? <Lines text={before.replace(/\n$/, '')} /> : null}
+      {before ? (before.endsWith('\n') || ownLine ? <br /> : ' ') : null}
+      <em className={cn('italic text-teal-lum', className)}>
+        <Lines text={inner} />
+      </em>
+      {after ? <Lines text={after} /> : null}
     </>
   )
 }
@@ -62,7 +85,7 @@ export function PageHero({
                 {hero.eyebrow}
               </p>
             ) : null}
-            <h1 className="heading-display">
+            <h1 className="heading-display text-wrap-initial">
               <Highlighted text={heading} highlight={hero?.highlight} />
             </h1>
             {hero?.text ? <p className="lede mt-6 max-w-[470px] lg:mt-[30px]">{hero.text}</p> : null}
@@ -88,8 +111,7 @@ export function PageHero({
                   fill
                   priority
                   sizes="(min-width: 1024px) 45vw, 100vw"
-                  className="object-cover object-top"
-                  style={{ objectPosition: 'center 20%' }}
+                  className="home-hero-photo"
                 />
               </div>
               {hero?.imageMarker ? (

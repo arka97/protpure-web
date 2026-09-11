@@ -5,7 +5,8 @@ import { FAQ_CATEGORIES } from '@/collections/Faqs'
 import { CERTIFICATION_KINDS } from '@/collections/Certifications'
 import { UPDATE_KINDS } from '@/collections/Updates'
 
-const heading = (required = false): Field => ({ name: 'heading', type: 'text', required })
+// Textarea (still a varchar column): a line break in the heading is kept as a deliberate break on screen.
+const heading = (required = false): Field => ({ name: 'heading', type: 'textarea', required, admin: { rows: 2, description: 'Line breaks are kept. *asterisks* italicise the proposition.' } })
 const eyebrow: Field = { name: 'eyebrow', type: 'text', admin: { description: 'Small label above the heading.' } }
 const intro: Field = { name: 'intro', type: 'textarea' }
 const links = (max = 2): Field => ({ name: 'links', type: 'array', maxRows: max, fields: [linkField({ appearance: true })] })

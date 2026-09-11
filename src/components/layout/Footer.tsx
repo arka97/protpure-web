@@ -71,17 +71,17 @@ export function Footer({
           {cols.map((col, i) => (
             <div key={i}>
               <h3 className="mb-4 text-[13px] font-medium text-surface">{col.title}</h3>
-              <ul className="grid gap-2 text-[12px] text-text-2-dark">
+              <ul className="grid gap-0 text-[12px] text-text-2-dark lg:gap-2">
                 {col.links.map((l, j) => (
                   <li key={j}>
-                    <Link href={l.href} className="hover:text-surface" target={l.newTab ? '_blank' : undefined} rel={l.newTab ? 'noopener noreferrer' : undefined}>
+                    <Link href={l.href} className="touch-row hover:text-surface" target={l.newTab ? '_blank' : undefined} rel={l.newTab ? 'noopener noreferrer' : undefined}>
                       {l.label}
                     </Link>
                   </li>
                 ))}
                 {i === cols.length - 1 && linkedin ? (
                   <li>
-                    <a href={linkedin} target="_blank" rel="noopener noreferrer" className="hover:text-surface">
+                    <a href={linkedin} target="_blank" rel="noopener noreferrer" className="touch-row hover:text-surface">
                       LinkedIn
                     </a>
                   </li>
