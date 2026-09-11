@@ -83,7 +83,8 @@ export function cardSpecs(p: Pick<Product, 'grades' | 'specs'>): CardSpec[] {
     const d50s = grades.map((g) => g.d50).filter((d): d is string => Boolean(d))
     const sameUnit = d50s.length > 0 && d50s.every((d) => /µm\s*$/.test(d))
     const note = d50s.length ? `d50V ${sameUnit ? `${d50s.map((d) => stripUnit(d)).join(' / ')} µm` : d50s.join(' / ')}` : null
-    out.push({ label: many ? 'Grades / d50V' : 'Grade / d50V', value: grades.map((g) => gradeLabel(g.grade)).join(' / '), note })
+    // Non-breaking space before each slash so a wrapped list never starts a line with "/".
+    out.push({ label: many ? 'Grades / d50V' : 'Grade / d50V', value: grades.map((g) => gradeLabel(g.grade)).join('\u00a0/ '), note })
   } else {
     const spec = specs.find((s) => /format|bed dimensions|reactions|contents/i.test(s.parameter))
     if (spec) out.push({ label: specLabel(spec.parameter), value: spec.value })
@@ -247,7 +248,8 @@ export function buildFilterGroups(products: Product[], categories: ProductCatego
     name: 'grade',
     legend: 'Grade / bead size',
     selected: q.grade,
-    options: GRADE_VALUES.map((g) => ({ value: g, label: GRADE_LABELS[g], count: count((p) => (p.grades ?? []).some((x) => x.grade === g)), note: gradeD50Note(products, g) })).filter((o) => o.count > 0),
+    // "Fast Flow / Standard" share one grade value (and one filter); the exact d50 stays on each card.
+    options: GRADE_VALUES.map((g) => ({ value: g, label: g === 'fast-flow' ? `${GRADE_LABELS[g]} / Standard` : GRADE_LABELS[g], count: count((p) => (p.grades ?? []).some((x) => x.grade === g)), note: gradeD50Note(products, g) })).filter((o) => o.count > 0),
   })
   groups.push({
     name: 'availability',
@@ -284,4 +286,12 @@ export const specValue = (p: Pick<Product, 'specs'>, parameter: string): Spec | 
 export function slimProduct(p: Product) {
   const cat = categoryOf(p)
   return { id: p.id, slug: p.slug!, name: p.name, subtitle: p.subtitle ?? null, category: cat?.slug ?? '', categoryName: cat?.name ?? '', ligand: p.chemistry?.ligand ?? null, functionalType: p.chemistry?.functionalType ?? null, grades: (p.grades ?? []).map((g) => g.grade) }
+}
+
+/** "800–1000 cm/h, 0.1 MPa, 20 cm bed height" minus the flow that has its own column → "0.1 MPa, 20 cm bed height". */
+export function pressureOnly(g: Pick<Grade, 'pressureFlow' | 'maxFlowVelocity'> | null | undefined): string {
+  const p = g?.pressureFlow?.trim()
+  if (!p) return ''
+  const flow = g?.maxFlowVelocity?.trim()
+  return flow && p.startsWith(flow) ? p.slice(flow.length).replace(/^[,;\s]+/, '') : p
 }

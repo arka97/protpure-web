@@ -3,10 +3,10 @@
 import * as React from 'react'
 import { useActionState } from 'react'
 import { usePathname, useSearchParams } from 'next/navigation'
-import { CircleCheck, TriangleAlert } from 'lucide-react'
 import { submitInquiry, type FormState } from '@/app/actions'
 import { useBasket } from '@/components/rfq/BasketProvider'
 import { BasketTable, controlClass } from '@/components/rfq/BasketLines'
+import { AlertIcon, ArrowIcon, CheckIcon } from '@/components/visual/icons'
 import { toInquiryItem, type BasketProduct, type PurposeValue } from '@/lib/rfq'
 import { cn } from '@/lib/utils'
 
@@ -18,8 +18,12 @@ const TYPE_LABELS: Record<string, string> = {
   contact: 'Send a message',
 }
 
-/** Default line purpose when a product is pre-added from a `?type=` link. */
-const PURPOSE_FOR_TYPE: Record<string, PurposeValue> = { quote: 'production', evaluation: 'evaluation', technical: 'other' }
+/**
+ * Default line purpose when a product is pre-added from a `?type=` link. An evaluation request
+ * is a paid sample kit (5–25 mL packs or a 1 mL pre-packed column, credited against the first
+ * bulk order) — never a free sample.
+ */
+const PURPOSE_FOR_TYPE: Record<string, PurposeValue> = { quote: 'production', evaluation: 'sample-kit', technical: 'other' }
 
 export function InquiryForm({
   type: initialType = 'quote',
@@ -39,6 +43,7 @@ export function InquiryForm({
   const basket = useBasket()
   const [type, setType] = React.useState(params.get('type') || initialType)
   const pageUrlRef = React.useRef<HTMLInputElement>(null)
+  const formRef = React.useRef<HTMLFormElement>(null)
   const addSelectId = React.useId()
 
   React.useEffect(() => {
@@ -72,15 +77,25 @@ export function InquiryForm({
     }
   }, [state, basket])
 
+  // Validation failed: move focus to the first invalid field so the error is read out.
+  React.useEffect(() => {
+    if (!state || state.ok || !state.errors) return
+    const first = formRef.current?.querySelector<HTMLElement>('[aria-invalid="true"]')
+    first?.focus()
+  }, [state])
+
   const err = (k: string) => state?.errors?.[k]
-  const input = (k: string) => cn(controlClass, 'px-3.5 py-2.5 sm:py-2.5', err(k) && 'border-red-400')
+  const inputClass = cn(controlClass, 'px-3.5 py-2.5 sm:py-2.5')
+  const invalid = (k: string) => ({ 'aria-invalid': err(k) ? true : undefined, 'aria-describedby': err(k) ? `${k}-error` : undefined })
 
   if (state?.ok) {
     return (
-      <div className="card p-8 text-center" role="status">
-        <CircleCheck className="mx-auto h-10 w-10 text-teal-500" />
-        <p className="heading-3 mt-4">Request received</p>
-        <p className="mx-auto mt-2 max-w-md text-ink-soft">{state.message}</p>
+      <div className="card p-8 text-center lg:p-10" role="status">
+        <span className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-tint text-teal-deep">
+          <CheckIcon className="h-6 w-6" />
+        </span>
+        <p className="mt-5 font-display text-[32px] leading-[1.05] tracking-[-0.03em] text-ink">Request received.</p>
+        <p className="mx-auto mt-3 max-w-md text-[14px] leading-[1.6] text-text-2">{state.message}</p>
       </div>
     )
   }
@@ -91,6 +106,7 @@ export function InquiryForm({
 
   return (
     <form
+      ref={formRef}
       action={action}
       // Submitting through the transition (rather than letting React run the form action) keeps
       // typed values and the basket selects intact when validation fails; without JS the plain
@@ -109,10 +125,10 @@ export function InquiryForm({
 
       {allowTypeChange ? (
         <div>
-          <label className="mb-1.5 block text-sm font-medium text-ink" htmlFor="inq-type">
+          <label className="mb-1.5 block text-[12px] font-medium text-ink" htmlFor="inq-type">
             What can we help with?
           </label>
-          <select id="inq-type" name="type" value={type} onChange={(e) => setType(e.target.value)} className={input('type')}>
+          <select id="inq-type" name="type" value={type} onChange={(e) => setType(e.target.value)} className={inputClass}>
             {Object.entries(TYPE_LABELS).map(([v, l]) => (
               <option key={v} value={v}>
                 {l}
@@ -125,15 +141,15 @@ export function InquiryForm({
       )}
 
       {showProducts ? (
-        <fieldset>
-          <legend className="mb-1.5 text-sm font-medium text-ink">
+        <fieldset className="min-w-0">
+          <legend className="mb-1.5 text-[12px] font-medium text-ink">
             {type === 'technical' ? 'Products this question is about' : 'Items to quote'}{' '}
-            <span className="font-normal text-muted">{basket.ready && items.length ? `(${items.length})` : '(optional)'}</span>
+            <span className="font-normal text-text-2">{basket.ready && items.length ? <span className="mono">({items.length})</span> : '(optional)'}</span>
           </legend>
           {basket.ready && items.length ? (
             <BasketTable />
           ) : (
-            <p className="rounded-lg border border-dashed border-line bg-surface-2/50 px-4 py-3 text-sm text-ink-soft">
+            <p className="border border-dashed border-rule-strong bg-surface px-4 py-3 text-[13px] leading-[1.6] text-text-2">
               {basket.ready ? 'Your RFQ basket is empty. Add a product below, or describe what you need in the message.' : 'Loading your basket…'}
             </p>
           )}
@@ -161,63 +177,72 @@ export function InquiryForm({
               </select>
             </div>
           ) : null}
+          {err('items') ? (
+            <p id="items-error" className="mt-2 text-[12px] text-error" role="alert">
+              {err('items')}
+            </p>
+          ) : null}
         </fieldset>
       ) : null}
 
       <div className="grid gap-5 sm:grid-cols-2">
         <Field label="Full name" name="name" error={err('name')}>
-          <input id="name" name="name" required autoComplete="name" className={input('name')} />
+          <input id="name" name="name" required autoComplete="name" className={inputClass} {...invalid('name')} />
         </Field>
         <Field label="Work email" name="email" error={err('email')}>
-          <input id="email" name="email" type="email" required autoComplete="email" className={input('email')} />
+          <input id="email" name="email" type="email" required autoComplete="email" className={inputClass} placeholder="you@company.com" {...invalid('email')} />
         </Field>
         <Field label="Company / organisation" name="organization" error={err('organization')}>
-          <input id="organization" name="organization" autoComplete="organization" className={input('organization')} />
+          <input id="organization" name="organization" autoComplete="organization" className={inputClass} placeholder="Company or institute" {...invalid('organization')} />
         </Field>
         <Field label="Job title" name="jobTitle" optional error={err('jobTitle')}>
-          <input id="jobTitle" name="jobTitle" autoComplete="organization-title" className={input('jobTitle')} />
+          <input id="jobTitle" name="jobTitle" autoComplete="organization-title" className={inputClass} {...invalid('jobTitle')} />
         </Field>
-        <Field label="Country" name="country" error={err('country')}>
-          <input id="country" name="country" autoComplete="country-name" className={input('country')} placeholder="Where should we ship or quote to?" />
+        <Field label="Destination country" name="country" error={err('country')}>
+          <input id="country" name="country" autoComplete="country-name" className={inputClass} placeholder="Where should we ship or quote to?" {...invalid('country')} />
         </Field>
         <Field label="Phone / WhatsApp" name="phone" optional error={err('phone')}>
-          <input id="phone" name="phone" type="tel" autoComplete="tel" className={input('phone')} placeholder="+1 …" />
+          <input id="phone" name="phone" type="tel" autoComplete="tel" className={inputClass} placeholder="+91 …" {...invalid('phone')} />
         </Field>
       </div>
 
       {type !== 'partnership' && type !== 'contact' ? (
         <Field label="What are you purifying?" name="application" optional error={err('application')}>
-          <input id="application" name="application" className={input('application')} placeholder="e.g. His-tagged recombinant enzyme, 5 L fermentation, capture step" />
+          <input id="application" name="application" className={inputClass} placeholder="e.g. His-tagged recombinant enzyme, 5 L fermentation, capture step" {...invalid('application')} />
         </Field>
       ) : null}
 
-      <Field label="Message" name="message" optional={type !== 'contact' && type !== 'partnership'} error={err('message')}>
+      <Field label={showProducts ? 'Process notes' : 'Message'} name="message" optional={type !== 'contact' && type !== 'partnership'} error={err('message')}>
         <textarea
           id="message"
           name="message"
           rows={5}
-          className={input('message')}
-          placeholder={type === 'partnership' ? 'Tell us about your company, territories and the customers you serve.' : showProducts ? 'Anything else we should know — other items, timelines, documentation needs, column formats…' : 'How can we help?'}
+          className={inputClass}
+          placeholder={type === 'partnership' ? 'Tell us about your company, territories and the customers you serve.' : showProducts ? 'Target, scale, timeline, custom volume, documentation needs, column formats…' : 'How can we help?'}
+          {...invalid('message')}
         />
       </Field>
 
-      <label className={cn('flex items-start gap-3 text-sm text-ink-soft', err('consent') && 'text-red-600')}>
-        <input type="checkbox" name="consent" className="mt-1 h-4 w-4 rounded border-line accent-teal-500" />
-        <span>I agree that Protpure may contact me about this request and store my details for that purpose. See our privacy policy.</span>
+      <label className={cn('flex items-start gap-3 text-[13px] leading-[1.55] text-text-2', err('consent') && 'text-error')}>
+        <input type="checkbox" name="consent" className="mt-1 h-4 w-4 shrink-0" aria-invalid={err('consent') ? true : undefined} />
+        <span>
+          I agree that Protpure may contact me about this request and store my details for that purpose. See our privacy policy.
+          {err('consent') ? <span className="block text-[12px]">{err('consent')}</span> : null}
+        </span>
       </label>
 
       {state && !state.ok ? (
-        <p className="flex items-start gap-2 rounded-lg border border-amber-200 bg-amber-50 px-3.5 py-3 text-sm text-amber-800" role="alert">
-          <TriangleAlert className="mt-0.5 h-4 w-4 shrink-0" /> {state.message}
-          {err('items') ? <> Items: {err('items')}</> : null}
+        <p className="flex items-start gap-2.5 border border-[#e2c9a2] bg-[#fbf3e6] px-3.5 py-3 text-[13px] leading-[1.55] text-attention" role="alert">
+          <AlertIcon className="mt-0.5 h-4 w-4 shrink-0" /> {state.message}
         </p>
       ) : null}
 
       <div className="flex flex-wrap items-center gap-4">
-        <button type="submit" className="btn-primary min-h-11" disabled={pending}>
+        <button type="submit" className="btn-primary min-h-12" disabled={pending}>
           {pending ? 'Sending…' : showProducts && items.length ? `${TYPE_LABELS[type] ?? 'Send'} (${items.length} item${items.length === 1 ? '' : 's'})` : TYPE_LABELS[type] ?? 'Send'}
+          <ArrowIcon />
         </button>
-        {responseTime ? <p className="text-sm text-muted">We reply {responseTime}.</p> : null}
+        {responseTime ? <p className="text-[13px] text-text-2">A scientist replies {responseTime}.</p> : null}
       </div>
     </form>
   )
@@ -225,13 +250,13 @@ export function InquiryForm({
 
 function Field({ label, name, optional, error, children }: { label: string; name: string; optional?: boolean; error?: string; children: React.ReactNode }) {
   return (
-    <div>
-      <label className="mb-1.5 block text-sm font-medium text-ink" htmlFor={name}>
-        {label} {optional ? <span className="font-normal text-muted">(optional)</span> : null}
+    <div className="min-w-0">
+      <label className="mb-1.5 block text-[12px] font-medium text-ink" htmlFor={name}>
+        {label} {optional ? <span className="font-normal text-text-2">(optional)</span> : null}
       </label>
       {children}
       {error ? (
-        <p className="mt-1 text-xs text-red-600" role="alert">
+        <p id={`${name}-error`} className="mt-1.5 text-[12px] text-error" role="alert">
           {error}
         </p>
       ) : null}

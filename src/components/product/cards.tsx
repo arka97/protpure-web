@@ -11,6 +11,29 @@ import type { Application, Document, Product, ProductCategory, Service } from '@
 
 const GRADE_SHORT: Record<string, string> = GRADE_LABELS
 
+/** Split a value for the "mono number, sans unit" treatment; text values stay whole and in sans. */
+export function figureParts(v: string) {
+  const [head, tail] = splitFigure(v)
+  const isFigure = Boolean(tail) || /^[\d≈~≥≤<>±]/.test(head)
+  return isFigure ? { head, tail, isFigure } : { head: v, tail: '', isFigure }
+}
+
+/**
+ * Table value: a figure ("≈100 mg lysozyme/mL", "45–165 µm") is set as a mono number with the unit
+ * in sans beneath it; text ("Yes", "Stable in 1.0 M NaOH…") stays in sans with tabular numerals.
+ */
+export function TableFigure({ value, className }: { value?: string | null; className?: string }) {
+  if (!value) return <span className="text-text-2">—</span>
+  const { head, tail, isFigure } = figureParts(value)
+  if (!isFigure) return <span className={cn('num block text-[13px] leading-[1.5] text-inherit', className)}>{value}</span>
+  return (
+    <span className={cn('block', className)}>
+      <span className="mono text-[13px] text-inherit">{head}</span>
+      {tail ? <small className="mt-1 block text-[10px] leading-[1.4] text-text-2">{tail}</small> : null}
+    </span>
+  )
+}
+
 /** A scanned figure: the number in mono, the unit / grade qualifier in sans beneath it. */
 export function SpecFigure({ spec, className }: { spec: CardSpec; className?: string }) {
   if (spec.missing) return <span className={cn('mono text-[12px] leading-[1.5] text-text-2', className)}>{spec.value}</span>

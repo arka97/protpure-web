@@ -23,6 +23,14 @@ export function FilterSidebar({ action, groups, q, sort, activeCount, resultCoun
   const js = useHydrated()
   const [open, setOpen] = React.useState(false)
   const submit = () => formRef.current?.requestSubmit()
+  // An empty search box would otherwise put a bare `q=` in every filtered URL.
+  const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    const q = e.currentTarget.elements.namedItem('q')
+    if (q instanceof HTMLInputElement && !q.value.trim()) {
+      q.disabled = true
+      window.setTimeout(() => (q.disabled = false), 0)
+    }
+  }
 
   return (
     <div className="lg:sticky lg:top-[88px]">
@@ -40,7 +48,7 @@ export function FilterSidebar({ action, groups, q, sort, activeCount, resultCoun
         <span className="text-[12px] font-normal text-text-2"><span className="mono">{resultCount}</span> products</span>
       </button>
 
-      <Form ref={formRef} id={`${id}-form`} action={action} scroll={false} className={cn(js && !open && 'max-lg:hidden')} role="search" aria-label="Product filters">
+      <Form ref={formRef} id={`${id}-form`} action={action} scroll={false} onSubmit={onSubmit} className={cn(js && !open && 'max-lg:hidden')} role="search" aria-label="Product filters">
         <div className="mb-5 flex items-baseline justify-between gap-3">
           <h2 className="text-[15px] font-medium text-ink">Refine your selection</h2>
           {activeCount ? (

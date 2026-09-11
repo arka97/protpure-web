@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { buildFilterGroups, cardSpecs, catalogueSearch, categoryOf, filterProducts, leadTimeWeeks, parseCatalogueQuery, pickCompared, publishedWhere, shortType, sortProducts, typeSlug } from '@/lib/catalog'
+import { buildFilterGroups, cardSpecs, catalogueSearch, categoryOf, filterProducts, leadTimeWeeks, parseCatalogueQuery, pickCompared, pressureOnly, publishedWhere, shortType, sortProducts, typeSlug } from '@/lib/catalog'
 import type { Product, ProductCategory } from '@/payload-types'
 
 describe('publishedWhere', () => {
@@ -102,7 +102,7 @@ describe('cardSpecs', () => {
     expect(cardSpecs(sp)).toEqual([
       { label: 'DBC', value: '≈100 mg lysozyme/mL', note: 'Fast Flow' },
       { label: 'Max flow', value: '800–1000 cm/h', note: 'Faster' },
-      { label: 'Grades / d50V', value: 'Faster / Fast Flow / HR', note: 'd50V 150 / 90 / 35 µm' },
+      { label: 'Grades / d50V', value: 'Faster\u00a0/ Fast Flow\u00a0/ HR', note: 'd50V 150 / 90 / 35 µm' },
     ])
   })
   it('keeps missing figures bracketed and uses the specs for products without grades', () => {
@@ -146,7 +146,7 @@ describe('catalogue query, filters and sort', () => {
     // A functional type only discriminates inside a mode with several types: the lone IEX type is not repeated.
     expect(groups[1].options.map((o) => o.value)).toEqual(['activated-support-for-ligand-immobilisation', 'affinity', 'magnetic-affinity-beads'])
     expect(groups[2].selected).toEqual(['hr'])
-    expect(groups[2].options.find((o) => o.value === 'fast-flow')).toEqual({ value: 'fast-flow', label: 'Fast Flow', count: 3, note: '~90 µm' })
+    expect(groups[2].options.find((o) => o.value === 'fast-flow')).toEqual({ value: 'fast-flow', label: 'Fast Flow / Standard', count: 3, note: '~90 µm' })
     expect(groups[3].options).toEqual([
       { value: 'available', label: 'Available', count: 3 },
       { value: 'made-to-order', label: 'Made to order', count: 1 },
@@ -157,6 +157,11 @@ describe('catalogue query, filters and sort', () => {
     expect(shortType('Immobilised metal affinity (IMAC)')).toBe('Immobilised metal affinity (IMAC)')
     expect(shortType('Mixed-mode (anion exchange / hydrophobic interaction)')).toBe('Mixed-mode')
     expect(shortType('Activated support for ligand immobilisation')).toBe('Activated support')
+  })
+  it('strips the flow that has its own column from the pressure specification', () => {
+    expect(pressureOnly({ pressureFlow: '800–1000 cm/h, 0.1 MPa, 20 cm bed height', maxFlowVelocity: '800–1000 cm/h' })).toBe('0.1 MPa, 20 cm bed height')
+    expect(pressureOnly({ pressureFlow: '0.3 MPa', maxFlowVelocity: '~700 cm/h' })).toBe('0.3 MPa')
+    expect(pressureOnly(null)).toBe('')
   })
   it('picks compared products from ids or slugs, capped at three', () => {
     expect(pickCompared(all, { ids: '10,protein-a-agarose,10' }).map((p) => p.id)).toEqual([10, 12])

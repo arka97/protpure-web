@@ -5,7 +5,7 @@ import * as React from 'react'
 import { RichText } from '@/components/RichText'
 import { LivePreview } from '@/components/LivePreview'
 import { FaqList } from '@/components/FaqList'
-import { DocumentRow, ProductCard } from '@/components/product/cards'
+import { DocumentRow, ProductCard, TableFigure, figureParts } from '@/components/product/cards'
 import { OrderingTable } from '@/components/product/OrderingTable'
 import { QuoteBar } from '@/components/product/QuoteBar'
 import { SectionNav, type Section } from '@/components/product/SectionNav'
@@ -19,8 +19,7 @@ import { RangeBars } from '@/components/visual/RangeBars'
 import { Reveal } from '@/components/visual/Reveal'
 import { ArrowIcon, CheckIcon, DocumentIcon, DownloadIcon } from '@/components/visual/icons'
 import { getFaqs, getProduct, getSiteSettings } from '@/lib/data'
-import { categoryOf, gradeLabel, referenceGrade } from '@/lib/catalog'
-import { splitFigure } from '@/lib/figures'
+import { categoryOf, gradeLabel, pressureOnly, referenceGrade } from '@/lib/catalog'
 import { toBasketProduct, type GradeValue } from '@/lib/rfq'
 import { buildMetadata } from '@/lib/seo'
 import { breadcrumbJsonLd, faqJsonLd, JsonLd, productJsonLd } from '@/lib/jsonld'
@@ -35,30 +34,6 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 }
 
 type Grade = NonNullable<Product['grades']>[number]
-
-/** "800–1000 cm/h, 0.1 MPa, 20 cm bed height" minus the flow that already has its own column → "0.1 MPa, 20 cm bed height". */
-function pressureOnly(g: Grade) {
-  const p = g.pressureFlow?.trim()
-  if (!p) return ''
-  const flow = g.maxFlowVelocity?.trim()
-  return flow && p.startsWith(flow) ? p.slice(flow.length).replace(/^[,;\s]+/, '') : p
-}
-
-/**
- * Table value: a figure ("≈100 mg lysozyme/mL", "45–165 µm") is set as a mono number with the unit
- * in sans beneath it; text ("Yes", "Stable in 1.0 M NaOH…") stays in sans with tabular numerals.
- */
-function Figure({ value, className }: { value?: string | null; className?: string }) {
-  if (!value) return <span className="text-text-2">—</span>
-  const { head, tail, isFigure } = parts(value)
-  if (!isFigure) return <span className={cn('num block text-[13px] leading-[1.5] text-inherit', className)}>{value}</span>
-  return (
-    <span className={cn('block', className)}>
-      <span className="mono text-[13px] text-inherit">{head}</span>
-      {tail ? <small className="mt-1 block text-[10px] leading-[1.4] text-text-2">{tail}</small> : null}
-    </span>
-  )
-}
 
 const SECTION = 'scroll-mt-[140px] lg:scroll-mt-[150px]'
 /** Product sections stack with 60 px between them (DIRECTION: product-section padding-top 60, no bottom padding). */
@@ -282,27 +257,27 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
                     </th>
                     {has('particleSizeRange') ? (
                       <td className="align-middle">
-                        <Figure value={g.particleSizeRange} />
+                        <TableFigure value={g.particleSizeRange} />
                       </td>
                     ) : null}
                     {has('d50') ? (
                       <td className="align-middle">
-                        <Figure value={g.d50} />
+                        <TableFigure value={g.d50} />
                       </td>
                     ) : null}
                     {has('maxFlowVelocity') ? (
                       <td className="align-middle">
-                        <Figure value={g.maxFlowVelocity} />
+                        <TableFigure value={g.maxFlowVelocity} />
                       </td>
                     ) : null}
                     {has('dynamicBindingCapacity') ? (
                       <td className="highlight align-middle">
-                        <Figure value={g.dynamicBindingCapacity} />
+                        <TableFigure value={g.dynamicBindingCapacity} />
                       </td>
                     ) : null}
                     {has('pressureFlow') ? (
                       <td className="align-middle">
-                        <Figure value={pressureOnly(g)} />
+                        <TableFigure value={pressureOnly(g)} />
                       </td>
                     ) : null}
                   </tr>
@@ -495,7 +470,7 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
 
 /** Hero fact: uppercase label, value (mono when it is a figure). */
 function Fact({ k, v, figure }: { k: string; v: string; figure?: boolean }) {
-  const { head, tail, isFigure } = figure ? parts(v) : { head: v, tail: '', isFigure: false }
+  const { head, tail, isFigure } = figure ? figureParts(v) : { head: v, tail: '', isFigure: false }
   return (
     <div className="min-w-0">
       <dt className="mb-1 text-[10px] uppercase tracking-[0.1em] text-text-2-dark">{k}</dt>
@@ -507,16 +482,10 @@ function Fact({ k, v, figure }: { k: string; v: string; figure?: boolean }) {
   )
 }
 
-/** Split a value for the "mono number, sans unit" treatment; text values stay whole and in sans. */
-function parts(v: string) {
-  const [head, tail] = splitFigure(v)
-  const isFigure = Boolean(tail) || /^[\d≈~≥≤<>±]/.test(head)
-  return isFigure ? { head, tail, isFigure } : { head: v, tail: '', isFigure }
-}
 
 /** Definition row for the chemistry panel and the quotation panel. */
 function Row({ k, v, figure, dark }: { k: string; v: string; figure?: boolean; dark?: boolean }) {
-  const { head, tail, isFigure } = figure ? parts(v) : { head: v, tail: '', isFigure: false }
+  const { head, tail, isFigure } = figure ? figureParts(v) : { head: v, tail: '', isFigure: false }
   return (
     <div className="grid grid-cols-[minmax(0,38%)_1fr] gap-3 py-2.5">
       <dt className={dark ? 'text-text-2-dark' : 'text-text-2'}>{k}</dt>
@@ -535,9 +504,9 @@ function SpecRow({ label, value, market }: { label: string; value: string; marke
         {label}
       </th>
       <td className="highlight">
-        <Figure value={value} />
+        <TableFigure value={value} />
       </td>
-      {market !== undefined ? <td>{market ? <Figure value={market} /> : <span className="text-text-2">—</span>}</td> : null}
+      {market !== undefined ? <td>{market ? <TableFigure value={market} /> : <span className="text-text-2">—</span>}</td> : null}
     </tr>
   )
 }

@@ -21,7 +21,7 @@ export function BasketButton({ className, label }: { className?: string; label?:
     >
       <BasketIcon />
       {label ? <span className="hidden md:inline">{label}</span> : null}
-      <span className={cn('num inline-grid h-[22px] w-[22px] place-items-center rounded-full text-[11px] leading-none', n ? 'bg-ink text-white' : 'border border-rule text-text-2')} aria-hidden>
+      <span className={cn('mono inline-grid h-[22px] w-[22px] place-items-center rounded-full text-[11px] leading-none', n ? 'bg-ink text-white' : 'border border-rule text-text-2')} aria-hidden>
         {n > 99 ? '99+' : n}
       </span>
     </button>

@@ -93,7 +93,8 @@ export function CompareBar({ names }: { names: Record<string, string> }) {
         <div className="min-w-0 flex-1">
           <p className="font-medium">
             Compare <span className="mono">({list.length})</span>
-            <span className="text-text-2-dark"> · {ready ? picked.join(' · ') : `${picked[0]} — pick one more to compare`}</span>
+            <span className="hidden text-text-2-dark sm:inline"> · {ready ? picked.join(' · ') : `${picked[0]} — pick one more to compare`}</span>
+            {!ready ? <span className="block text-[11px] font-normal text-text-2-dark sm:hidden">Pick one more to compare</span> : null}
           </p>
         </div>
         <div className="flex items-center gap-2">
