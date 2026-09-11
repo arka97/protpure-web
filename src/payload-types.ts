@@ -580,7 +580,7 @@ export interface Page {
     style?: ('standard' | 'schematic' | 'compact' | 'none') | null;
     eyebrow?: string | null;
     /**
-     * Defaults to the page title.
+     * Defaults to the page title. Line breaks are kept.
      */
     heading?: string | null;
     /**
@@ -691,6 +691,9 @@ export interface Page {
             blockType: 'trustStrip';
           }
         | {
+            /**
+             * Line breaks are kept. *asterisks* italicise the proposition.
+             */
             heading?: string | null;
             items?:
               | {
@@ -717,6 +720,9 @@ export interface Page {
              * Small label above the heading.
              */
             eyebrow?: string | null;
+            /**
+             * Line breaks are kept. *asterisks* italicise the proposition.
+             */
             heading?: string | null;
             intro?: string | null;
             columns?: ('2' | '3' | '4') | null;
@@ -787,6 +793,9 @@ export interface Page {
              * Small label above the heading.
              */
             eyebrow?: string | null;
+            /**
+             * Line breaks are kept. *asterisks* italicise the proposition.
+             */
             heading?: string | null;
             content?: {
               root: {
@@ -878,6 +887,9 @@ export interface Page {
              * Small label above the heading.
              */
             eyebrow?: string | null;
+            /**
+             * Line breaks are kept. *asterisks* italicise the proposition.
+             */
             heading?: string | null;
             intro?: string | null;
             columnA: string;
@@ -900,6 +912,9 @@ export interface Page {
              * Small label above the heading.
              */
             eyebrow?: string | null;
+            /**
+             * Line breaks are kept. *asterisks* italicise the proposition.
+             */
             heading?: string | null;
             intro?: string | null;
             grades?:
@@ -972,6 +987,9 @@ export interface Page {
              * Small label above the heading.
              */
             eyebrow?: string | null;
+            /**
+             * Line breaks are kept. *asterisks* italicise the proposition.
+             */
             heading?: string | null;
             intro?: string | null;
             id?: string | null;
@@ -983,6 +1001,9 @@ export interface Page {
              * Small label above the heading.
              */
             eyebrow?: string | null;
+            /**
+             * Line breaks are kept. *asterisks* italicise the proposition.
+             */
             heading?: string | null;
             intro?: string | null;
             /**
@@ -1006,6 +1027,9 @@ export interface Page {
              * Small label above the heading.
              */
             eyebrow?: string | null;
+            /**
+             * Line breaks are kept. *asterisks* italicise the proposition.
+             */
             heading?: string | null;
             intro?: string | null;
             /**
@@ -1021,6 +1045,9 @@ export interface Page {
              * Small label above the heading.
              */
             eyebrow?: string | null;
+            /**
+             * Line breaks are kept. *asterisks* italicise the proposition.
+             */
             heading?: string | null;
             intro?: string | null;
             layout?: ('cards' | 'list') | null;
@@ -1033,6 +1060,9 @@ export interface Page {
              * Small label above the heading.
              */
             eyebrow?: string | null;
+            /**
+             * Line breaks are kept. *asterisks* italicise the proposition.
+             */
             heading?: string | null;
             intro?: string | null;
             layout?: ('cards' | 'row') | null;
@@ -1045,6 +1075,9 @@ export interface Page {
              * Small label above the heading.
              */
             eyebrow?: string | null;
+            /**
+             * Line breaks are kept. *asterisks* italicise the proposition.
+             */
             heading?: string | null;
             intro?: string | null;
             /**
@@ -1074,6 +1107,9 @@ export interface Page {
              * Small label above the heading.
              */
             eyebrow?: string | null;
+            /**
+             * Line breaks are kept. *asterisks* italicise the proposition.
+             */
             heading?: string | null;
             limit?: number | null;
             id?: string | null;
@@ -1085,6 +1121,9 @@ export interface Page {
              * Small label above the heading.
              */
             eyebrow?: string | null;
+            /**
+             * Line breaks are kept. *asterisks* italicise the proposition.
+             */
             heading?: string | null;
             intro?: string | null;
             limit?: number | null;
@@ -1101,6 +1140,9 @@ export interface Page {
              * Small label above the heading.
              */
             eyebrow?: string | null;
+            /**
+             * Line breaks are kept. *asterisks* italicise the proposition.
+             */
             heading?: string | null;
             /**
              * Leave empty to show all.
@@ -1115,6 +1157,9 @@ export interface Page {
              * Small label above the heading.
              */
             eyebrow?: string | null;
+            /**
+             * Line breaks are kept. *asterisks* italicise the proposition.
+             */
             heading?: string | null;
             intro?: string | null;
             /**
@@ -1131,6 +1176,9 @@ export interface Page {
              * Small label above the heading.
              */
             eyebrow?: string | null;
+            /**
+             * Line breaks are kept. *asterisks* italicise the proposition.
+             */
             heading?: string | null;
             items?:
               | {
@@ -1152,6 +1200,9 @@ export interface Page {
              * Small label above the heading.
              */
             eyebrow?: string | null;
+            /**
+             * Line breaks are kept. *asterisks* italicise the proposition.
+             */
             heading?: string | null;
             intro?: string | null;
             category?: ('all' | 'products' | 'ordering' | 'shipping' | 'quality' | 'technical') | null;
@@ -1173,6 +1224,9 @@ export interface Page {
           }
         | {
             form: 'quote' | 'contact' | 'partnership' | 'newsletter';
+            /**
+             * Line breaks are kept. *asterisks* italicise the proposition.
+             */
             heading?: string | null;
             intro?: string | null;
             /**
@@ -1202,6 +1256,9 @@ export interface Page {
              * Small label above the heading.
              */
             eyebrow?: string | null;
+            /**
+             * Line breaks are kept. *asterisks* italicise the proposition.
+             */
             heading: string;
             /**
              * Blank lines start new paragraphs.
@@ -1254,6 +1311,9 @@ export interface Page {
              * Small label above the heading.
              */
             eyebrow?: string | null;
+            /**
+             * Line breaks are kept. *asterisks* italicise the proposition.
+             */
             heading?: string | null;
             source?: ('all' | 'picked') | null;
             /**
@@ -1269,6 +1329,9 @@ export interface Page {
             blockType: 'logoWall';
           }
         | {
+            /**
+             * Line breaks are kept. *asterisks* italicise the proposition.
+             */
             heading?: string | null;
             /**
              * Leave empty for all kinds.
@@ -1284,6 +1347,9 @@ export interface Page {
              * Small label above the heading.
              */
             eyebrow?: string | null;
+            /**
+             * Line breaks are kept. *asterisks* italicise the proposition.
+             */
             heading?: string | null;
             /**
              * Facility, lab and team photos. The block is hidden until at least one photo is added.
@@ -1309,6 +1375,9 @@ export interface Page {
              * Small label above the heading.
              */
             eyebrow?: string | null;
+            /**
+             * Line breaks are kept. *asterisks* italicise the proposition.
+             */
             heading?: string | null;
             /**
              * Leave empty to list publications of every team member marked "featured".

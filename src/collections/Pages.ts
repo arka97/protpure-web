@@ -45,7 +45,7 @@ export const Pages: CollectionConfig = {
                   ],
                 },
                 { name: 'eyebrow', type: 'text', admin: { condition: (_, s) => s?.style !== 'none' } },
-                { name: 'heading', type: 'text', admin: { condition: (_, s) => s?.style !== 'none', description: 'Defaults to the page title.' } },
+                { name: 'heading', type: 'textarea', admin: { rows: 2, condition: (_, s) => s?.style !== 'none', description: 'Defaults to the page title. Line breaks are kept.' } },
                 { name: 'highlight', type: 'text', admin: { condition: (_, s) => s?.style === 'standard' || s?.style === 'schematic', description: 'Optional: words from the heading to colour in the accent shade.' } },
                 { name: 'text', type: 'textarea', admin: { condition: (_, s) => s?.style !== 'none' } },
                 { name: 'image', type: 'upload', relationTo: 'media', admin: { condition: (_, s) => s?.style === 'standard' } },
