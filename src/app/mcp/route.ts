@@ -127,7 +127,7 @@ const handler = createMcpHandler(
       'get_company_info',
       {
         title: 'Company information',
-        description: 'Who Protpure is, where it manufactures, how to buy (quotation only — no free samples), lead times, regions served, export notes and contact details.',
+        description: 'Who Protpure is, where it manufactures, how to buy (quotation only — no free samples, but paid sample kits credited against the first bulk order), lead times, regions served, export notes and contact details.',
         inputSchema: z.object({}),
         annotations: readOnly,
       },
@@ -174,7 +174,7 @@ const handler = createMcpHandler(
   {
     serverInfo: { name: 'protpure', version: '1.0.0' },
     instructions:
-      'Protpure Tech Pvt. Ltd. manufactures agarose-based chromatography resins in Anand, India and supplies worldwide. Use list_products/get_product for specifications, compare_products for side-by-side tables, search_documents for datasheets, and request_quote only when the user explicitly asks to contact Protpure. Pricing is by quotation; there are no free samples.',
+      'Protpure Tech Pvt. Ltd. manufactures agarose-based chromatography resins in Anand, India and supplies worldwide. Use list_products/get_product for specifications, compare_products for side-by-side tables, search_documents for datasheets, and request_quote only when the user explicitly asks to contact Protpure. Pricing is by quotation; there are no free samples, only paid sample kits (5–25 mL packs or a 1 mL pre-packed column) credited against the first bulk order.',
   },
 )
 

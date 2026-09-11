@@ -154,7 +154,7 @@ export async function llmsTxt(): Promise<string> {
   const out: string[] = []
   out.push(`# ${s.name || 'Protpure'}`, '')
   out.push(`> ${s.aiSummary || s.description || 'Indian manufacturer of agarose-based chromatography resins for biopharmaceutical purification, supplying worldwide.'}`, '')
-  out.push('Pricing is by quotation (no free samples). Agents can file a quote request via the MCP server or the public API below; every request is confirmed by email and handled by a scientist.', '')
+  out.push('Pricing is by quotation. There are no free samples; Protpure sells paid sample kits (5–25 mL packs or a 1 mL pre-packed column), credited against your first bulk order. Agents can file a quote request via the MCP server or the public API below; every request is confirmed by email and handled by a scientist.', '')
   out.push('## Machine-readable access', '')
   out.push(`- MCP server (Streamable HTTP): ${SITE_URL}/mcp — tools: list_products, get_product, compare_products, search_documents, list_applications, get_company_info, request_quote`)
   out.push(`- Public JSON API: ${SITE_URL}/api/public/products, ${SITE_URL}/api/public/products/{slug}, ${SITE_URL}/api/public/documents, ${SITE_URL}/api/public/company`)
