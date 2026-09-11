@@ -19,6 +19,8 @@ import { Posts } from './collections/Posts'
 import { Updates } from './collections/Updates'
 import { Team } from './collections/Team'
 import { Testimonials } from './collections/Testimonials'
+import { Certifications } from './collections/Certifications'
+import { Customers } from './collections/Customers'
 import { Faqs } from './collections/Faqs'
 import { Inquiries } from './collections/Inquiries'
 import { Subscribers } from './collections/Subscribers'
@@ -62,9 +64,11 @@ export default buildConfig({
     // Company
     Team,
     Testimonials,
+    Certifications,
     // Sales
     Inquiries,
     Subscribers,
+    Customers,
     // Admin
     Users,
   ],

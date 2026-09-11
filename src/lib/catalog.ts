@@ -7,7 +7,7 @@ import type { Product, ProductCategory } from '@/payload-types'
  */
 
 /** Collections with `versions.drafts` enabled (see `src/collections/*`). Public reads must exclude drafts. */
-export const DRAFT_COLLECTIONS = ['pages', 'posts', 'products'] as const
+export const DRAFT_COLLECTIONS = ['pages', 'posts', 'products', 'updates'] as const
 
 /**
  * Query constraint for a public read of a versioned collection: only published docs, unless draft

@@ -3,7 +3,7 @@ import { draftMode } from 'next/headers'
 import { getPayload, type Payload, type Where } from 'payload'
 import config from '@payload-config'
 import { publishedWhere } from './catalog'
-import type { Application, Faq, Header, Footer, Page, Post, Product, ProductCategory, Service, SiteSetting, Team, Testimonial, Update, Document } from '@/payload-types'
+import type { Application, Certification, Customer, Faq, Header, Footer, Page, Post, Product, ProductCategory, Service, SiteSetting, Team, Testimonial, Update, Document } from '@/payload-types'
 
 export const getPayloadClient = (): Promise<Payload> => getPayload({ config })
 
@@ -23,6 +23,9 @@ async function isDraft() {
     return false
   }
 }
+
+/** True inside admin preview / live preview. Renderers use it to show editor-only hints. */
+export const isDraftMode = isDraft
 
 function cached<T extends unknown[], R>(fn: (...args: T) => Promise<R>, key: string, tags: string[]) {
   return async (...args: T): Promise<R> => {
@@ -192,9 +195,12 @@ export const getPost = cached(
 )
 
 export const getUpdates = cached(
-  async (limit: number = 12) => {
+  async (limit: number = 12, opts?: { kind?: string | null }) => {
     const payload = await getPayloadClient()
-    const res = await payload.find({ collection: 'updates', sort: ['-pinned', '-publishedAt'], limit, depth: 1, pagination: false })
+    const draft = await isDraft()
+    // Updates have drafts enabled (summaries prepared before the LinkedIn post exists): public reads see published only.
+    const where = publishedWhere(draft, opts?.kind ? { kind: { equals: opts.kind } } : undefined)
+    const res = await payload.find({ collection: 'updates', where, sort: ['-pinned', '-publishedAt'], limit, depth: 1, draft, pagination: false })
     return res.docs as Update[]
   },
   'updates',
@@ -216,9 +222,9 @@ export const getFaqs = cached(
 )
 
 export const getTeam = cached(
-  async () => {
+  async (opts?: { featured?: boolean }) => {
     const payload = await getPayloadClient()
-    const res = await payload.find({ collection: 'team', sort: 'order', limit: 50, depth: 1, pagination: false })
+    const res = await payload.find({ collection: 'team', where: opts?.featured ? { featured: { equals: true } } : undefined, sort: 'order', limit: 50, depth: 1, pagination: false })
     return res.docs as Team[]
   },
   'team',
@@ -233,4 +239,34 @@ export const getTestimonials = cached(
   },
   'testimonials',
   ['testimonials'],
+)
+
+// ---------- Trust & proof ----------
+/** Certifications, registrations and quality claims (Company → Certifications & claims), with document + logo populated. */
+export const getCertifications = cached(
+  async (opts?: { kinds?: string[] | null; limit?: number | null }) => {
+    const payload = await getPayloadClient()
+    const where: Where | undefined = opts?.kinds?.length ? { kind: { in: opts.kinds } } : undefined
+    const res = await payload.find({ collection: 'certifications', where, sort: 'order', limit: opts?.limit || 50, depth: 1, pagination: false })
+    return res.docs as Certification[]
+  },
+  'certifications',
+  ['certifications', 'documents'],
+)
+
+/**
+ * Customers for the logo wall. `showLogo: true` returns only customers cleared for display (the
+ * renderer additionally requires an uploaded logo); `ids` returns a picked set in `order` order.
+ */
+export const getCustomers = cached(
+  async (opts?: { showLogo?: boolean; ids?: number[] }) => {
+    const payload = await getPayloadClient()
+    const and: Where[] = []
+    if (opts?.showLogo) and.push({ showLogo: { equals: true } })
+    if (opts?.ids?.length) and.push({ id: { in: opts.ids } })
+    const res = await payload.find({ collection: 'customers', where: and.length ? { and } : undefined, sort: 'order', limit: 100, depth: 1, pagination: false })
+    return res.docs as Customer[]
+  },
+  'customers',
+  ['customers'],
 )

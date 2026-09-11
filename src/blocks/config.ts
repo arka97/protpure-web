@@ -2,6 +2,8 @@ import type { Block, Field } from 'payload'
 import { linkField } from '@/fields/link'
 import { DOCUMENT_TYPES } from '@/collections/Documents'
 import { FAQ_CATEGORIES } from '@/collections/Faqs'
+import { CERTIFICATION_KINDS } from '@/collections/Certifications'
+import { UPDATE_KINDS } from '@/collections/Updates'
 
 const heading = (required = false): Field => ({ name: 'heading', type: 'text', required })
 const eyebrow: Field = { name: 'eyebrow', type: 'text', admin: { description: 'Small label above the heading.' } }
@@ -273,27 +275,6 @@ export const TrustStripBlock: Block = {
   ],
 }
 
-export const LogoWallBlock: Block = {
-  slug: 'logoWall',
-  labels: { singular: 'Customer logos', plural: 'Customer logos' },
-  fields: [
-    { name: 'heading', type: 'textarea', admin: { description: 'Short statement beside the logos, e.g. "Used in GMP facilities. Repeat orders from Indian biopharma."' } },
-    {
-      name: 'logos',
-      type: 'array',
-      maxRows: 12,
-      fields: [
-        { name: 'logo', type: 'upload', relationTo: 'media', required: true },
-        { type: 'row', fields: [
-          { name: 'name', type: 'text', required: true, admin: { width: '50%' } },
-          { name: 'url', type: 'text', admin: { width: '50%' } },
-        ] },
-      ],
-      admin: { description: 'Add logos only with customer permission. While empty, visitors see nothing; editors see a dashed slot in preview.' },
-    },
-  ],
-}
-
 export const LatestPostsBlock: Block = {
   slug: 'latestPosts',
   labels: { singular: 'Latest blog posts', plural: 'Latest blog posts' },
@@ -303,7 +284,13 @@ export const LatestPostsBlock: Block = {
 export const LinkedInFeedBlock: Block = {
   slug: 'linkedInFeed',
   labels: { singular: 'LinkedIn feed', plural: 'LinkedIn feeds' },
-  fields: [eyebrow, heading(), intro, { name: 'limit', type: 'number', defaultValue: 3 }],
+  fields: [
+    eyebrow,
+    heading(),
+    intro,
+    { name: 'limit', type: 'number', defaultValue: 3 },
+    { name: 'kind', type: 'select', options: [...UPDATE_KINDS], admin: { description: 'Optional: show only updates of this kind (set on each LinkedIn update).' } },
+  ],
 }
 
 export const FormBlock: Block = {
@@ -362,6 +349,89 @@ export const ResinSelectorBlock: Block = {
   fields: [eyebrow, heading(), intro],
 }
 
+/* ---------- Trust & proof blocks (rendered from src/components/blocks/trust/*) ---------- */
+
+export const LogoWallBlock: Block = {
+  slug: 'logoWall',
+  labels: { singular: 'Customer logo wall', plural: 'Customer logo walls' },
+  fields: [
+    eyebrow,
+    heading(),
+    {
+      name: 'source',
+      type: 'select',
+      defaultValue: 'all',
+      options: [
+        { label: 'All customers with "Show logo" ticked', value: 'all' },
+        { label: 'Picked customers', value: 'picked' },
+      ],
+    },
+    { name: 'customers', type: 'relationship', relationTo: 'customers', hasMany: true, admin: { condition: (_, s) => s?.source === 'picked', description: 'Only customers with a logo and "Show logo" ticked are rendered.' } },
+    { name: 'fallbackStatement', type: 'text', admin: { description: 'Shown instead of logos while none can be published. Defaults to Site settings → Proof points → Customers statement.' } },
+  ],
+}
+
+export const CertificationsStripBlock: Block = {
+  slug: 'certificationsStrip',
+  labels: { singular: 'Certifications strip', plural: 'Certifications strips' },
+  fields: [
+    heading(),
+    { name: 'kinds', type: 'select', hasMany: true, options: [...CERTIFICATION_KINDS], admin: { description: 'Leave empty for all kinds.' } },
+    { name: 'limit', type: 'number', defaultValue: 8 },
+  ],
+}
+
+export const GalleryBlock: Block = {
+  slug: 'gallery',
+  labels: { singular: 'Photo gallery', plural: 'Photo galleries' },
+  fields: [
+    eyebrow,
+    heading(),
+    {
+      name: 'items',
+      type: 'array',
+      labels: { singular: 'Photo', plural: 'Photos' },
+      admin: { description: 'Facility, lab and team photos. The block is hidden until at least one photo is added.' },
+      fields: [
+        { name: 'image', type: 'upload', relationTo: 'media', required: true },
+        { type: 'row', fields: [
+          { name: 'label', type: 'text', admin: { width: '35%', description: 'Small tag, e.g. "Production" or "QC lab".' } },
+          { name: 'caption', type: 'text', admin: { width: '65%' } },
+        ] },
+      ],
+    },
+    {
+      name: 'layout',
+      type: 'select',
+      defaultValue: 'grid',
+      options: [
+        { label: 'Grid', value: 'grid' },
+        { label: 'Horizontal strip', value: 'strip' },
+        { label: 'Spread (one large + small)', value: 'spread' },
+      ],
+    },
+  ],
+}
+
+export const PublicationsBlock: Block = {
+  slug: 'publications',
+  labels: { singular: 'Publications', plural: 'Publications' },
+  fields: [
+    eyebrow,
+    heading(),
+    { name: 'member', type: 'relationship', relationTo: 'team', admin: { description: 'Leave empty to list publications of every team member marked "featured".' } },
+  ],
+}
+
+export const ProofBarBlock: Block = {
+  slug: 'proofBar',
+  labels: { singular: 'Proof bar', plural: 'Proof bars' },
+  fields: [
+    { name: 'showStatement', type: 'checkbox', defaultValue: true, admin: { description: 'Include the customers statement from Site settings → Proof points.' } },
+    { name: 'style', type: 'select', defaultValue: 'light', options: [{ label: 'Light', value: 'light' }, { label: 'Dark', value: 'dark' }] },
+  ],
+}
+
 export const pageBlocks: Block[] = [
   RichTextBlock,
   TrustStripBlock,
@@ -375,7 +445,6 @@ export const pageBlocks: Block[] = [
   FeaturedProductsBlock,
   ApplicationsGridBlock,
   ServicesGridBlock,
-  LogoWallBlock,
   DocumentListBlock,
   LatestPostsBlock,
   LinkedInFeedBlock,
@@ -386,4 +455,9 @@ export const pageBlocks: Block[] = [
   MediaBlock,
   FormBlock,
   CtaBlock,
+  LogoWallBlock,
+  CertificationsStripBlock,
+  GalleryBlock,
+  PublicationsBlock,
+  ProofBarBlock,
 ]

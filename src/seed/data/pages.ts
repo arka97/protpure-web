@@ -1,4 +1,5 @@
 import { rt } from '../richtext'
+import { siteSettings } from './content'
 
 /**
  * Page definitions. `link` values use { slug } for internal pages, { href } for custom URLs;
@@ -58,7 +59,7 @@ export const pages = [
       { blockType: 'twoColumn', background: 'recessed', eyebrow: 'The people behind the platform', heading: 'Built for scale. Grounded in science.', image: 'fplc-system.webp', imagePosition: 'left', imageCaption: 'Process evaluation in the Protpure lab', imageCaptionNote: 'Anand, Gujarat', secondImageText: 'In-house bead synthesis, ligand functionalisation and process evaluation.\n\nSemi-automated manufacturing + R&D.', content: rt(`Protpure started in May 2023 with a semi-automated manufacturing and R&D facility in Anand, Gujarat, and in-house capability across bead synthesis, ligand functionalisation, chromatography media development, process evaluation and customer deployment.`), quote: 'We are a humble start-up in the niche technology of protein purification. With proven academic research backed by our kilo-lab success, we are entering the market to provide a wide range of resins and nanoparticle-based purification solutions.', links: [{ label: 'About Protpure', slug: 'about', appearance: 'secondary' }] },
       { blockType: 'teamGrid', layout: 'spread' },
       { blockType: 'servicesGrid', layout: 'row', heading: 'We don’t just supply resin.' },
-      { blockType: 'logoWall', heading: 'Used in GMP facilities.\nRepeat orders from Indian biopharma.' },
+      { blockType: 'logoWall', source: 'all', fallbackStatement: 'Used in GMP facilities.\nRepeat orders from Indian biopharma.' },
       // 05 / Start with an evaluation — paid packs, then the FAQ teaser
       { blockType: 'cta', style: 'evaluation', eyebrow: 'Start with an evaluation', heading: 'Your process. Our resin. Let the data decide.', text: 'Paid evaluation packs: 5–25 mL or a 1 mL pre-packed column, with scientist support and documentation.', note: 'The cost is credited against your first bulk order.', links: [{ label: 'Request an evaluation quote', href: '/request-quote?type=evaluation', appearance: 'primary' }] },
       { blockType: 'faqBlock', eyebrow: 'Before you order', heading: 'Questions from the bench.', faqs: ['Do you offer sample kits?', 'What documentation do you provide?', 'What is the typical lead time?', 'Are Protpure resins drop-in replacements for imported agarose resins?'] },
@@ -98,7 +99,10 @@ To develop and manufacture affordable, reliable and scalable chromatography medi
         { icon: 'handshake', title: 'Customer deployment', text: 'Commercial implementation of Protpure media in customer processes, including BPG 200 process columns.' },
         { icon: 'shield', title: 'Alignment to GMP', text: 'Reproducibility over aggressive customisation; long-term view toward GMP-compliant production.' },
       ] },
+      { blockType: 'logoWall', eyebrow: 'Customers', heading: 'Who uses Protpure resins', source: 'all', fallbackStatement: siteSettings.proof.customersStatement },
       { blockType: 'teamGrid', eyebrow: 'Leadership', heading: 'Founder-led innovation' },
+      { blockType: 'publications', eyebrow: 'Publications', heading: 'Peer-reviewed work behind the platform' },
+      { blockType: 'gallery', eyebrow: 'Facility', heading: 'Inside the Anand facility', layout: 'grid', items: [] },
       { blockType: 'featureGrid', eyebrow: 'What we look for', heading: 'How we work with customers', columns: '3', items: [
         { icon: 'scale', title: 'Evaluation under your SOPs', text: 'Lab- or bench-scale evaluation, side-by-side comparison if desired, feedback-driven iteration. Outcome: technical data only — you decide.' },
         { icon: 'globe', title: 'Second sourcing', text: 'Process development teams evaluating alternatives and organisations seeking India-based or non-traditional second sourcing.' },
@@ -155,6 +159,8 @@ Reproducibility often begins during column packing itself. We evaluate every res
         { icon: 'shield', title: 'No cold chain', text: 'Resins travel as a 20% ethanol slurry at ambient temperature and are non-hazardous for transport.' },
         { icon: 'cost', title: 'Quotes in your currency', text: 'USD, EUR or INR invoicing; bank transfer and letters of credit for larger orders.' },
       ] },
+      { blockType: 'proofBar', showStatement: true, style: 'light' },
+      { blockType: 'certificationsStrip', heading: 'Quality & documentation you can reference', limit: 8 },
       { blockType: 'richText', width: 'narrow', content: rt(`## Regions
 
 - **India** — direct supply, GST invoicing, domestic dispatch from Gujarat.

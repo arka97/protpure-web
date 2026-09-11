@@ -14,11 +14,13 @@ import { BeadField } from '@/components/visual/BeadField'
 import { Chapter, ChapterEyebrow, type ChapterTone } from '@/components/visual/Chapter'
 import { RangeBars } from '@/components/visual/RangeBars'
 import { ArrowIcon, CheckIcon } from '@/components/visual/icons'
-import { getApplications, getCategories, getDocuments, getFaqs, getPosts, getProducts, getServices, getSiteSettings, getTeam, getTestimonials, getUpdates } from '@/lib/data'
+import { CertificationsStrip, Gallery, ProofBar, Publications } from '@/components/blocks/trust'
+import { getApplications, getCategories, getCustomers, getDocuments, getFaqs, getPosts, getProducts, getServices, getSiteSettings, getTeam, getTestimonials, getUpdates } from '@/lib/data'
+import { displayableCustomers } from '@/lib/trust'
 import { toBasketProduct } from '@/lib/rfq'
 import { cn, resolveLink } from '@/lib/utils'
 import { categoryOf } from '@/lib/catalog'
-import type { Page, Product, ProductCategory, Team, Testimonial } from '@/payload-types'
+import type { Customer, Page, Product, ProductCategory, Team, Testimonial } from '@/payload-types'
 
 type Block = NonNullable<Page['layout']>[number]
 
@@ -35,7 +37,7 @@ type Block = NonNullable<Page['layout']>[number]
 
 const CHAPTER_BLOCKS = new Set<Block['blockType']>([
   'productCategories', 'gradesPlatform', 'featureGrid', 'twoColumn', 'resinSelector', 'featuredProducts', 'teamGrid', 'timeline', 'testimonials',
-  'latestPosts', 'linkedInFeed', 'applicationsGrid', 'servicesGrid', 'documentList', 'formBlock', 'faqBlock', 'cta', 'comparisonTable',
+  'latestPosts', 'linkedInFeed', 'applicationsGrid', 'servicesGrid', 'documentList', 'formBlock', 'faqBlock', 'cta', 'comparisonTable', 'logoWall',
 ])
 
 function opensChapter(b: Block): boolean {
@@ -56,7 +58,7 @@ function isAttached(b: Block, prev?: Block): boolean {
     case 'teamGrid':
       return b.layout === 'spread'
     case 'logoWall':
-      return ['twoColumn', 'teamGrid', 'servicesGrid', 'logoWall', 'featureGrid', 'comparisonTable'].includes(prev.blockType)
+      return !b.eyebrow && !b.heading && ['twoColumn', 'teamGrid', 'servicesGrid', 'logoWall', 'featureGrid', 'comparisonTable'].includes(prev.blockType)
     case 'faqBlock':
       return !b.eyebrow && !b.heading && !b.intro
     default:
@@ -574,34 +576,54 @@ async function RenderBlock({ block, meta }: { block: Block; meta: Meta }) {
     }
 
     case 'logoWall': {
-      const logos = (block.logos ?? []).filter((l) => l.logo && typeof l.logo === 'object')
-      const { isEnabled: isDraft } = await draftMode()
-      if (!logos.length && !isDraft) return null
+      // Logos come from Sales → Customers (only those cleared with "Show logo"); the statement beside
+      // them is the block's fallback statement or Site settings → Proof points → Customers statement.
+      // Attached under a chapter it reads as a closing line; standalone (about page) it opens one.
+      const pickedIds = (block.customers ?? []).map((c) => (typeof c === 'object' ? c.id : c))
+      const [customers, settings, { isEnabled: isDraft }] = await Promise.all([
+        block.source === 'picked' ? (pickedIds.length ? getCustomers({ ids: pickedIds }) : Promise.resolve([] as Customer[])) : getCustomers({ showLogo: true }),
+        getSiteSettings(),
+        draftMode(),
+      ])
+      const logos = displayableCustomers(customers)
+      const statement = block.fallbackStatement || settings.proof?.customersStatement || null
+      if (!logos.length && !statement && !isDraft) return null
+      const wall = (
+        <div className={cn('grid items-center gap-5 lg:grid-cols-[310px_1fr] lg:gap-11', attached && 'border-t border-rule-strong pt-6')}>
+          {statement ? <p className="whitespace-pre-line text-[12px] leading-[1.6] text-secondary lg:text-[13px]">{statement}</p> : <span />}
+          {logos.length ? (
+            <ul className="flex flex-wrap items-center gap-x-10 gap-y-6" aria-label="Customers">
+              {logos.map((c) => {
+                const label = [c.name, c.country].filter(Boolean).join(', ')
+                const img = c.logo && typeof c.logo === 'object' ? <CmsImage media={c.logo} size="thumbnail" className="h-8 w-auto max-w-[140px] object-contain lg:h-10" fallbackAlt={c.name} /> : null
+                return (
+                  <li key={c.id} title={label}>
+                    {c.website ? (
+                      <a href={c.website} target="_blank" rel="noopener noreferrer" aria-label={c.name} className="opacity-80 transition-opacity hover:opacity-100">
+                        {img}
+                      </a>
+                    ) : (
+                      img
+                    )}
+                  </li>
+                )
+              })}
+            </ul>
+          ) : isDraft ? (
+            <div className="placeholder-slot min-h-[75px]">[CUSTOMER LOGOS — add customers with a logo under Sales → Customers and tick “Show logo”. Visitors do not see this slot.]</div>
+          ) : null}
+        </div>
+      )
+      if (attached || (!block.eyebrow && !block.heading)) {
+        return (
+          <Chapter tone={tone} attached={attached} tight={tight}>
+            {wall}
+          </Chapter>
+        )
+      }
       return (
-        <Chapter tone={tone} attached={attached} tight={tight}>
-          <div className="grid items-center gap-5 border-t border-rule-strong pt-6 lg:grid-cols-[310px_1fr] lg:gap-11">
-            {block.heading ? <p className="whitespace-pre-line text-[12px] leading-[1.6] text-secondary lg:text-[13px]">{block.heading}</p> : <span />}
-            {logos.length ? (
-              <ul className="flex flex-wrap items-center gap-x-10 gap-y-6" aria-label="Customers">
-                {logos.map((l, i) => {
-                  const img = <CmsImage media={l.logo} size="thumbnail" className="h-8 w-auto max-w-[140px] object-contain lg:h-10" fallbackAlt={l.name} />
-                  return (
-                    <li key={l.id ?? i} title={l.name}>
-                      {l.url ? (
-                        <a href={l.url} target="_blank" rel="noopener noreferrer" aria-label={l.name}>
-                          {img}
-                        </a>
-                      ) : (
-                        img
-                      )}
-                    </li>
-                  )
-                })}
-              </ul>
-            ) : (
-              <div className="placeholder-slot min-h-[75px]">[CUSTOMER LOGOS — add logos to this block once permission is confirmed. Visitors do not see this slot.]</div>
-            )}
-          </div>
+        <Chapter tone={tone} number={number} eyebrow={block.eyebrow} heading={<Heading text={block.heading} dark={dark} />} tight={tight}>
+          {wall}
         </Chapter>
       )
     }
@@ -649,7 +671,7 @@ async function RenderBlock({ block, meta }: { block: Block; meta: Meta }) {
     }
 
     case 'linkedInFeed': {
-      const updates = await getUpdates(block.limit ?? 3)
+      const updates = await getUpdates(block.limit ?? 3, { kind: block.kind })
       const settings = await getSiteSettings()
       if (!updates.length) return null
       return (
@@ -941,6 +963,19 @@ async function RenderBlock({ block, meta }: { block: Block; meta: Meta }) {
         </Chapter>
       )
     }
+
+    // ---------- Trust & proof (src/components/blocks/trust/*) ----------
+    case 'certificationsStrip':
+      return <CertificationsStrip block={block} />
+
+    case 'gallery':
+      return <Gallery block={block} />
+
+    case 'publications':
+      return <Publications block={block} />
+
+    case 'proofBar':
+      return <ProofBar block={block} />
 
     default:
       return null

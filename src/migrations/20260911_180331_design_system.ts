@@ -32,24 +32,6 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   	"block_name" varchar
   );
   
-  CREATE TABLE "pages_blocks_logo_wall_logos" (
-  	"_order" integer NOT NULL,
-  	"_parent_id" varchar NOT NULL,
-  	"id" varchar PRIMARY KEY NOT NULL,
-  	"logo_id" integer,
-  	"name" varchar,
-  	"url" varchar
-  );
-  
-  CREATE TABLE "pages_blocks_logo_wall" (
-  	"_order" integer NOT NULL,
-  	"_parent_id" integer NOT NULL,
-  	"_path" text NOT NULL,
-  	"id" varchar PRIMARY KEY NOT NULL,
-  	"heading" varchar,
-  	"block_name" varchar
-  );
-  
   CREATE TABLE "_pages_v_blocks_trust_strip_items" (
   	"_order" integer NOT NULL,
   	"_parent_id" integer NOT NULL,
@@ -64,26 +46,6 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   	"_path" text NOT NULL,
   	"id" serial PRIMARY KEY NOT NULL,
   	"source" "enum__pages_v_blocks_trust_strip_source" DEFAULT 'settings',
-  	"_uuid" varchar,
-  	"block_name" varchar
-  );
-  
-  CREATE TABLE "_pages_v_blocks_logo_wall_logos" (
-  	"_order" integer NOT NULL,
-  	"_parent_id" integer NOT NULL,
-  	"id" serial PRIMARY KEY NOT NULL,
-  	"logo_id" integer,
-  	"name" varchar,
-  	"url" varchar,
-  	"_uuid" varchar
-  );
-  
-  CREATE TABLE "_pages_v_blocks_logo_wall" (
-  	"_order" integer NOT NULL,
-  	"_parent_id" integer NOT NULL,
-  	"_path" text NOT NULL,
-  	"id" serial PRIMARY KEY NOT NULL,
-  	"heading" varchar,
   	"_uuid" varchar,
   	"block_name" varchar
   );
@@ -145,36 +107,18 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   ALTER TABLE "footer" ADD COLUMN "newsletter_note" varchar;
   ALTER TABLE "pages_blocks_trust_strip_items" ADD CONSTRAINT "pages_blocks_trust_strip_items_parent_id_fk" FOREIGN KEY ("_parent_id") REFERENCES "public"."pages_blocks_trust_strip"("id") ON DELETE cascade ON UPDATE no action;
   ALTER TABLE "pages_blocks_trust_strip" ADD CONSTRAINT "pages_blocks_trust_strip_parent_id_fk" FOREIGN KEY ("_parent_id") REFERENCES "public"."pages"("id") ON DELETE cascade ON UPDATE no action;
-  ALTER TABLE "pages_blocks_logo_wall_logos" ADD CONSTRAINT "pages_blocks_logo_wall_logos_logo_id_media_id_fk" FOREIGN KEY ("logo_id") REFERENCES "public"."media"("id") ON DELETE set null ON UPDATE no action;
-  ALTER TABLE "pages_blocks_logo_wall_logos" ADD CONSTRAINT "pages_blocks_logo_wall_logos_parent_id_fk" FOREIGN KEY ("_parent_id") REFERENCES "public"."pages_blocks_logo_wall"("id") ON DELETE cascade ON UPDATE no action;
-  ALTER TABLE "pages_blocks_logo_wall" ADD CONSTRAINT "pages_blocks_logo_wall_parent_id_fk" FOREIGN KEY ("_parent_id") REFERENCES "public"."pages"("id") ON DELETE cascade ON UPDATE no action;
   ALTER TABLE "_pages_v_blocks_trust_strip_items" ADD CONSTRAINT "_pages_v_blocks_trust_strip_items_parent_id_fk" FOREIGN KEY ("_parent_id") REFERENCES "public"."_pages_v_blocks_trust_strip"("id") ON DELETE cascade ON UPDATE no action;
   ALTER TABLE "_pages_v_blocks_trust_strip" ADD CONSTRAINT "_pages_v_blocks_trust_strip_parent_id_fk" FOREIGN KEY ("_parent_id") REFERENCES "public"."_pages_v"("id") ON DELETE cascade ON UPDATE no action;
-  ALTER TABLE "_pages_v_blocks_logo_wall_logos" ADD CONSTRAINT "_pages_v_blocks_logo_wall_logos_logo_id_media_id_fk" FOREIGN KEY ("logo_id") REFERENCES "public"."media"("id") ON DELETE set null ON UPDATE no action;
-  ALTER TABLE "_pages_v_blocks_logo_wall_logos" ADD CONSTRAINT "_pages_v_blocks_logo_wall_logos_parent_id_fk" FOREIGN KEY ("_parent_id") REFERENCES "public"."_pages_v_blocks_logo_wall"("id") ON DELETE cascade ON UPDATE no action;
-  ALTER TABLE "_pages_v_blocks_logo_wall" ADD CONSTRAINT "_pages_v_blocks_logo_wall_parent_id_fk" FOREIGN KEY ("_parent_id") REFERENCES "public"."_pages_v"("id") ON DELETE cascade ON UPDATE no action;
   CREATE INDEX "pages_blocks_trust_strip_items_order_idx" ON "pages_blocks_trust_strip_items" USING btree ("_order");
   CREATE INDEX "pages_blocks_trust_strip_items_parent_id_idx" ON "pages_blocks_trust_strip_items" USING btree ("_parent_id");
   CREATE INDEX "pages_blocks_trust_strip_order_idx" ON "pages_blocks_trust_strip" USING btree ("_order");
   CREATE INDEX "pages_blocks_trust_strip_parent_id_idx" ON "pages_blocks_trust_strip" USING btree ("_parent_id");
   CREATE INDEX "pages_blocks_trust_strip_path_idx" ON "pages_blocks_trust_strip" USING btree ("_path");
-  CREATE INDEX "pages_blocks_logo_wall_logos_order_idx" ON "pages_blocks_logo_wall_logos" USING btree ("_order");
-  CREATE INDEX "pages_blocks_logo_wall_logos_parent_id_idx" ON "pages_blocks_logo_wall_logos" USING btree ("_parent_id");
-  CREATE INDEX "pages_blocks_logo_wall_logos_logo_idx" ON "pages_blocks_logo_wall_logos" USING btree ("logo_id");
-  CREATE INDEX "pages_blocks_logo_wall_order_idx" ON "pages_blocks_logo_wall" USING btree ("_order");
-  CREATE INDEX "pages_blocks_logo_wall_parent_id_idx" ON "pages_blocks_logo_wall" USING btree ("_parent_id");
-  CREATE INDEX "pages_blocks_logo_wall_path_idx" ON "pages_blocks_logo_wall" USING btree ("_path");
   CREATE INDEX "_pages_v_blocks_trust_strip_items_order_idx" ON "_pages_v_blocks_trust_strip_items" USING btree ("_order");
   CREATE INDEX "_pages_v_blocks_trust_strip_items_parent_id_idx" ON "_pages_v_blocks_trust_strip_items" USING btree ("_parent_id");
   CREATE INDEX "_pages_v_blocks_trust_strip_order_idx" ON "_pages_v_blocks_trust_strip" USING btree ("_order");
   CREATE INDEX "_pages_v_blocks_trust_strip_parent_id_idx" ON "_pages_v_blocks_trust_strip" USING btree ("_parent_id");
   CREATE INDEX "_pages_v_blocks_trust_strip_path_idx" ON "_pages_v_blocks_trust_strip" USING btree ("_path");
-  CREATE INDEX "_pages_v_blocks_logo_wall_logos_order_idx" ON "_pages_v_blocks_logo_wall_logos" USING btree ("_order");
-  CREATE INDEX "_pages_v_blocks_logo_wall_logos_parent_id_idx" ON "_pages_v_blocks_logo_wall_logos" USING btree ("_parent_id");
-  CREATE INDEX "_pages_v_blocks_logo_wall_logos_logo_idx" ON "_pages_v_blocks_logo_wall_logos" USING btree ("logo_id");
-  CREATE INDEX "_pages_v_blocks_logo_wall_order_idx" ON "_pages_v_blocks_logo_wall" USING btree ("_order");
-  CREATE INDEX "_pages_v_blocks_logo_wall_parent_id_idx" ON "_pages_v_blocks_logo_wall" USING btree ("_parent_id");
-  CREATE INDEX "_pages_v_blocks_logo_wall_path_idx" ON "_pages_v_blocks_logo_wall" USING btree ("_path");
   ALTER TABLE "pages_blocks_two_column" ADD CONSTRAINT "pages_blocks_two_column_second_image_id_media_id_fk" FOREIGN KEY ("second_image_id") REFERENCES "public"."media"("id") ON DELETE set null ON UPDATE no action;
   ALTER TABLE "_pages_v_blocks_two_column" ADD CONSTRAINT "_pages_v_blocks_two_column_second_image_id_media_id_fk" FOREIGN KEY ("second_image_id") REFERENCES "public"."media"("id") ON DELETE set null ON UPDATE no action;
   CREATE INDEX "pages_blocks_two_column_second_image_idx" ON "pages_blocks_two_column" USING btree ("second_image_id");
@@ -185,20 +129,12 @@ export async function down({ db, payload, req }: MigrateDownArgs): Promise<void>
   await db.execute(sql`
    ALTER TABLE "pages_blocks_trust_strip_items" DISABLE ROW LEVEL SECURITY;
   ALTER TABLE "pages_blocks_trust_strip" DISABLE ROW LEVEL SECURITY;
-  ALTER TABLE "pages_blocks_logo_wall_logos" DISABLE ROW LEVEL SECURITY;
-  ALTER TABLE "pages_blocks_logo_wall" DISABLE ROW LEVEL SECURITY;
   ALTER TABLE "_pages_v_blocks_trust_strip_items" DISABLE ROW LEVEL SECURITY;
   ALTER TABLE "_pages_v_blocks_trust_strip" DISABLE ROW LEVEL SECURITY;
-  ALTER TABLE "_pages_v_blocks_logo_wall_logos" DISABLE ROW LEVEL SECURITY;
-  ALTER TABLE "_pages_v_blocks_logo_wall" DISABLE ROW LEVEL SECURITY;
   DROP TABLE "pages_blocks_trust_strip_items" CASCADE;
   DROP TABLE "pages_blocks_trust_strip" CASCADE;
-  DROP TABLE "pages_blocks_logo_wall_logos" CASCADE;
-  DROP TABLE "pages_blocks_logo_wall" CASCADE;
   DROP TABLE "_pages_v_blocks_trust_strip_items" CASCADE;
   DROP TABLE "_pages_v_blocks_trust_strip" CASCADE;
-  DROP TABLE "_pages_v_blocks_logo_wall_logos" CASCADE;
-  DROP TABLE "_pages_v_blocks_logo_wall" CASCADE;
   ALTER TABLE "pages_blocks_two_column" DROP CONSTRAINT "pages_blocks_two_column_second_image_id_media_id_fk";
   
   ALTER TABLE "_pages_v_blocks_two_column" DROP CONSTRAINT "_pages_v_blocks_two_column_second_image_id_media_id_fk";

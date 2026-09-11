@@ -1,9 +1,10 @@
 import { createMcpHandler } from 'mcp-handler'
 import { z } from 'zod'
-import { getApplications, getDocuments, getPayloadClient, getProduct, getProducts, getServices, getSiteSettings } from '@/lib/data'
+import { getApplications, getDocuments, getPayloadClient, getProduct, getProducts, getServices, getSiteSettings, getUpdates } from '@/lib/data'
 import { createInquiry, inquirySchema, rateLimit } from '@/lib/inquiries'
 import { applicationToMarkdown, companyMarkdown, productToMarkdown, serviceToMarkdown } from '@/lib/markdown'
-import { publicDocument, publicProduct } from '@/lib/public-api'
+import { publicDocument, publicProduct, publicUpdate } from '@/lib/public-api'
+import { UPDATE_KINDS } from '@/collections/Updates'
 import { GRADE_VALUES, PURPOSE_VALUES, SAMPLE_KIT_POLICY, describeItem } from '@/lib/rfq'
 import { SITE_URL } from '@/lib/utils'
 import { categoryOf } from '@/lib/catalog'
@@ -128,11 +129,28 @@ const handler = createMcpHandler(
       'get_company_info',
       {
         title: 'Company information',
-        description: 'Who Protpure is, where it manufactures, how to buy (quotation only; paid sample kits, no free samples), lead times, regions served, export notes and contact details.',
+        description: 'Who Protpure is, where it manufactures, how to buy (quotation only; paid sample kits, no free samples), lead times, regions served, export notes, contact details, company facts (founded, team size, capacity), quality claims and certifications, and the team with credentials and publications.',
         inputSchema: z.object({}),
         annotations: readOnly,
       },
       async () => text(await companyMarkdown()),
+    )
+
+    server.registerTool(
+      'list_updates',
+      {
+        title: 'List recent updates',
+        description: 'Recent published company updates mirrored from LinkedIn: product launches, performance data, milestones, services and perspectives. Each has a title, summary, date, kind, related products and the LinkedIn post URL.',
+        inputSchema: z.object({
+          kind: z.enum(UPDATE_KINDS.map((k) => k.value) as [string, ...string[]]).optional().describe('Only updates of this kind.'),
+          limit: z.number().int().min(1).max(50).default(10),
+        }),
+        annotations: readOnly,
+      },
+      async ({ kind, limit }) => {
+        const updates = await getUpdates(limit, { kind })
+        return text(JSON.stringify({ count: updates.length, updates: updates.map(publicUpdate) }, null, 2))
+      },
     )
 
     server.registerTool(
@@ -201,7 +219,7 @@ const handler = createMcpHandler(
   {
     serverInfo: { name: 'protpure', version: '1.0.0' },
     instructions:
-      'Protpure Tech Pvt. Ltd. manufactures agarose-based chromatography resins in Anand, India and supplies worldwide. Use list_products/get_product for specifications, compare_products for side-by-side tables, search_documents for datasheets, and request_quote only when the user explicitly asks to contact Protpure. Pricing is by quotation. There are no free samples: paid sample kits (5–25 mL packs or a 1 mL pre-packed column) are credited against the first bulk order — file them as request_quote items with purpose "sample-kit".',
+      'Protpure Tech Pvt. Ltd. manufactures agarose-based chromatography resins in Anand, India and supplies worldwide. Use list_products/get_product for specifications, compare_products for side-by-side tables, search_documents for datasheets, get_company_info for company facts, certifications and the team, list_updates for recent news, and request_quote only when the user explicitly asks to contact Protpure. Pricing is by quotation. There are no free samples: paid sample kits (5–25 mL packs or a 1 mL pre-packed column) are credited against the first bulk order — file them as request_quote items with purpose "sample-kit".',
   },
 )
 

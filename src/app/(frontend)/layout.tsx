@@ -8,7 +8,7 @@ import { BasketProvider } from '@/components/rfq/BasketProvider'
 import { BasketDrawer } from '@/components/rfq/BasketDrawer'
 import { getFooter, getHeader, getSiteSettings } from '@/lib/data'
 import { mediaUrl, resolveLink, SITE_URL, type LinkValue } from '@/lib/utils'
-import { organizationJsonLd, JsonLd } from '@/lib/jsonld'
+import { OrganizationJsonLd } from '@/components/OrganizationJsonLd'
 import '@fontsource/instrument-serif/400.css'
 import '@fontsource/instrument-serif/400-italic.css'
 import '@fontsource-variable/dm-sans'
@@ -113,7 +113,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
             </a>
           ) : null}
         </BasketProvider>
-        <JsonLd data={organizationJsonLd(settings)} />
+        <OrganizationJsonLd settings={settings} />
       </body>
     </html>
   )

@@ -1,7 +1,9 @@
 import { categoryOf } from './catalog'
 import { GRADE_LABELS, type GradeValue } from './rfq'
-import { SITE_URL, absoluteUrl } from './utils'
-import type { Application, Document, Product } from '@/payload-types'
+import { lexicalToText } from './lexical-md'
+import { parseFoundedDate, parseTeamSize, type Proof } from './trust'
+import { SITE_URL, absoluteUrl, mediaUrl } from './utils'
+import type { Application, Certification, Document, Product, Team, Update } from '@/payload-types'
 
 /** Stable, compact product shape for agents and integrations (independent of the CMS schema). */
 export function publicProduct(p: Product, opts?: { full?: boolean }) {
@@ -48,6 +50,66 @@ export function publicDocument(d: Document) {
     url: d.url ? absoluteUrl(d.url) : null,
     filesize: d.filesize ?? null,
     products: (d.products ?? []).filter((p): p is Product => typeof p === 'object').map((p) => ({ slug: p.slug, name: p.name })),
+  }
+}
+
+/** Certification / claim for agents: name, kind, issuer, validity, statement and certificate PDF link. */
+export function publicCertification(c: Certification) {
+  const doc = c.document && typeof c.document === 'object' ? c.document : null
+  return {
+    id: c.id,
+    name: c.name,
+    kind: c.kind,
+    issuer: c.issuer ?? null,
+    statement: c.statement ?? null,
+    validUntil: c.validUntil ?? null,
+    document: doc ? { title: doc.title, url: doc.url ? absoluteUrl(doc.url) : null } : null,
+  }
+}
+
+/** Team member for agents: role, credentials, expertise, publications (no email). */
+export function publicTeamMember(m: Team) {
+  const photo = mediaUrl(m.photo, 'thumbnail')
+  return {
+    id: m.id,
+    name: m.name,
+    role: m.role,
+    credentials: (m.credentials ?? []).map((c) => c.text),
+    expertise: (m.expertise ?? []).map((e) => e.text),
+    bio: m.bio ? lexicalToText(m.bio as never) : null,
+    publications: (m.publications ?? []).map((p) => ({ title: p.title, journal: p.journal ?? null, year: p.year ?? null, url: p.url ?? null })),
+    linkedin: m.linkedinUrl ?? null,
+    photo: photo ? absoluteUrl(photo) : null,
+    featured: Boolean(m.featured),
+  }
+}
+
+/** Proof points as text plus the parsed values agents and structured data can use. */
+export function publicProof(proof?: Proof | null, foundedYear?: number | null) {
+  return {
+    founded: proof?.foundedText ?? null,
+    foundingDate: parseFoundedDate(proof?.foundedText, foundedYear) ?? null,
+    teamSize: proof?.teamSize ?? null,
+    employees: parseTeamSize(proof?.teamSize) ?? null,
+    capacity: proof?.capacity ?? null,
+    customersStatement: proof?.customersStatement ?? null,
+    linkedinFollowers: proof?.linkedinFollowers ?? null,
+  }
+}
+
+/** Published LinkedIn update for agents. */
+export function publicUpdate(u: Update) {
+  const image = mediaUrl(u.image, 'card')
+  return {
+    id: u.id,
+    title: u.title,
+    kind: u.kind ?? null,
+    summary: u.summary,
+    publishedAt: u.publishedAt,
+    url: u.url ?? null,
+    image: image ? absoluteUrl(image) : null,
+    pinned: Boolean(u.pinned),
+    relatedProducts: (u.relatedProducts ?? []).filter((p): p is Product => typeof p === 'object').map((p) => ({ slug: p.slug, name: p.name })),
   }
 }
 

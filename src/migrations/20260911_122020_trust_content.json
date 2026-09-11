@@ -3438,199 +3438,6 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
-    "public.pages_blocks_trust_strip_items": {
-      "name": "pages_blocks_trust_strip_items",
-      "schema": "",
-      "columns": {
-        "_order": {
-          "name": "_order",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "_parent_id": {
-          "name": "_parent_id",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "id": {
-          "name": "id",
-          "type": "varchar",
-          "primaryKey": true,
-          "notNull": true
-        },
-        "text": {
-          "name": "text",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": false
-        }
-      },
-      "indexes": {
-        "pages_blocks_trust_strip_items_order_idx": {
-          "name": "pages_blocks_trust_strip_items_order_idx",
-          "columns": [
-            {
-              "expression": "_order",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            }
-          ],
-          "isUnique": false,
-          "concurrently": false,
-          "method": "btree",
-          "with": {}
-        },
-        "pages_blocks_trust_strip_items_parent_id_idx": {
-          "name": "pages_blocks_trust_strip_items_parent_id_idx",
-          "columns": [
-            {
-              "expression": "_parent_id",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            }
-          ],
-          "isUnique": false,
-          "concurrently": false,
-          "method": "btree",
-          "with": {}
-        }
-      },
-      "foreignKeys": {
-        "pages_blocks_trust_strip_items_parent_id_fk": {
-          "name": "pages_blocks_trust_strip_items_parent_id_fk",
-          "tableFrom": "pages_blocks_trust_strip_items",
-          "tableTo": "pages_blocks_trust_strip",
-          "columnsFrom": [
-            "_parent_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
-        }
-      },
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {},
-      "policies": {},
-      "checkConstraints": {},
-      "isRLSEnabled": false
-    },
-    "public.pages_blocks_trust_strip": {
-      "name": "pages_blocks_trust_strip",
-      "schema": "",
-      "columns": {
-        "_order": {
-          "name": "_order",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "_parent_id": {
-          "name": "_parent_id",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "_path": {
-          "name": "_path",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "id": {
-          "name": "id",
-          "type": "varchar",
-          "primaryKey": true,
-          "notNull": true
-        },
-        "source": {
-          "name": "source",
-          "type": "enum_pages_blocks_trust_strip_source",
-          "typeSchema": "public",
-          "primaryKey": false,
-          "notNull": false,
-          "default": "'settings'"
-        },
-        "block_name": {
-          "name": "block_name",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": false
-        }
-      },
-      "indexes": {
-        "pages_blocks_trust_strip_order_idx": {
-          "name": "pages_blocks_trust_strip_order_idx",
-          "columns": [
-            {
-              "expression": "_order",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            }
-          ],
-          "isUnique": false,
-          "concurrently": false,
-          "method": "btree",
-          "with": {}
-        },
-        "pages_blocks_trust_strip_parent_id_idx": {
-          "name": "pages_blocks_trust_strip_parent_id_idx",
-          "columns": [
-            {
-              "expression": "_parent_id",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            }
-          ],
-          "isUnique": false,
-          "concurrently": false,
-          "method": "btree",
-          "with": {}
-        },
-        "pages_blocks_trust_strip_path_idx": {
-          "name": "pages_blocks_trust_strip_path_idx",
-          "columns": [
-            {
-              "expression": "_path",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            }
-          ],
-          "isUnique": false,
-          "concurrently": false,
-          "method": "btree",
-          "with": {}
-        }
-      },
-      "foreignKeys": {
-        "pages_blocks_trust_strip_parent_id_fk": {
-          "name": "pages_blocks_trust_strip_parent_id_fk",
-          "tableFrom": "pages_blocks_trust_strip",
-          "tableTo": "pages",
-          "columnsFrom": [
-            "_parent_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
-        }
-      },
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {},
-      "policies": {},
-      "checkConstraints": {},
-      "isRLSEnabled": false
-    },
     "public.pages_blocks_stats_items": {
       "name": "pages_blocks_stats_items",
       "schema": "",
@@ -3655,12 +3462,6 @@
         },
         "value": {
           "name": "value",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "unit": {
-          "name": "unit",
           "type": "varchar",
           "primaryKey": false,
           "notNull": false
@@ -4355,18 +4156,6 @@
           "primaryKey": false,
           "notNull": false
         },
-        "image_caption": {
-          "name": "image_caption",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "image_caption_note": {
-          "name": "image_caption_note",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": false
-        },
         "image_position": {
           "name": "image_position",
           "type": "enum_pages_blocks_two_column_image_position",
@@ -4374,32 +4163,6 @@
           "primaryKey": false,
           "notNull": false,
           "default": "'right'"
-        },
-        "second_image_id": {
-          "name": "second_image_id",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "second_image_text": {
-          "name": "second_image_text",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "quote": {
-          "name": "quote",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "background": {
-          "name": "background",
-          "type": "enum_pages_blocks_two_column_background",
-          "typeSchema": "public",
-          "primaryKey": false,
-          "notNull": false,
-          "default": "'light'"
         },
         "block_name": {
           "name": "block_name",
@@ -4468,21 +4231,6 @@
           "concurrently": false,
           "method": "btree",
           "with": {}
-        },
-        "pages_blocks_two_column_second_image_idx": {
-          "name": "pages_blocks_two_column_second_image_idx",
-          "columns": [
-            {
-              "expression": "second_image_id",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            }
-          ],
-          "isUnique": false,
-          "concurrently": false,
-          "method": "btree",
-          "with": {}
         }
       },
       "foreignKeys": {
@@ -4492,19 +4240,6 @@
           "tableTo": "media",
           "columnsFrom": [
             "image_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "set null",
-          "onUpdate": "no action"
-        },
-        "pages_blocks_two_column_second_image_id_media_id_fk": {
-          "name": "pages_blocks_two_column_second_image_id_media_id_fk",
-          "tableFrom": "pages_blocks_two_column",
-          "tableTo": "media",
-          "columnsFrom": [
-            "second_image_id"
           ],
           "columnsTo": [
             "id"
@@ -4931,38 +4666,6 @@
           "primaryKey": false,
           "notNull": false
         },
-        "note": {
-          "name": "note",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "link_type": {
-          "name": "link_type",
-          "type": "enum_pages_blocks_grades_platform_link_type",
-          "typeSchema": "public",
-          "primaryKey": false,
-          "notNull": false,
-          "default": "'internal'"
-        },
-        "link_new_tab": {
-          "name": "link_new_tab",
-          "type": "boolean",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "link_url": {
-          "name": "link_url",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "link_label": {
-          "name": "link_label",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": false
-        },
         "block_name": {
           "name": "block_name",
           "type": "varchar",
@@ -5201,18 +4904,6 @@
         },
         "intro": {
           "name": "intro",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "footnote": {
-          "name": "footnote",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "link_label": {
-          "name": "link_label",
           "type": "varchar",
           "primaryKey": false,
           "notNull": false
@@ -5459,14 +5150,6 @@
           "primaryKey": false,
           "notNull": false
         },
-        "layout": {
-          "name": "layout",
-          "type": "enum_pages_blocks_applications_grid_layout",
-          "typeSchema": "public",
-          "primaryKey": false,
-          "notNull": false,
-          "default": "'cards'"
-        },
         "block_name": {
           "name": "block_name",
           "type": "varchar",
@@ -5588,14 +5271,6 @@
           "primaryKey": false,
           "notNull": false
         },
-        "layout": {
-          "name": "layout",
-          "type": "enum_pages_blocks_services_grid_layout",
-          "typeSchema": "public",
-          "primaryKey": false,
-          "notNull": false,
-          "default": "'cards'"
-        },
         "block_name": {
           "name": "block_name",
           "type": "varchar",
@@ -5654,237 +5329,6 @@
         "pages_blocks_services_grid_parent_id_fk": {
           "name": "pages_blocks_services_grid_parent_id_fk",
           "tableFrom": "pages_blocks_services_grid",
-          "tableTo": "pages",
-          "columnsFrom": [
-            "_parent_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
-        }
-      },
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {},
-      "policies": {},
-      "checkConstraints": {},
-      "isRLSEnabled": false
-    },
-    "public.pages_blocks_logo_wall_logos": {
-      "name": "pages_blocks_logo_wall_logos",
-      "schema": "",
-      "columns": {
-        "_order": {
-          "name": "_order",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "_parent_id": {
-          "name": "_parent_id",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "id": {
-          "name": "id",
-          "type": "varchar",
-          "primaryKey": true,
-          "notNull": true
-        },
-        "logo_id": {
-          "name": "logo_id",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "name": {
-          "name": "name",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "url": {
-          "name": "url",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": false
-        }
-      },
-      "indexes": {
-        "pages_blocks_logo_wall_logos_order_idx": {
-          "name": "pages_blocks_logo_wall_logos_order_idx",
-          "columns": [
-            {
-              "expression": "_order",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            }
-          ],
-          "isUnique": false,
-          "concurrently": false,
-          "method": "btree",
-          "with": {}
-        },
-        "pages_blocks_logo_wall_logos_parent_id_idx": {
-          "name": "pages_blocks_logo_wall_logos_parent_id_idx",
-          "columns": [
-            {
-              "expression": "_parent_id",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            }
-          ],
-          "isUnique": false,
-          "concurrently": false,
-          "method": "btree",
-          "with": {}
-        },
-        "pages_blocks_logo_wall_logos_logo_idx": {
-          "name": "pages_blocks_logo_wall_logos_logo_idx",
-          "columns": [
-            {
-              "expression": "logo_id",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            }
-          ],
-          "isUnique": false,
-          "concurrently": false,
-          "method": "btree",
-          "with": {}
-        }
-      },
-      "foreignKeys": {
-        "pages_blocks_logo_wall_logos_logo_id_media_id_fk": {
-          "name": "pages_blocks_logo_wall_logos_logo_id_media_id_fk",
-          "tableFrom": "pages_blocks_logo_wall_logos",
-          "tableTo": "media",
-          "columnsFrom": [
-            "logo_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "set null",
-          "onUpdate": "no action"
-        },
-        "pages_blocks_logo_wall_logos_parent_id_fk": {
-          "name": "pages_blocks_logo_wall_logos_parent_id_fk",
-          "tableFrom": "pages_blocks_logo_wall_logos",
-          "tableTo": "pages_blocks_logo_wall",
-          "columnsFrom": [
-            "_parent_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
-        }
-      },
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {},
-      "policies": {},
-      "checkConstraints": {},
-      "isRLSEnabled": false
-    },
-    "public.pages_blocks_logo_wall": {
-      "name": "pages_blocks_logo_wall",
-      "schema": "",
-      "columns": {
-        "_order": {
-          "name": "_order",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "_parent_id": {
-          "name": "_parent_id",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "_path": {
-          "name": "_path",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "id": {
-          "name": "id",
-          "type": "varchar",
-          "primaryKey": true,
-          "notNull": true
-        },
-        "heading": {
-          "name": "heading",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "block_name": {
-          "name": "block_name",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": false
-        }
-      },
-      "indexes": {
-        "pages_blocks_logo_wall_order_idx": {
-          "name": "pages_blocks_logo_wall_order_idx",
-          "columns": [
-            {
-              "expression": "_order",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            }
-          ],
-          "isUnique": false,
-          "concurrently": false,
-          "method": "btree",
-          "with": {}
-        },
-        "pages_blocks_logo_wall_parent_id_idx": {
-          "name": "pages_blocks_logo_wall_parent_id_idx",
-          "columns": [
-            {
-              "expression": "_parent_id",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            }
-          ],
-          "isUnique": false,
-          "concurrently": false,
-          "method": "btree",
-          "with": {}
-        },
-        "pages_blocks_logo_wall_path_idx": {
-          "name": "pages_blocks_logo_wall_path_idx",
-          "columns": [
-            {
-              "expression": "_path",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            }
-          ],
-          "isUnique": false,
-          "concurrently": false,
-          "method": "btree",
-          "with": {}
-        }
-      },
-      "foreignKeys": {
-        "pages_blocks_logo_wall_parent_id_fk": {
-          "name": "pages_blocks_logo_wall_parent_id_fk",
-          "tableFrom": "pages_blocks_logo_wall",
           "tableTo": "pages",
           "columnsFrom": [
             "_parent_id"
@@ -6012,12 +5456,6 @@
           "type": "varchar",
           "primaryKey": true,
           "notNull": true
-        },
-        "eyebrow": {
-          "name": "eyebrow",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": false
         },
         "heading": {
           "name": "heading",
@@ -6288,6 +5726,13 @@
           "notNull": false,
           "default": 3
         },
+        "kind": {
+          "name": "kind",
+          "type": "enum_pages_blocks_linked_in_feed_kind",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
         "block_name": {
           "name": "block_name",
           "type": "varchar",
@@ -6523,14 +5968,6 @@
           "type": "varchar",
           "primaryKey": false,
           "notNull": false
-        },
-        "layout": {
-          "name": "layout",
-          "type": "enum_pages_blocks_team_grid_layout",
-          "typeSchema": "public",
-          "primaryKey": false,
-          "notNull": false,
-          "default": "'grid'"
         },
         "block_name": {
           "name": "block_name",
@@ -6843,12 +6280,6 @@
           "type": "varchar",
           "primaryKey": true,
           "notNull": true
-        },
-        "eyebrow": {
-          "name": "eyebrow",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": false
         },
         "heading": {
           "name": "heading",
@@ -7363,12 +6794,6 @@
           "primaryKey": true,
           "notNull": true
         },
-        "eyebrow": {
-          "name": "eyebrow",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": false
-        },
         "heading": {
           "name": "heading",
           "type": "varchar",
@@ -7377,12 +6802,6 @@
         },
         "text": {
           "name": "text",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "note": {
-          "name": "note",
           "type": "varchar",
           "primaryKey": false,
           "notNull": false
@@ -7470,6 +6889,846 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
+    "public.pages_blocks_logo_wall": {
+      "name": "pages_blocks_logo_wall",
+      "schema": "",
+      "columns": {
+        "_order": {
+          "name": "_order",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "_parent_id": {
+          "name": "_parent_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "_path": {
+          "name": "_path",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "id": {
+          "name": "id",
+          "type": "varchar",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "eyebrow": {
+          "name": "eyebrow",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "heading": {
+          "name": "heading",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "source": {
+          "name": "source",
+          "type": "enum_pages_blocks_logo_wall_source",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'all'"
+        },
+        "fallback_statement": {
+          "name": "fallback_statement",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "block_name": {
+          "name": "block_name",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {
+        "pages_blocks_logo_wall_order_idx": {
+          "name": "pages_blocks_logo_wall_order_idx",
+          "columns": [
+            {
+              "expression": "_order",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "pages_blocks_logo_wall_parent_id_idx": {
+          "name": "pages_blocks_logo_wall_parent_id_idx",
+          "columns": [
+            {
+              "expression": "_parent_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "pages_blocks_logo_wall_path_idx": {
+          "name": "pages_blocks_logo_wall_path_idx",
+          "columns": [
+            {
+              "expression": "_path",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "pages_blocks_logo_wall_parent_id_fk": {
+          "name": "pages_blocks_logo_wall_parent_id_fk",
+          "tableFrom": "pages_blocks_logo_wall",
+          "tableTo": "pages",
+          "columnsFrom": [
+            "_parent_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.pages_blocks_certifications_strip_kinds": {
+      "name": "pages_blocks_certifications_strip_kinds",
+      "schema": "",
+      "columns": {
+        "order": {
+          "name": "order",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "parent_id": {
+          "name": "parent_id",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "value": {
+          "name": "value",
+          "type": "enum_pages_blocks_certifications_strip_kinds",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        }
+      },
+      "indexes": {
+        "pages_blocks_certifications_strip_kinds_order_idx": {
+          "name": "pages_blocks_certifications_strip_kinds_order_idx",
+          "columns": [
+            {
+              "expression": "order",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "pages_blocks_certifications_strip_kinds_parent_idx": {
+          "name": "pages_blocks_certifications_strip_kinds_parent_idx",
+          "columns": [
+            {
+              "expression": "parent_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "pages_blocks_certifications_strip_kinds_parent_fk": {
+          "name": "pages_blocks_certifications_strip_kinds_parent_fk",
+          "tableFrom": "pages_blocks_certifications_strip_kinds",
+          "tableTo": "pages_blocks_certifications_strip",
+          "columnsFrom": [
+            "parent_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.pages_blocks_certifications_strip": {
+      "name": "pages_blocks_certifications_strip",
+      "schema": "",
+      "columns": {
+        "_order": {
+          "name": "_order",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "_parent_id": {
+          "name": "_parent_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "_path": {
+          "name": "_path",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "id": {
+          "name": "id",
+          "type": "varchar",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "heading": {
+          "name": "heading",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "limit": {
+          "name": "limit",
+          "type": "numeric",
+          "primaryKey": false,
+          "notNull": false,
+          "default": 8
+        },
+        "block_name": {
+          "name": "block_name",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {
+        "pages_blocks_certifications_strip_order_idx": {
+          "name": "pages_blocks_certifications_strip_order_idx",
+          "columns": [
+            {
+              "expression": "_order",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "pages_blocks_certifications_strip_parent_id_idx": {
+          "name": "pages_blocks_certifications_strip_parent_id_idx",
+          "columns": [
+            {
+              "expression": "_parent_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "pages_blocks_certifications_strip_path_idx": {
+          "name": "pages_blocks_certifications_strip_path_idx",
+          "columns": [
+            {
+              "expression": "_path",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "pages_blocks_certifications_strip_parent_id_fk": {
+          "name": "pages_blocks_certifications_strip_parent_id_fk",
+          "tableFrom": "pages_blocks_certifications_strip",
+          "tableTo": "pages",
+          "columnsFrom": [
+            "_parent_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.pages_blocks_gallery_items": {
+      "name": "pages_blocks_gallery_items",
+      "schema": "",
+      "columns": {
+        "_order": {
+          "name": "_order",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "_parent_id": {
+          "name": "_parent_id",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "id": {
+          "name": "id",
+          "type": "varchar",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "image_id": {
+          "name": "image_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "label": {
+          "name": "label",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "caption": {
+          "name": "caption",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {
+        "pages_blocks_gallery_items_order_idx": {
+          "name": "pages_blocks_gallery_items_order_idx",
+          "columns": [
+            {
+              "expression": "_order",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "pages_blocks_gallery_items_parent_id_idx": {
+          "name": "pages_blocks_gallery_items_parent_id_idx",
+          "columns": [
+            {
+              "expression": "_parent_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "pages_blocks_gallery_items_image_idx": {
+          "name": "pages_blocks_gallery_items_image_idx",
+          "columns": [
+            {
+              "expression": "image_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "pages_blocks_gallery_items_image_id_media_id_fk": {
+          "name": "pages_blocks_gallery_items_image_id_media_id_fk",
+          "tableFrom": "pages_blocks_gallery_items",
+          "tableTo": "media",
+          "columnsFrom": [
+            "image_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "set null",
+          "onUpdate": "no action"
+        },
+        "pages_blocks_gallery_items_parent_id_fk": {
+          "name": "pages_blocks_gallery_items_parent_id_fk",
+          "tableFrom": "pages_blocks_gallery_items",
+          "tableTo": "pages_blocks_gallery",
+          "columnsFrom": [
+            "_parent_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.pages_blocks_gallery": {
+      "name": "pages_blocks_gallery",
+      "schema": "",
+      "columns": {
+        "_order": {
+          "name": "_order",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "_parent_id": {
+          "name": "_parent_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "_path": {
+          "name": "_path",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "id": {
+          "name": "id",
+          "type": "varchar",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "eyebrow": {
+          "name": "eyebrow",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "heading": {
+          "name": "heading",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "layout": {
+          "name": "layout",
+          "type": "enum_pages_blocks_gallery_layout",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'grid'"
+        },
+        "block_name": {
+          "name": "block_name",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {
+        "pages_blocks_gallery_order_idx": {
+          "name": "pages_blocks_gallery_order_idx",
+          "columns": [
+            {
+              "expression": "_order",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "pages_blocks_gallery_parent_id_idx": {
+          "name": "pages_blocks_gallery_parent_id_idx",
+          "columns": [
+            {
+              "expression": "_parent_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "pages_blocks_gallery_path_idx": {
+          "name": "pages_blocks_gallery_path_idx",
+          "columns": [
+            {
+              "expression": "_path",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "pages_blocks_gallery_parent_id_fk": {
+          "name": "pages_blocks_gallery_parent_id_fk",
+          "tableFrom": "pages_blocks_gallery",
+          "tableTo": "pages",
+          "columnsFrom": [
+            "_parent_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.pages_blocks_publications": {
+      "name": "pages_blocks_publications",
+      "schema": "",
+      "columns": {
+        "_order": {
+          "name": "_order",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "_parent_id": {
+          "name": "_parent_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "_path": {
+          "name": "_path",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "id": {
+          "name": "id",
+          "type": "varchar",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "eyebrow": {
+          "name": "eyebrow",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "heading": {
+          "name": "heading",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "member_id": {
+          "name": "member_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "block_name": {
+          "name": "block_name",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {
+        "pages_blocks_publications_order_idx": {
+          "name": "pages_blocks_publications_order_idx",
+          "columns": [
+            {
+              "expression": "_order",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "pages_blocks_publications_parent_id_idx": {
+          "name": "pages_blocks_publications_parent_id_idx",
+          "columns": [
+            {
+              "expression": "_parent_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "pages_blocks_publications_path_idx": {
+          "name": "pages_blocks_publications_path_idx",
+          "columns": [
+            {
+              "expression": "_path",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "pages_blocks_publications_member_idx": {
+          "name": "pages_blocks_publications_member_idx",
+          "columns": [
+            {
+              "expression": "member_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "pages_blocks_publications_member_id_team_id_fk": {
+          "name": "pages_blocks_publications_member_id_team_id_fk",
+          "tableFrom": "pages_blocks_publications",
+          "tableTo": "team",
+          "columnsFrom": [
+            "member_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "set null",
+          "onUpdate": "no action"
+        },
+        "pages_blocks_publications_parent_id_fk": {
+          "name": "pages_blocks_publications_parent_id_fk",
+          "tableFrom": "pages_blocks_publications",
+          "tableTo": "pages",
+          "columnsFrom": [
+            "_parent_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.pages_blocks_proof_bar": {
+      "name": "pages_blocks_proof_bar",
+      "schema": "",
+      "columns": {
+        "_order": {
+          "name": "_order",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "_parent_id": {
+          "name": "_parent_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "_path": {
+          "name": "_path",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "id": {
+          "name": "id",
+          "type": "varchar",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "show_statement": {
+          "name": "show_statement",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false,
+          "default": true
+        },
+        "style": {
+          "name": "style",
+          "type": "enum_pages_blocks_proof_bar_style",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'light'"
+        },
+        "block_name": {
+          "name": "block_name",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {
+        "pages_blocks_proof_bar_order_idx": {
+          "name": "pages_blocks_proof_bar_order_idx",
+          "columns": [
+            {
+              "expression": "_order",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "pages_blocks_proof_bar_parent_id_idx": {
+          "name": "pages_blocks_proof_bar_parent_id_idx",
+          "columns": [
+            {
+              "expression": "_parent_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "pages_blocks_proof_bar_path_idx": {
+          "name": "pages_blocks_proof_bar_path_idx",
+          "columns": [
+            {
+              "expression": "_path",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "pages_blocks_proof_bar_parent_id_fk": {
+          "name": "pages_blocks_proof_bar_parent_id_fk",
+          "tableFrom": "pages_blocks_proof_bar",
+          "tableTo": "pages",
+          "columnsFrom": [
+            "_parent_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
     "public.pages": {
       "name": "pages",
       "schema": "",
@@ -7521,30 +7780,6 @@
         "hero_image_id": {
           "name": "hero_image_id",
           "type": "integer",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "hero_image_marker": {
-          "name": "hero_image_marker",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "hero_image_marker_note": {
-          "name": "hero_image_marker_note",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "hero_image_caption": {
-          "name": "hero_image_caption",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "hero_image_caption_note": {
-          "name": "hero_image_caption_note",
-          "type": "varchar",
           "primaryKey": false,
           "notNull": false
         },
@@ -7803,6 +8038,12 @@
           "type": "integer",
           "primaryKey": false,
           "notNull": false
+        },
+        "customers_id": {
+          "name": "customers_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
         }
       },
       "indexes": {
@@ -7970,6 +8211,21 @@
           "concurrently": false,
           "method": "btree",
           "with": {}
+        },
+        "pages_rels_customers_id_idx": {
+          "name": "pages_rels_customers_id_idx",
+          "columns": [
+            {
+              "expression": "customers_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
         }
       },
       "foreignKeys": {
@@ -8083,6 +8339,19 @@
           "tableTo": "faqs",
           "columnsFrom": [
             "faqs_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "pages_rels_customers_fk": {
+          "name": "pages_rels_customers_fk",
+          "tableFrom": "pages_rels",
+          "tableTo": "customers",
+          "columnsFrom": [
+            "customers_id"
           ],
           "columnsTo": [
             "id"
@@ -8424,211 +8693,6 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
-    "public._pages_v_blocks_trust_strip_items": {
-      "name": "_pages_v_blocks_trust_strip_items",
-      "schema": "",
-      "columns": {
-        "_order": {
-          "name": "_order",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "_parent_id": {
-          "name": "_parent_id",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "id": {
-          "name": "id",
-          "type": "serial",
-          "primaryKey": true,
-          "notNull": true
-        },
-        "text": {
-          "name": "text",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "_uuid": {
-          "name": "_uuid",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": false
-        }
-      },
-      "indexes": {
-        "_pages_v_blocks_trust_strip_items_order_idx": {
-          "name": "_pages_v_blocks_trust_strip_items_order_idx",
-          "columns": [
-            {
-              "expression": "_order",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            }
-          ],
-          "isUnique": false,
-          "concurrently": false,
-          "method": "btree",
-          "with": {}
-        },
-        "_pages_v_blocks_trust_strip_items_parent_id_idx": {
-          "name": "_pages_v_blocks_trust_strip_items_parent_id_idx",
-          "columns": [
-            {
-              "expression": "_parent_id",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            }
-          ],
-          "isUnique": false,
-          "concurrently": false,
-          "method": "btree",
-          "with": {}
-        }
-      },
-      "foreignKeys": {
-        "_pages_v_blocks_trust_strip_items_parent_id_fk": {
-          "name": "_pages_v_blocks_trust_strip_items_parent_id_fk",
-          "tableFrom": "_pages_v_blocks_trust_strip_items",
-          "tableTo": "_pages_v_blocks_trust_strip",
-          "columnsFrom": [
-            "_parent_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
-        }
-      },
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {},
-      "policies": {},
-      "checkConstraints": {},
-      "isRLSEnabled": false
-    },
-    "public._pages_v_blocks_trust_strip": {
-      "name": "_pages_v_blocks_trust_strip",
-      "schema": "",
-      "columns": {
-        "_order": {
-          "name": "_order",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "_parent_id": {
-          "name": "_parent_id",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "_path": {
-          "name": "_path",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "id": {
-          "name": "id",
-          "type": "serial",
-          "primaryKey": true,
-          "notNull": true
-        },
-        "source": {
-          "name": "source",
-          "type": "enum__pages_v_blocks_trust_strip_source",
-          "typeSchema": "public",
-          "primaryKey": false,
-          "notNull": false,
-          "default": "'settings'"
-        },
-        "_uuid": {
-          "name": "_uuid",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "block_name": {
-          "name": "block_name",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": false
-        }
-      },
-      "indexes": {
-        "_pages_v_blocks_trust_strip_order_idx": {
-          "name": "_pages_v_blocks_trust_strip_order_idx",
-          "columns": [
-            {
-              "expression": "_order",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            }
-          ],
-          "isUnique": false,
-          "concurrently": false,
-          "method": "btree",
-          "with": {}
-        },
-        "_pages_v_blocks_trust_strip_parent_id_idx": {
-          "name": "_pages_v_blocks_trust_strip_parent_id_idx",
-          "columns": [
-            {
-              "expression": "_parent_id",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            }
-          ],
-          "isUnique": false,
-          "concurrently": false,
-          "method": "btree",
-          "with": {}
-        },
-        "_pages_v_blocks_trust_strip_path_idx": {
-          "name": "_pages_v_blocks_trust_strip_path_idx",
-          "columns": [
-            {
-              "expression": "_path",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            }
-          ],
-          "isUnique": false,
-          "concurrently": false,
-          "method": "btree",
-          "with": {}
-        }
-      },
-      "foreignKeys": {
-        "_pages_v_blocks_trust_strip_parent_id_fk": {
-          "name": "_pages_v_blocks_trust_strip_parent_id_fk",
-          "tableFrom": "_pages_v_blocks_trust_strip",
-          "tableTo": "_pages_v",
-          "columnsFrom": [
-            "_parent_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
-        }
-      },
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {},
-      "policies": {},
-      "checkConstraints": {},
-      "isRLSEnabled": false
-    },
     "public._pages_v_blocks_stats_items": {
       "name": "_pages_v_blocks_stats_items",
       "schema": "",
@@ -8653,12 +8717,6 @@
         },
         "value": {
           "name": "value",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "unit": {
-          "name": "unit",
           "type": "varchar",
           "primaryKey": false,
           "notNull": false
@@ -9389,18 +9447,6 @@
           "primaryKey": false,
           "notNull": false
         },
-        "image_caption": {
-          "name": "image_caption",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "image_caption_note": {
-          "name": "image_caption_note",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": false
-        },
         "image_position": {
           "name": "image_position",
           "type": "enum__pages_v_blocks_two_column_image_position",
@@ -9408,32 +9454,6 @@
           "primaryKey": false,
           "notNull": false,
           "default": "'right'"
-        },
-        "second_image_id": {
-          "name": "second_image_id",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "second_image_text": {
-          "name": "second_image_text",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "quote": {
-          "name": "quote",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "background": {
-          "name": "background",
-          "type": "enum__pages_v_blocks_two_column_background",
-          "typeSchema": "public",
-          "primaryKey": false,
-          "notNull": false,
-          "default": "'light'"
         },
         "_uuid": {
           "name": "_uuid",
@@ -9508,21 +9528,6 @@
           "concurrently": false,
           "method": "btree",
           "with": {}
-        },
-        "_pages_v_blocks_two_column_second_image_idx": {
-          "name": "_pages_v_blocks_two_column_second_image_idx",
-          "columns": [
-            {
-              "expression": "second_image_id",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            }
-          ],
-          "isUnique": false,
-          "concurrently": false,
-          "method": "btree",
-          "with": {}
         }
       },
       "foreignKeys": {
@@ -9532,19 +9537,6 @@
           "tableTo": "media",
           "columnsFrom": [
             "image_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "set null",
-          "onUpdate": "no action"
-        },
-        "_pages_v_blocks_two_column_second_image_id_media_id_fk": {
-          "name": "_pages_v_blocks_two_column_second_image_id_media_id_fk",
-          "tableFrom": "_pages_v_blocks_two_column",
-          "tableTo": "media",
-          "columnsFrom": [
-            "second_image_id"
           ],
           "columnsTo": [
             "id"
@@ -9989,38 +9981,6 @@
           "primaryKey": false,
           "notNull": false
         },
-        "note": {
-          "name": "note",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "link_type": {
-          "name": "link_type",
-          "type": "enum__pages_v_blocks_grades_platform_link_type",
-          "typeSchema": "public",
-          "primaryKey": false,
-          "notNull": false,
-          "default": "'internal'"
-        },
-        "link_new_tab": {
-          "name": "link_new_tab",
-          "type": "boolean",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "link_url": {
-          "name": "link_url",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "link_label": {
-          "name": "link_label",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": false
-        },
         "_uuid": {
           "name": "_uuid",
           "type": "varchar",
@@ -10271,18 +10231,6 @@
         },
         "intro": {
           "name": "intro",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "footnote": {
-          "name": "footnote",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "link_label": {
-          "name": "link_label",
           "type": "varchar",
           "primaryKey": false,
           "notNull": false
@@ -10541,14 +10489,6 @@
           "primaryKey": false,
           "notNull": false
         },
-        "layout": {
-          "name": "layout",
-          "type": "enum__pages_v_blocks_applications_grid_layout",
-          "typeSchema": "public",
-          "primaryKey": false,
-          "notNull": false,
-          "default": "'cards'"
-        },
         "_uuid": {
           "name": "_uuid",
           "type": "varchar",
@@ -10676,14 +10616,6 @@
           "primaryKey": false,
           "notNull": false
         },
-        "layout": {
-          "name": "layout",
-          "type": "enum__pages_v_blocks_services_grid_layout",
-          "typeSchema": "public",
-          "primaryKey": false,
-          "notNull": false,
-          "default": "'cards'"
-        },
         "_uuid": {
           "name": "_uuid",
           "type": "varchar",
@@ -10748,249 +10680,6 @@
         "_pages_v_blocks_services_grid_parent_id_fk": {
           "name": "_pages_v_blocks_services_grid_parent_id_fk",
           "tableFrom": "_pages_v_blocks_services_grid",
-          "tableTo": "_pages_v",
-          "columnsFrom": [
-            "_parent_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
-        }
-      },
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {},
-      "policies": {},
-      "checkConstraints": {},
-      "isRLSEnabled": false
-    },
-    "public._pages_v_blocks_logo_wall_logos": {
-      "name": "_pages_v_blocks_logo_wall_logos",
-      "schema": "",
-      "columns": {
-        "_order": {
-          "name": "_order",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "_parent_id": {
-          "name": "_parent_id",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "id": {
-          "name": "id",
-          "type": "serial",
-          "primaryKey": true,
-          "notNull": true
-        },
-        "logo_id": {
-          "name": "logo_id",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "name": {
-          "name": "name",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "url": {
-          "name": "url",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "_uuid": {
-          "name": "_uuid",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": false
-        }
-      },
-      "indexes": {
-        "_pages_v_blocks_logo_wall_logos_order_idx": {
-          "name": "_pages_v_blocks_logo_wall_logos_order_idx",
-          "columns": [
-            {
-              "expression": "_order",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            }
-          ],
-          "isUnique": false,
-          "concurrently": false,
-          "method": "btree",
-          "with": {}
-        },
-        "_pages_v_blocks_logo_wall_logos_parent_id_idx": {
-          "name": "_pages_v_blocks_logo_wall_logos_parent_id_idx",
-          "columns": [
-            {
-              "expression": "_parent_id",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            }
-          ],
-          "isUnique": false,
-          "concurrently": false,
-          "method": "btree",
-          "with": {}
-        },
-        "_pages_v_blocks_logo_wall_logos_logo_idx": {
-          "name": "_pages_v_blocks_logo_wall_logos_logo_idx",
-          "columns": [
-            {
-              "expression": "logo_id",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            }
-          ],
-          "isUnique": false,
-          "concurrently": false,
-          "method": "btree",
-          "with": {}
-        }
-      },
-      "foreignKeys": {
-        "_pages_v_blocks_logo_wall_logos_logo_id_media_id_fk": {
-          "name": "_pages_v_blocks_logo_wall_logos_logo_id_media_id_fk",
-          "tableFrom": "_pages_v_blocks_logo_wall_logos",
-          "tableTo": "media",
-          "columnsFrom": [
-            "logo_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "set null",
-          "onUpdate": "no action"
-        },
-        "_pages_v_blocks_logo_wall_logos_parent_id_fk": {
-          "name": "_pages_v_blocks_logo_wall_logos_parent_id_fk",
-          "tableFrom": "_pages_v_blocks_logo_wall_logos",
-          "tableTo": "_pages_v_blocks_logo_wall",
-          "columnsFrom": [
-            "_parent_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
-        }
-      },
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {},
-      "policies": {},
-      "checkConstraints": {},
-      "isRLSEnabled": false
-    },
-    "public._pages_v_blocks_logo_wall": {
-      "name": "_pages_v_blocks_logo_wall",
-      "schema": "",
-      "columns": {
-        "_order": {
-          "name": "_order",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "_parent_id": {
-          "name": "_parent_id",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "_path": {
-          "name": "_path",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "id": {
-          "name": "id",
-          "type": "serial",
-          "primaryKey": true,
-          "notNull": true
-        },
-        "heading": {
-          "name": "heading",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "_uuid": {
-          "name": "_uuid",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "block_name": {
-          "name": "block_name",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": false
-        }
-      },
-      "indexes": {
-        "_pages_v_blocks_logo_wall_order_idx": {
-          "name": "_pages_v_blocks_logo_wall_order_idx",
-          "columns": [
-            {
-              "expression": "_order",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            }
-          ],
-          "isUnique": false,
-          "concurrently": false,
-          "method": "btree",
-          "with": {}
-        },
-        "_pages_v_blocks_logo_wall_parent_id_idx": {
-          "name": "_pages_v_blocks_logo_wall_parent_id_idx",
-          "columns": [
-            {
-              "expression": "_parent_id",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            }
-          ],
-          "isUnique": false,
-          "concurrently": false,
-          "method": "btree",
-          "with": {}
-        },
-        "_pages_v_blocks_logo_wall_path_idx": {
-          "name": "_pages_v_blocks_logo_wall_path_idx",
-          "columns": [
-            {
-              "expression": "_path",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            }
-          ],
-          "isUnique": false,
-          "concurrently": false,
-          "method": "btree",
-          "with": {}
-        }
-      },
-      "foreignKeys": {
-        "_pages_v_blocks_logo_wall_parent_id_fk": {
-          "name": "_pages_v_blocks_logo_wall_parent_id_fk",
-          "tableFrom": "_pages_v_blocks_logo_wall",
           "tableTo": "_pages_v",
           "columnsFrom": [
             "_parent_id"
@@ -11118,12 +10807,6 @@
           "type": "serial",
           "primaryKey": true,
           "notNull": true
-        },
-        "eyebrow": {
-          "name": "eyebrow",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": false
         },
         "heading": {
           "name": "heading",
@@ -11406,6 +11089,13 @@
           "notNull": false,
           "default": 3
         },
+        "kind": {
+          "name": "kind",
+          "type": "enum__pages_v_blocks_linked_in_feed_kind",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
         "_uuid": {
           "name": "_uuid",
           "type": "varchar",
@@ -11653,14 +11343,6 @@
           "type": "varchar",
           "primaryKey": false,
           "notNull": false
-        },
-        "layout": {
-          "name": "layout",
-          "type": "enum__pages_v_blocks_team_grid_layout",
-          "typeSchema": "public",
-          "primaryKey": false,
-          "notNull": false,
-          "default": "'grid'"
         },
         "_uuid": {
           "name": "_uuid",
@@ -11991,12 +11673,6 @@
           "type": "serial",
           "primaryKey": true,
           "notNull": true
-        },
-        "eyebrow": {
-          "name": "eyebrow",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": false
         },
         "heading": {
           "name": "heading",
@@ -12535,12 +12211,6 @@
           "primaryKey": true,
           "notNull": true
         },
-        "eyebrow": {
-          "name": "eyebrow",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": false
-        },
         "heading": {
           "name": "heading",
           "type": "varchar",
@@ -12549,12 +12219,6 @@
         },
         "text": {
           "name": "text",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "note": {
-          "name": "note",
           "type": "varchar",
           "primaryKey": false,
           "notNull": false
@@ -12648,6 +12312,882 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
+    "public._pages_v_blocks_logo_wall": {
+      "name": "_pages_v_blocks_logo_wall",
+      "schema": "",
+      "columns": {
+        "_order": {
+          "name": "_order",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "_parent_id": {
+          "name": "_parent_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "_path": {
+          "name": "_path",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "eyebrow": {
+          "name": "eyebrow",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "heading": {
+          "name": "heading",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "source": {
+          "name": "source",
+          "type": "enum__pages_v_blocks_logo_wall_source",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'all'"
+        },
+        "fallback_statement": {
+          "name": "fallback_statement",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "_uuid": {
+          "name": "_uuid",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "block_name": {
+          "name": "block_name",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {
+        "_pages_v_blocks_logo_wall_order_idx": {
+          "name": "_pages_v_blocks_logo_wall_order_idx",
+          "columns": [
+            {
+              "expression": "_order",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "_pages_v_blocks_logo_wall_parent_id_idx": {
+          "name": "_pages_v_blocks_logo_wall_parent_id_idx",
+          "columns": [
+            {
+              "expression": "_parent_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "_pages_v_blocks_logo_wall_path_idx": {
+          "name": "_pages_v_blocks_logo_wall_path_idx",
+          "columns": [
+            {
+              "expression": "_path",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "_pages_v_blocks_logo_wall_parent_id_fk": {
+          "name": "_pages_v_blocks_logo_wall_parent_id_fk",
+          "tableFrom": "_pages_v_blocks_logo_wall",
+          "tableTo": "_pages_v",
+          "columnsFrom": [
+            "_parent_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public._pages_v_blocks_certifications_strip_kinds": {
+      "name": "_pages_v_blocks_certifications_strip_kinds",
+      "schema": "",
+      "columns": {
+        "order": {
+          "name": "order",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "parent_id": {
+          "name": "parent_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "value": {
+          "name": "value",
+          "type": "enum__pages_v_blocks_certifications_strip_kinds",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        }
+      },
+      "indexes": {
+        "_pages_v_blocks_certifications_strip_kinds_order_idx": {
+          "name": "_pages_v_blocks_certifications_strip_kinds_order_idx",
+          "columns": [
+            {
+              "expression": "order",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "_pages_v_blocks_certifications_strip_kinds_parent_idx": {
+          "name": "_pages_v_blocks_certifications_strip_kinds_parent_idx",
+          "columns": [
+            {
+              "expression": "parent_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "_pages_v_blocks_certifications_strip_kinds_parent_fk": {
+          "name": "_pages_v_blocks_certifications_strip_kinds_parent_fk",
+          "tableFrom": "_pages_v_blocks_certifications_strip_kinds",
+          "tableTo": "_pages_v_blocks_certifications_strip",
+          "columnsFrom": [
+            "parent_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public._pages_v_blocks_certifications_strip": {
+      "name": "_pages_v_blocks_certifications_strip",
+      "schema": "",
+      "columns": {
+        "_order": {
+          "name": "_order",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "_parent_id": {
+          "name": "_parent_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "_path": {
+          "name": "_path",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "heading": {
+          "name": "heading",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "limit": {
+          "name": "limit",
+          "type": "numeric",
+          "primaryKey": false,
+          "notNull": false,
+          "default": 8
+        },
+        "_uuid": {
+          "name": "_uuid",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "block_name": {
+          "name": "block_name",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {
+        "_pages_v_blocks_certifications_strip_order_idx": {
+          "name": "_pages_v_blocks_certifications_strip_order_idx",
+          "columns": [
+            {
+              "expression": "_order",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "_pages_v_blocks_certifications_strip_parent_id_idx": {
+          "name": "_pages_v_blocks_certifications_strip_parent_id_idx",
+          "columns": [
+            {
+              "expression": "_parent_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "_pages_v_blocks_certifications_strip_path_idx": {
+          "name": "_pages_v_blocks_certifications_strip_path_idx",
+          "columns": [
+            {
+              "expression": "_path",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "_pages_v_blocks_certifications_strip_parent_id_fk": {
+          "name": "_pages_v_blocks_certifications_strip_parent_id_fk",
+          "tableFrom": "_pages_v_blocks_certifications_strip",
+          "tableTo": "_pages_v",
+          "columnsFrom": [
+            "_parent_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public._pages_v_blocks_gallery_items": {
+      "name": "_pages_v_blocks_gallery_items",
+      "schema": "",
+      "columns": {
+        "_order": {
+          "name": "_order",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "_parent_id": {
+          "name": "_parent_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "image_id": {
+          "name": "image_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "label": {
+          "name": "label",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "caption": {
+          "name": "caption",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "_uuid": {
+          "name": "_uuid",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {
+        "_pages_v_blocks_gallery_items_order_idx": {
+          "name": "_pages_v_blocks_gallery_items_order_idx",
+          "columns": [
+            {
+              "expression": "_order",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "_pages_v_blocks_gallery_items_parent_id_idx": {
+          "name": "_pages_v_blocks_gallery_items_parent_id_idx",
+          "columns": [
+            {
+              "expression": "_parent_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "_pages_v_blocks_gallery_items_image_idx": {
+          "name": "_pages_v_blocks_gallery_items_image_idx",
+          "columns": [
+            {
+              "expression": "image_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "_pages_v_blocks_gallery_items_image_id_media_id_fk": {
+          "name": "_pages_v_blocks_gallery_items_image_id_media_id_fk",
+          "tableFrom": "_pages_v_blocks_gallery_items",
+          "tableTo": "media",
+          "columnsFrom": [
+            "image_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "set null",
+          "onUpdate": "no action"
+        },
+        "_pages_v_blocks_gallery_items_parent_id_fk": {
+          "name": "_pages_v_blocks_gallery_items_parent_id_fk",
+          "tableFrom": "_pages_v_blocks_gallery_items",
+          "tableTo": "_pages_v_blocks_gallery",
+          "columnsFrom": [
+            "_parent_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public._pages_v_blocks_gallery": {
+      "name": "_pages_v_blocks_gallery",
+      "schema": "",
+      "columns": {
+        "_order": {
+          "name": "_order",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "_parent_id": {
+          "name": "_parent_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "_path": {
+          "name": "_path",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "eyebrow": {
+          "name": "eyebrow",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "heading": {
+          "name": "heading",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "layout": {
+          "name": "layout",
+          "type": "enum__pages_v_blocks_gallery_layout",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'grid'"
+        },
+        "_uuid": {
+          "name": "_uuid",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "block_name": {
+          "name": "block_name",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {
+        "_pages_v_blocks_gallery_order_idx": {
+          "name": "_pages_v_blocks_gallery_order_idx",
+          "columns": [
+            {
+              "expression": "_order",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "_pages_v_blocks_gallery_parent_id_idx": {
+          "name": "_pages_v_blocks_gallery_parent_id_idx",
+          "columns": [
+            {
+              "expression": "_parent_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "_pages_v_blocks_gallery_path_idx": {
+          "name": "_pages_v_blocks_gallery_path_idx",
+          "columns": [
+            {
+              "expression": "_path",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "_pages_v_blocks_gallery_parent_id_fk": {
+          "name": "_pages_v_blocks_gallery_parent_id_fk",
+          "tableFrom": "_pages_v_blocks_gallery",
+          "tableTo": "_pages_v",
+          "columnsFrom": [
+            "_parent_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public._pages_v_blocks_publications": {
+      "name": "_pages_v_blocks_publications",
+      "schema": "",
+      "columns": {
+        "_order": {
+          "name": "_order",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "_parent_id": {
+          "name": "_parent_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "_path": {
+          "name": "_path",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "eyebrow": {
+          "name": "eyebrow",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "heading": {
+          "name": "heading",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "member_id": {
+          "name": "member_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "_uuid": {
+          "name": "_uuid",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "block_name": {
+          "name": "block_name",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {
+        "_pages_v_blocks_publications_order_idx": {
+          "name": "_pages_v_blocks_publications_order_idx",
+          "columns": [
+            {
+              "expression": "_order",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "_pages_v_blocks_publications_parent_id_idx": {
+          "name": "_pages_v_blocks_publications_parent_id_idx",
+          "columns": [
+            {
+              "expression": "_parent_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "_pages_v_blocks_publications_path_idx": {
+          "name": "_pages_v_blocks_publications_path_idx",
+          "columns": [
+            {
+              "expression": "_path",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "_pages_v_blocks_publications_member_idx": {
+          "name": "_pages_v_blocks_publications_member_idx",
+          "columns": [
+            {
+              "expression": "member_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "_pages_v_blocks_publications_member_id_team_id_fk": {
+          "name": "_pages_v_blocks_publications_member_id_team_id_fk",
+          "tableFrom": "_pages_v_blocks_publications",
+          "tableTo": "team",
+          "columnsFrom": [
+            "member_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "set null",
+          "onUpdate": "no action"
+        },
+        "_pages_v_blocks_publications_parent_id_fk": {
+          "name": "_pages_v_blocks_publications_parent_id_fk",
+          "tableFrom": "_pages_v_blocks_publications",
+          "tableTo": "_pages_v",
+          "columnsFrom": [
+            "_parent_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public._pages_v_blocks_proof_bar": {
+      "name": "_pages_v_blocks_proof_bar",
+      "schema": "",
+      "columns": {
+        "_order": {
+          "name": "_order",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "_parent_id": {
+          "name": "_parent_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "_path": {
+          "name": "_path",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "show_statement": {
+          "name": "show_statement",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false,
+          "default": true
+        },
+        "style": {
+          "name": "style",
+          "type": "enum__pages_v_blocks_proof_bar_style",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'light'"
+        },
+        "_uuid": {
+          "name": "_uuid",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "block_name": {
+          "name": "block_name",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {
+        "_pages_v_blocks_proof_bar_order_idx": {
+          "name": "_pages_v_blocks_proof_bar_order_idx",
+          "columns": [
+            {
+              "expression": "_order",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "_pages_v_blocks_proof_bar_parent_id_idx": {
+          "name": "_pages_v_blocks_proof_bar_parent_id_idx",
+          "columns": [
+            {
+              "expression": "_parent_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "_pages_v_blocks_proof_bar_path_idx": {
+          "name": "_pages_v_blocks_proof_bar_path_idx",
+          "columns": [
+            {
+              "expression": "_path",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "_pages_v_blocks_proof_bar_parent_id_fk": {
+          "name": "_pages_v_blocks_proof_bar_parent_id_fk",
+          "tableFrom": "_pages_v_blocks_proof_bar",
+          "tableTo": "_pages_v",
+          "columnsFrom": [
+            "_parent_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
     "public._pages_v": {
       "name": "_pages_v",
       "schema": "",
@@ -12705,30 +13245,6 @@
         "version_hero_image_id": {
           "name": "version_hero_image_id",
           "type": "integer",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "version_hero_image_marker": {
-          "name": "version_hero_image_marker",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "version_hero_image_marker_note": {
-          "name": "version_hero_image_marker_note",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "version_hero_image_caption": {
-          "name": "version_hero_image_caption",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "version_hero_image_caption_note": {
-          "name": "version_hero_image_caption_note",
-          "type": "varchar",
           "primaryKey": false,
           "notNull": false
         },
@@ -13099,6 +13615,12 @@
           "type": "integer",
           "primaryKey": false,
           "notNull": false
+        },
+        "customers_id": {
+          "name": "customers_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
         }
       },
       "indexes": {
@@ -13266,6 +13788,21 @@
           "concurrently": false,
           "method": "btree",
           "with": {}
+        },
+        "_pages_v_rels_customers_id_idx": {
+          "name": "_pages_v_rels_customers_id_idx",
+          "columns": [
+            {
+              "expression": "customers_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
         }
       },
       "foreignKeys": {
@@ -13379,6 +13916,19 @@
           "tableTo": "faqs",
           "columnsFrom": [
             "faqs_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "_pages_v_rels_customers_fk": {
+          "name": "_pages_v_rels_customers_fk",
+          "tableFrom": "_pages_v_rels",
+          "tableTo": "customers",
+          "columnsFrom": [
+            "customers_id"
           ],
           "columnsTo": [
             "id"
@@ -14461,13 +15011,13 @@
           "name": "title",
           "type": "varchar",
           "primaryKey": false,
-          "notNull": true
+          "notNull": false
         },
         "url": {
           "name": "url",
           "type": "varchar",
           "primaryKey": false,
-          "notNull": true
+          "notNull": false
         },
         "urn": {
           "name": "urn",
@@ -14479,7 +15029,7 @@
           "name": "summary",
           "type": "varchar",
           "primaryKey": false,
-          "notNull": true
+          "notNull": false
         },
         "image_id": {
           "name": "image_id",
@@ -14487,11 +15037,18 @@
           "primaryKey": false,
           "notNull": false
         },
+        "kind": {
+          "name": "kind",
+          "type": "enum_updates_kind",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
         "published_at": {
           "name": "published_at",
           "type": "timestamp(3) with time zone",
           "primaryKey": false,
-          "notNull": true
+          "notNull": false
         },
         "pinned": {
           "name": "pinned",
@@ -14513,6 +15070,14 @@
           "primaryKey": false,
           "notNull": true,
           "default": "now()"
+        },
+        "_status": {
+          "name": "_status",
+          "type": "enum_updates_status",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'draft'"
         }
       },
       "indexes": {
@@ -14551,6 +15116,21 @@
           "columns": [
             {
               "expression": "created_at",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "updates__status_idx": {
+          "name": "updates__status_idx",
+          "columns": [
+            {
+              "expression": "_status",
               "isExpression": false,
               "asc": true,
               "nulls": "last"
@@ -14697,6 +15277,400 @@
         "updates_rels_products_fk": {
           "name": "updates_rels_products_fk",
           "tableFrom": "updates_rels",
+          "tableTo": "products",
+          "columnsFrom": [
+            "products_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public._updates_v": {
+      "name": "_updates_v",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "parent_id": {
+          "name": "parent_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "version_title": {
+          "name": "version_title",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "version_url": {
+          "name": "version_url",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "version_urn": {
+          "name": "version_urn",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "version_summary": {
+          "name": "version_summary",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "version_image_id": {
+          "name": "version_image_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "version_kind": {
+          "name": "version_kind",
+          "type": "enum__updates_v_version_kind",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "version_published_at": {
+          "name": "version_published_at",
+          "type": "timestamp(3) with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "version_pinned": {
+          "name": "version_pinned",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false,
+          "default": false
+        },
+        "version_updated_at": {
+          "name": "version_updated_at",
+          "type": "timestamp(3) with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "version_created_at": {
+          "name": "version_created_at",
+          "type": "timestamp(3) with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "version__status": {
+          "name": "version__status",
+          "type": "enum__updates_v_version_status",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'draft'"
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp(3) with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp(3) with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "latest": {
+          "name": "latest",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {
+        "_updates_v_parent_idx": {
+          "name": "_updates_v_parent_idx",
+          "columns": [
+            {
+              "expression": "parent_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "_updates_v_version_version_image_idx": {
+          "name": "_updates_v_version_version_image_idx",
+          "columns": [
+            {
+              "expression": "version_image_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "_updates_v_version_version_updated_at_idx": {
+          "name": "_updates_v_version_version_updated_at_idx",
+          "columns": [
+            {
+              "expression": "version_updated_at",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "_updates_v_version_version_created_at_idx": {
+          "name": "_updates_v_version_version_created_at_idx",
+          "columns": [
+            {
+              "expression": "version_created_at",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "_updates_v_version_version__status_idx": {
+          "name": "_updates_v_version_version__status_idx",
+          "columns": [
+            {
+              "expression": "version__status",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "_updates_v_created_at_idx": {
+          "name": "_updates_v_created_at_idx",
+          "columns": [
+            {
+              "expression": "created_at",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "_updates_v_updated_at_idx": {
+          "name": "_updates_v_updated_at_idx",
+          "columns": [
+            {
+              "expression": "updated_at",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "_updates_v_latest_idx": {
+          "name": "_updates_v_latest_idx",
+          "columns": [
+            {
+              "expression": "latest",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "_updates_v_parent_id_updates_id_fk": {
+          "name": "_updates_v_parent_id_updates_id_fk",
+          "tableFrom": "_updates_v",
+          "tableTo": "updates",
+          "columnsFrom": [
+            "parent_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "set null",
+          "onUpdate": "no action"
+        },
+        "_updates_v_version_image_id_media_id_fk": {
+          "name": "_updates_v_version_image_id_media_id_fk",
+          "tableFrom": "_updates_v",
+          "tableTo": "media",
+          "columnsFrom": [
+            "version_image_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "set null",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public._updates_v_rels": {
+      "name": "_updates_v_rels",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "order": {
+          "name": "order",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "parent_id": {
+          "name": "parent_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "path": {
+          "name": "path",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "products_id": {
+          "name": "products_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {
+        "_updates_v_rels_order_idx": {
+          "name": "_updates_v_rels_order_idx",
+          "columns": [
+            {
+              "expression": "order",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "_updates_v_rels_parent_idx": {
+          "name": "_updates_v_rels_parent_idx",
+          "columns": [
+            {
+              "expression": "parent_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "_updates_v_rels_path_idx": {
+          "name": "_updates_v_rels_path_idx",
+          "columns": [
+            {
+              "expression": "path",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "_updates_v_rels_products_id_idx": {
+          "name": "_updates_v_rels_products_id_idx",
+          "columns": [
+            {
+              "expression": "products_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "_updates_v_rels_parent_fk": {
+          "name": "_updates_v_rels_parent_fk",
+          "tableFrom": "_updates_v_rels",
+          "tableTo": "_updates_v",
+          "columnsFrom": [
+            "parent_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "_updates_v_rels_products_fk": {
+          "name": "_updates_v_rels_products_fk",
+          "tableFrom": "_updates_v_rels",
           "tableTo": "products",
           "columnsFrom": [
             "products_id"
@@ -15586,6 +16560,270 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
+    "public.team_credentials": {
+      "name": "team_credentials",
+      "schema": "",
+      "columns": {
+        "_order": {
+          "name": "_order",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "_parent_id": {
+          "name": "_parent_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "id": {
+          "name": "id",
+          "type": "varchar",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "text": {
+          "name": "text",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {
+        "team_credentials_order_idx": {
+          "name": "team_credentials_order_idx",
+          "columns": [
+            {
+              "expression": "_order",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "team_credentials_parent_id_idx": {
+          "name": "team_credentials_parent_id_idx",
+          "columns": [
+            {
+              "expression": "_parent_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "team_credentials_parent_id_fk": {
+          "name": "team_credentials_parent_id_fk",
+          "tableFrom": "team_credentials",
+          "tableTo": "team",
+          "columnsFrom": [
+            "_parent_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.team_expertise": {
+      "name": "team_expertise",
+      "schema": "",
+      "columns": {
+        "_order": {
+          "name": "_order",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "_parent_id": {
+          "name": "_parent_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "id": {
+          "name": "id",
+          "type": "varchar",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "text": {
+          "name": "text",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {
+        "team_expertise_order_idx": {
+          "name": "team_expertise_order_idx",
+          "columns": [
+            {
+              "expression": "_order",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "team_expertise_parent_id_idx": {
+          "name": "team_expertise_parent_id_idx",
+          "columns": [
+            {
+              "expression": "_parent_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "team_expertise_parent_id_fk": {
+          "name": "team_expertise_parent_id_fk",
+          "tableFrom": "team_expertise",
+          "tableTo": "team",
+          "columnsFrom": [
+            "_parent_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.team_publications": {
+      "name": "team_publications",
+      "schema": "",
+      "columns": {
+        "_order": {
+          "name": "_order",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "_parent_id": {
+          "name": "_parent_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "id": {
+          "name": "id",
+          "type": "varchar",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "title": {
+          "name": "title",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "journal": {
+          "name": "journal",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "year": {
+          "name": "year",
+          "type": "numeric",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "url": {
+          "name": "url",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {
+        "team_publications_order_idx": {
+          "name": "team_publications_order_idx",
+          "columns": [
+            {
+              "expression": "_order",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "team_publications_parent_id_idx": {
+          "name": "team_publications_parent_id_idx",
+          "columns": [
+            {
+              "expression": "_parent_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "team_publications_parent_id_fk": {
+          "name": "team_publications_parent_id_fk",
+          "tableFrom": "team_publications",
+          "tableTo": "team",
+          "columnsFrom": [
+            "_parent_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
     "public.team": {
       "name": "team",
       "schema": "",
@@ -15607,12 +16845,6 @@
           "type": "varchar",
           "primaryKey": false,
           "notNull": true
-        },
-        "tagline": {
-          "name": "tagline",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": false
         },
         "bio": {
           "name": "bio",
@@ -15637,6 +16869,13 @@
           "type": "varchar",
           "primaryKey": false,
           "notNull": false
+        },
+        "featured": {
+          "name": "featured",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false,
+          "default": false
         },
         "order": {
           "name": "order",
@@ -15768,11 +17007,32 @@
           "primaryKey": false,
           "notNull": false
         },
+        "context": {
+          "name": "context",
+          "type": "enum_testimonials_context",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
         "logo_id": {
           "name": "logo_id",
           "type": "integer",
           "primaryKey": false,
           "notNull": false
+        },
+        "consent_on_file": {
+          "name": "consent_on_file",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false,
+          "default": false
+        },
+        "featured": {
+          "name": "featured",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false,
+          "default": false
         },
         "order": {
           "name": "order",
@@ -15986,6 +17246,178 @@
             "id"
           ],
           "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.certifications": {
+      "name": "certifications",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "name": {
+          "name": "name",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "kind": {
+          "name": "kind",
+          "type": "enum_certifications_kind",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'product-claim'"
+        },
+        "issuer": {
+          "name": "issuer",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "statement": {
+          "name": "statement",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "valid_until": {
+          "name": "valid_until",
+          "type": "timestamp(3) with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "document_id": {
+          "name": "document_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "logo_id": {
+          "name": "logo_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "order": {
+          "name": "order",
+          "type": "numeric",
+          "primaryKey": false,
+          "notNull": false,
+          "default": 0
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp(3) with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp(3) with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {
+        "certifications_document_idx": {
+          "name": "certifications_document_idx",
+          "columns": [
+            {
+              "expression": "document_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "certifications_logo_idx": {
+          "name": "certifications_logo_idx",
+          "columns": [
+            {
+              "expression": "logo_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "certifications_updated_at_idx": {
+          "name": "certifications_updated_at_idx",
+          "columns": [
+            {
+              "expression": "updated_at",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "certifications_created_at_idx": {
+          "name": "certifications_created_at_idx",
+          "columns": [
+            {
+              "expression": "created_at",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "certifications_document_id_documents_id_fk": {
+          "name": "certifications_document_id_documents_id_fk",
+          "tableFrom": "certifications",
+          "tableTo": "documents",
+          "columnsFrom": [
+            "document_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "set null",
+          "onUpdate": "no action"
+        },
+        "certifications_logo_id_media_id_fk": {
+          "name": "certifications_logo_id_media_id_fk",
+          "tableFrom": "certifications",
+          "tableTo": "media",
+          "columnsFrom": [
+            "logo_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "set null",
           "onUpdate": "no action"
         }
       },
@@ -16632,6 +18064,150 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
+    "public.customers": {
+      "name": "customers",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "name": {
+          "name": "name",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "logo_id": {
+          "name": "logo_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "website": {
+          "name": "website",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "sector": {
+          "name": "sector",
+          "type": "enum_customers_sector",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "country": {
+          "name": "country",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "anonymised_label": {
+          "name": "anonymised_label",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "show_logo": {
+          "name": "show_logo",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false,
+          "default": false
+        },
+        "order": {
+          "name": "order",
+          "type": "numeric",
+          "primaryKey": false,
+          "notNull": false,
+          "default": 0
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp(3) with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp(3) with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {
+        "customers_logo_idx": {
+          "name": "customers_logo_idx",
+          "columns": [
+            {
+              "expression": "logo_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "customers_updated_at_idx": {
+          "name": "customers_updated_at_idx",
+          "columns": [
+            {
+              "expression": "updated_at",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "customers_created_at_idx": {
+          "name": "customers_created_at_idx",
+          "columns": [
+            {
+              "expression": "created_at",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "customers_logo_id_media_id_fk": {
+          "name": "customers_logo_id_media_id_fk",
+          "tableFrom": "customers",
+          "tableTo": "media",
+          "columnsFrom": [
+            "logo_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "set null",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
     "public.users_roles": {
       "name": "users_roles",
       "schema": "",
@@ -17163,6 +18739,12 @@
           "primaryKey": false,
           "notNull": false
         },
+        "certifications_id": {
+          "name": "certifications_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
         "inquiries_id": {
           "name": "inquiries_id",
           "type": "integer",
@@ -17171,6 +18753,12 @@
         },
         "subscribers_id": {
           "name": "subscribers_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "customers_id": {
+          "name": "customers_id",
           "type": "integer",
           "primaryKey": false,
           "notNull": false
@@ -17408,6 +18996,21 @@
           "method": "btree",
           "with": {}
         },
+        "payload_locked_documents_rels_certifications_id_idx": {
+          "name": "payload_locked_documents_rels_certifications_id_idx",
+          "columns": [
+            {
+              "expression": "certifications_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
         "payload_locked_documents_rels_inquiries_id_idx": {
           "name": "payload_locked_documents_rels_inquiries_id_idx",
           "columns": [
@@ -17428,6 +19031,21 @@
           "columns": [
             {
               "expression": "subscribers_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "payload_locked_documents_rels_customers_id_idx": {
+          "name": "payload_locked_documents_rels_customers_id_idx",
+          "columns": [
+            {
+              "expression": "customers_id",
               "isExpression": false,
               "asc": true,
               "nulls": "last"
@@ -17624,6 +19242,19 @@
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
+        "payload_locked_documents_rels_certifications_fk": {
+          "name": "payload_locked_documents_rels_certifications_fk",
+          "tableFrom": "payload_locked_documents_rels",
+          "tableTo": "certifications",
+          "columnsFrom": [
+            "certifications_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
         "payload_locked_documents_rels_inquiries_fk": {
           "name": "payload_locked_documents_rels_inquiries_fk",
           "tableFrom": "payload_locked_documents_rels",
@@ -17643,6 +19274,19 @@
           "tableTo": "subscribers",
           "columnsFrom": [
             "subscribers_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "payload_locked_documents_rels_customers_fk": {
+          "name": "payload_locked_documents_rels_customers_fk",
+          "tableFrom": "payload_locked_documents_rels",
+          "tableTo": "customers",
+          "columnsFrom": [
+            "customers_id"
           ],
           "columnsTo": [
             "id"
@@ -18362,6 +20006,37 @@
         "logo_dark_id": {
           "name": "logo_dark_id",
           "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "proof_founded_text": {
+          "name": "proof_founded_text",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "proof_team_size": {
+          "name": "proof_team_size",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "proof_capacity": {
+          "name": "proof_capacity",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "proof_customers_statement": {
+          "name": "proof_customers_statement",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'Used in GMP facilities. Repeat orders from Indian biopharma.'"
+        },
+        "proof_linkedin_followers": {
+          "name": "proof_linkedin_followers",
+          "type": "numeric",
           "primaryKey": false,
           "notNull": false
         },
@@ -19129,12 +20804,6 @@
           "primaryKey": true,
           "notNull": true
         },
-        "tagline": {
-          "name": "tagline",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": false
-        },
         "cta_link_type": {
           "name": "cta_link_type",
           "type": "enum_header_cta_link_type",
@@ -19751,26 +21420,6 @@
           "primaryKey": false,
           "notNull": false
         },
-        "newsletter_heading": {
-          "name": "newsletter_heading",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": false,
-          "default": "'Notes from the bench'"
-        },
-        "newsletter_text": {
-          "name": "newsletter_text",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": false,
-          "default": "'Product updates, data and technical notes.'"
-        },
-        "newsletter_note": {
-          "name": "newsletter_note",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": false
-        },
         "bottom_text": {
           "name": "bottom_text",
           "type": "varchar",
@@ -20194,14 +21843,6 @@
         "wide"
       ]
     },
-    "public.enum_pages_blocks_trust_strip_source": {
-      "name": "enum_pages_blocks_trust_strip_source",
-      "schema": "public",
-      "values": [
-        "settings",
-        "custom"
-      ]
-    },
     "public.enum_pages_blocks_stats_style": {
       "name": "enum_pages_blocks_stats_style",
       "schema": "public",
@@ -20274,38 +21915,6 @@
         "left"
       ]
     },
-    "public.enum_pages_blocks_two_column_background": {
-      "name": "enum_pages_blocks_two_column_background",
-      "schema": "public",
-      "values": [
-        "light",
-        "recessed"
-      ]
-    },
-    "public.enum_pages_blocks_grades_platform_link_type": {
-      "name": "enum_pages_blocks_grades_platform_link_type",
-      "schema": "public",
-      "values": [
-        "internal",
-        "custom"
-      ]
-    },
-    "public.enum_pages_blocks_applications_grid_layout": {
-      "name": "enum_pages_blocks_applications_grid_layout",
-      "schema": "public",
-      "values": [
-        "cards",
-        "list"
-      ]
-    },
-    "public.enum_pages_blocks_services_grid_layout": {
-      "name": "enum_pages_blocks_services_grid_layout",
-      "schema": "public",
-      "values": [
-        "cards",
-        "row"
-      ]
-    },
     "public.enum_pages_blocks_document_list_types": {
       "name": "enum_pages_blocks_document_list_types",
       "schema": "public",
@@ -20322,12 +21931,15 @@
         "other"
       ]
     },
-    "public.enum_pages_blocks_team_grid_layout": {
-      "name": "enum_pages_blocks_team_grid_layout",
+    "public.enum_pages_blocks_linked_in_feed_kind": {
+      "name": "enum_pages_blocks_linked_in_feed_kind",
       "schema": "public",
       "values": [
-        "grid",
-        "spread"
+        "product-launch",
+        "data",
+        "milestone",
+        "services",
+        "perspective"
       ]
     },
     "public.enum_pages_blocks_faq_block_category": {
@@ -20384,8 +21996,43 @@
       "values": [
         "dark",
         "accent",
+        "light"
+      ]
+    },
+    "public.enum_pages_blocks_logo_wall_source": {
+      "name": "enum_pages_blocks_logo_wall_source",
+      "schema": "public",
+      "values": [
+        "all",
+        "picked"
+      ]
+    },
+    "public.enum_pages_blocks_certifications_strip_kinds": {
+      "name": "enum_pages_blocks_certifications_strip_kinds",
+      "schema": "public",
+      "values": [
+        "quality-system",
+        "product-claim",
+        "regulatory",
+        "membership",
+        "award"
+      ]
+    },
+    "public.enum_pages_blocks_gallery_layout": {
+      "name": "enum_pages_blocks_gallery_layout",
+      "schema": "public",
+      "values": [
+        "grid",
+        "strip",
+        "spread"
+      ]
+    },
+    "public.enum_pages_blocks_proof_bar_style": {
+      "name": "enum_pages_blocks_proof_bar_style",
+      "schema": "public",
+      "values": [
         "light",
-        "evaluation"
+        "dark"
       ]
     },
     "public.enum_pages_hero_style": {
@@ -20428,14 +22075,6 @@
       "values": [
         "narrow",
         "wide"
-      ]
-    },
-    "public.enum__pages_v_blocks_trust_strip_source": {
-      "name": "enum__pages_v_blocks_trust_strip_source",
-      "schema": "public",
-      "values": [
-        "settings",
-        "custom"
       ]
     },
     "public.enum__pages_v_blocks_stats_style": {
@@ -20510,38 +22149,6 @@
         "left"
       ]
     },
-    "public.enum__pages_v_blocks_two_column_background": {
-      "name": "enum__pages_v_blocks_two_column_background",
-      "schema": "public",
-      "values": [
-        "light",
-        "recessed"
-      ]
-    },
-    "public.enum__pages_v_blocks_grades_platform_link_type": {
-      "name": "enum__pages_v_blocks_grades_platform_link_type",
-      "schema": "public",
-      "values": [
-        "internal",
-        "custom"
-      ]
-    },
-    "public.enum__pages_v_blocks_applications_grid_layout": {
-      "name": "enum__pages_v_blocks_applications_grid_layout",
-      "schema": "public",
-      "values": [
-        "cards",
-        "list"
-      ]
-    },
-    "public.enum__pages_v_blocks_services_grid_layout": {
-      "name": "enum__pages_v_blocks_services_grid_layout",
-      "schema": "public",
-      "values": [
-        "cards",
-        "row"
-      ]
-    },
     "public.enum__pages_v_blocks_document_list_types": {
       "name": "enum__pages_v_blocks_document_list_types",
       "schema": "public",
@@ -20558,12 +22165,15 @@
         "other"
       ]
     },
-    "public.enum__pages_v_blocks_team_grid_layout": {
-      "name": "enum__pages_v_blocks_team_grid_layout",
+    "public.enum__pages_v_blocks_linked_in_feed_kind": {
+      "name": "enum__pages_v_blocks_linked_in_feed_kind",
       "schema": "public",
       "values": [
-        "grid",
-        "spread"
+        "product-launch",
+        "data",
+        "milestone",
+        "services",
+        "perspective"
       ]
     },
     "public.enum__pages_v_blocks_faq_block_category": {
@@ -20620,8 +22230,43 @@
       "values": [
         "dark",
         "accent",
+        "light"
+      ]
+    },
+    "public.enum__pages_v_blocks_logo_wall_source": {
+      "name": "enum__pages_v_blocks_logo_wall_source",
+      "schema": "public",
+      "values": [
+        "all",
+        "picked"
+      ]
+    },
+    "public.enum__pages_v_blocks_certifications_strip_kinds": {
+      "name": "enum__pages_v_blocks_certifications_strip_kinds",
+      "schema": "public",
+      "values": [
+        "quality-system",
+        "product-claim",
+        "regulatory",
+        "membership",
+        "award"
+      ]
+    },
+    "public.enum__pages_v_blocks_gallery_layout": {
+      "name": "enum__pages_v_blocks_gallery_layout",
+      "schema": "public",
+      "values": [
+        "grid",
+        "strip",
+        "spread"
+      ]
+    },
+    "public.enum__pages_v_blocks_proof_bar_style": {
+      "name": "enum__pages_v_blocks_proof_bar_style",
+      "schema": "public",
+      "values": [
         "light",
-        "evaluation"
+        "dark"
       ]
     },
     "public.enum__pages_v_version_hero_style": {
@@ -20681,6 +22326,44 @@
         "published"
       ]
     },
+    "public.enum_updates_kind": {
+      "name": "enum_updates_kind",
+      "schema": "public",
+      "values": [
+        "product-launch",
+        "data",
+        "milestone",
+        "services",
+        "perspective"
+      ]
+    },
+    "public.enum_updates_status": {
+      "name": "enum_updates_status",
+      "schema": "public",
+      "values": [
+        "draft",
+        "published"
+      ]
+    },
+    "public.enum__updates_v_version_kind": {
+      "name": "enum__updates_v_version_kind",
+      "schema": "public",
+      "values": [
+        "product-launch",
+        "data",
+        "milestone",
+        "services",
+        "perspective"
+      ]
+    },
+    "public.enum__updates_v_version_status": {
+      "name": "enum__updates_v_version_status",
+      "schema": "public",
+      "values": [
+        "draft",
+        "published"
+      ]
+    },
     "public.enum_documents_type": {
       "name": "enum_documents_type",
       "schema": "public",
@@ -20706,6 +22389,27 @@
         "shipping",
         "quality",
         "technical"
+      ]
+    },
+    "public.enum_testimonials_context": {
+      "name": "enum_testimonials_context",
+      "schema": "public",
+      "values": [
+        "evaluation",
+        "production",
+        "research",
+        "distributor"
+      ]
+    },
+    "public.enum_certifications_kind": {
+      "name": "enum_certifications_kind",
+      "schema": "public",
+      "values": [
+        "quality-system",
+        "product-claim",
+        "regulatory",
+        "membership",
+        "award"
       ]
     },
     "public.enum_inquiries_items_grade": {
@@ -20767,6 +22471,18 @@
         "pending",
         "confirmed",
         "unsubscribed"
+      ]
+    },
+    "public.enum_customers_sector": {
+      "name": "enum_customers_sector",
+      "schema": "public",
+      "values": [
+        "biopharma",
+        "vaccines",
+        "diagnostics",
+        "cdmo",
+        "research",
+        "distributor"
       ]
     },
     "public.enum_users_roles": {
@@ -20845,6 +22561,6 @@
     "tables": {},
     "columns": {}
   },
-  "id": "611efee2-d92c-4919-84b5-85531f8a46d6",
+  "id": "59066c9e-3a1c-4f97-98bf-0c53c708f60b",
   "prevId": "00000000-0000-0000-0000-000000000000"
 }

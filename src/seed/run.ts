@@ -9,7 +9,7 @@ import path from 'path'
 import fs from 'fs/promises'
 import type { Payload } from 'payload'
 import { products as seedProducts } from './data/products'
-import { applications, categories, faqs, footer, header, services, siteSettings, team } from './data/content'
+import { applications, categories, certifications, faqs, footer, header, services, siteSettings, team, updates } from './data/content'
 import { documents, mediaAlts, pages, posts } from './data/pages'
 
 const SEED_DIR = process.env.SEED_DIR || path.resolve(process.cwd(), 'seed')
@@ -21,7 +21,7 @@ export async function runSeed(payload: Payload, opts: { reset?: boolean } = {}) 
   const log = (m: string) => payload.logger.info(`[seed] ${m}`)
 
   if (opts.reset) {
-    for (const c of ['posts', 'pages', 'products', 'documents', 'product-categories', 'applications', 'services', 'faqs', 'team', 'testimonials', 'updates', 'media'] as const) {
+    for (const c of ['posts', 'pages', 'products', 'documents', 'product-categories', 'applications', 'services', 'faqs', 'team', 'testimonials', 'certifications', 'customers', 'updates', 'media'] as const) {
       await payload.delete({ collection: c, where: { id: { exists: true } }, ...ctx })
       log(`cleared ${c}`)
     }
@@ -144,9 +144,30 @@ export async function runSeed(payload: Payload, opts: { reset?: boolean } = {}) 
   // ---------- Team ----------
   const teamIds = new Map<string, number>()
   for (const t of team) {
-    const doc = await upsert(payload, 'team', { name: { equals: t.name } }, t)
+    const { credentials, expertise, ...rest } = t
+    const doc = await upsert(payload, 'team', { name: { equals: t.name } }, { ...rest, credentials: (credentials ?? []).map((text) => ({ text })), expertise: (expertise ?? []).map((text) => ({ text })) })
     teamIds.set(t.name, doc.id)
   }
+  log(`team: ${teamIds.size}`)
+
+  // ---------- Certifications & claims (the Customers and Testimonials collections are deliberately left empty) ----------
+  for (const c of certifications) {
+    await upsert(payload, 'certifications', { name: { equals: c.name } }, c)
+  }
+  log(`certifications: ${certifications.length}`)
+
+  // ---------- LinkedIn updates: drafts only (no URL yet) — the editor pastes the post URL and publishes ----------
+  for (const u of updates) {
+    const existing = await payload.find({ collection: 'updates', where: { title: { equals: u.title } }, limit: 1, draft: true, ...ctx })
+    if (existing.docs[0]) continue // never overwrite an update the editor may have published
+    await payload.create({
+      collection: 'updates',
+      draft: true,
+      data: { title: u.title, summary: u.summary, kind: u.kind as never, publishedAt: u.publishedAt, image: media(u.image), relatedProducts: u.relatedProducts.map((slug) => productIds.get(slug)!).filter(Boolean), _status: 'draft' },
+      ...ctx,
+    })
+  }
+  log(`updates (drafts): ${updates.length}`)
 
   // ---------- Globals ----------
   await payload.updateGlobal({ slug: 'site-settings', data: { ...siteSettings, logo: media('protpure-logo.svg'), ogImage: media('hero-resins-concept.webp') } as never, ...ctx })
@@ -235,10 +256,10 @@ export async function runSeed(payload: Payload, opts: { reset?: boolean } = {}) 
   log(`posts: ${posts.length}`)
 
   log('done ✔')
-  return { products: productIds.size, pages: pages.length, media: mediaIds.size, documents: documentIds.size, posts: posts.length }
+  return { products: productIds.size, pages: pages.length, media: mediaIds.size, documents: documentIds.size, posts: posts.length, certifications: certifications.length, updateDrafts: updates.length }
 }
 
-async function upsert(payload: Payload, collection: 'product-categories' | 'applications' | 'services' | 'products' | 'faqs' | 'team' | 'pages' | 'posts', where: Record<string, unknown>, data: Record<string, unknown>) {
+async function upsert(payload: Payload, collection: 'product-categories' | 'applications' | 'services' | 'products' | 'faqs' | 'team' | 'certifications' | 'pages' | 'posts', where: Record<string, unknown>, data: Record<string, unknown>) {
   const existing = await payload.find({ collection, where: where as never, limit: 1, ...ctx })
   if (existing.docs[0]) {
     return payload.update({ collection, id: existing.docs[0].id, data: data as never, ...ctx })
