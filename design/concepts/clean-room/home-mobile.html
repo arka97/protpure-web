@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Purification. Precisely engineered. / Mobile / Protpure — Clean Room</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&amp;family=Space+Grotesk:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+
+:root { --paper:#ffffff; --wash:#f3f6f6; --ink:#172526; --muted:#526465; --line:#cbd6d6; --accent:#006e73; --tint:#e5f1f0; --mono:'IBM Plex Mono',ui-monospace,monospace; --sans:'Space Grotesk',system-ui,sans-serif; }
+* { box-sizing:border-box; }
+html { width:1440px; margin:0; scroll-behavior:smooth; }
+body { margin:0; background:var(--paper); color:var(--ink); font-family:var(--sans); font-size:16px; line-height:1.5; -webkit-font-smoothing:antialiased; }
+::selection { background:var(--tint); }
+a { color:inherit; text-decoration:none; }
+button,input,select,textarea { font:inherit; color:inherit; }
+button,a,input,select,summary { -webkit-tap-highlight-color:transparent; }
+button { cursor:pointer; }
+:focus-visible { outline:2px solid var(--accent); outline-offset:4px; }
+button,a { transition:background 140ms,color 140ms; }
+svg { display:block; }
+.icon { width:20px; height:20px; flex:none; stroke:currentColor; stroke-width:1.5; fill:none; stroke-linecap:round; stroke-linejoin:round; }
+p,h1,h2,h3,h4,figure { margin:0; }
+h1,h2,h3 { font-weight:500; }
+h1 { font-size:80px; line-height:1.02; letter-spacing:-5px; }
+h2 { font-size:42px; line-height:1.12; letter-spacing:-1.8px; }
+h3 { font-size:24px; line-height:1.2; letter-spacing:-.65px; }
+p { color:var(--muted); }
+.mono,table td:not(:first-child),.metric strong,.num { font-family:var(--mono); font-variant-numeric:tabular-nums; }
+.label { font-family:var(--mono); font-size:11px; line-height:1.5; text-transform:uppercase; letter-spacing:1.2px; }
+.muted { color:var(--muted); }
+.teal { color:var(--accent); }
+.small { font-size:13px; line-height:1.55; }
+.wrap { width:1280px; margin:0 auto; }
+.topbar { height:30px; background:var(--wash); border-bottom:1px solid var(--line); }
+.topbar .wrap { display:flex; justify-content:space-between; align-items:center; height:100%; font-family:var(--mono); font-size:10px; letter-spacing:.5px; }
+.nav { height:88px; border-bottom:1px solid var(--line); background:white; }
+.nav .wrap { display:flex; align-items:center; height:100%; gap:48px; }
+.logo { width:136px; height:48px; object-fit:contain; }
+.navlinks { display:flex; gap:30px; align-items:center; margin-left:70px; font-size:14px; }
+.navlinks a:hover,.textlink:hover { color:var(--accent); }
+.navlinks a.active { color:var(--accent); border-bottom:1px solid var(--accent); }
+.basket-link { margin-left:auto; display:flex; gap:12px; align-items:center; font-size:14px; }
+.count { display:grid; place-items:center; width:26px; height:26px; background:var(--tint); color:var(--accent); font:12px var(--mono); }
+.mobile-menu { display:none; }
+.btn { display:inline-flex; align-items:center; justify-content:center; gap:20px; padding:14px 20px; min-height:48px; border:1px solid var(--accent); background:var(--accent); color:white; font-size:14px; font-weight:500; border-radius:2px; }
+.btn:hover { background:#00565a; }
+.btn.secondary { background:transparent; color:var(--ink); border-color:var(--line); }
+.btn.secondary:hover { background:var(--wash); }
+.btn.compact { min-height:40px; padding:9px 14px; gap:12px; font-size:13px; }
+.textlink { display:inline-flex; gap:14px; align-items:center; font-size:14px; border-bottom:1px solid var(--line); padding-bottom:5px; }
+.actions { display:flex; align-items:center; gap:28px; margin-top:28px; }
+.section { padding:64px 0; border-bottom:1px solid var(--line); }
+.section-head { display:flex; justify-content:space-between; align-items:end; gap:40px; margin-bottom:32px; }
+.section-head .label { margin-bottom:14px; color:var(--accent); }
+.section-head p { max-width:420px; font-size:15px; }
+.home-hero { display:grid; grid-template-columns:1.08fr 1fr; min-height:550px; }
+.hero-copy { padding:64px 36px 48px 0; }
+.hero-copy .label { color:var(--accent); margin-bottom:25px; }
+.hero-copy h1 { margin-bottom:24px; }
+.hero-copy h1 span { color:var(--accent); }
+.hero-copy p { max-width:490px; font-size:17px; line-height:1.6; }
+.hero-drawing { border-left:1px solid var(--line); padding:24px 0 24px 32px; display:flex; flex-direction:column; justify-content:space-between; }
+.drawing-label { display:flex; justify-content:space-between; color:var(--muted); }
+.bead-diagram { width:100%; height:388px; color:var(--accent); }
+.drawing-note { display:flex; justify-content:space-between; border-top:1px solid var(--line); padding-top:12px; }
+.hero-metrics { display:grid; grid-template-columns:repeat(3,1fr); border-top:1px solid var(--ink); padding:25px 0; }
+.metric { padding-left:32px; border-left:1px solid var(--line); }
+.metric:first-child { padding-left:0; border:0; }
+.metric strong { display:block; font-size:38px; font-weight:400; line-height:1.2; letter-spacing:-2px; }
+.metric strong span { font-size:19px; letter-spacing:-.5px; }
+.metric p { font-size:13px; margin-top:7px; }
+.trust { border-top:1px solid var(--line); border-bottom:1px solid var(--line); background:var(--wash); }
+.trust .wrap { display:flex; justify-content:space-between; padding:17px 0; }
+.trust span { display:flex; align-items:center; gap:10px; font-size:13px; }
+.trust .icon { color:var(--accent); width:16px; height:16px; }
+.mode-grid { display:grid; grid-template-columns:repeat(3,1fr); border-left:1px solid var(--line); border-top:1px solid var(--line); }
+.mode-card { padding:24px; border-right:1px solid var(--line); border-bottom:1px solid var(--line); display:grid; grid-template-columns:40px 1fr 20px; gap:15px; align-items:start; min-height:132px; }
+.mode-card:hover { background:var(--wash); }
+.mode-card h3 { font-size:20px; margin-bottom:8px; }
+.mode-card p { font-size:13px; }
+.mode-symbol { width:32px; height:32px; color:var(--accent); }
+.inline-row { display:flex; justify-content:space-between; align-items:center; gap:20px; padding-top:20px; font-size:13px; }
+.platform { background:var(--wash); }
+.platform-grid { display:grid; grid-template-columns:290px 1fr; gap:60px; }
+.platform-intro h2 { margin:12px 0 22px; }
+.platform-intro p { font-size:14px; }
+.platform-intro .textlink { margin-top:24px; }
+.grade-axis,.grade-row { display:grid; grid-template-columns:140px 1fr 100px 114px; align-items:center; gap:20px; }
+.grade-axis { font:10px var(--mono); text-transform:uppercase; color:var(--muted); padding-bottom:14px; border-bottom:1px solid var(--ink); }
+.grade-axis div:last-child { text-align:right; }
+.grade-row { min-height:87px; border-bottom:1px solid var(--line); }
+.grade-name { font-size:16px; font-weight:500; }
+.grade-name small { display:block; font-size:11px; font-weight:400; color:var(--muted); margin-top:4px; }
+.range-track { position:relative; height:35px; border-left:1px solid var(--line); border-right:1px solid var(--line); background:repeating-linear-gradient(90deg,transparent 0,transparent calc(25% - 1px),var(--line) calc(25% - 1px),var(--line) 25%); }
+.range-mark { position:absolute; height:12px; top:11px; border:1px solid var(--accent); background:var(--tint); }
+.range-dot { position:absolute; height:20px; width:2px; top:7px; background:var(--accent); }
+.grade-row .num { font-size:16px; }
+.grade-row .num:last-child { text-align:right; }
+.axis-ticks { display:flex; justify-content:space-between; font:10px var(--mono); color:var(--muted); margin:10px 254px 0 160px; }
+.footnote { font-size:11px; line-height:1.6; color:var(--muted); margin-top:14px; }
+.reason-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:36px; margin-bottom:35px; }
+.reason .label { color:var(--accent); margin-bottom:15px; }
+.reason h3 { font-size:20px; margin-bottom:10px; }
+.reason p { font-size:14px; }
+table { width:100%; border-collapse:collapse; font-size:13px; }
+caption { text-align:left; font-size:20px; font-weight:500; margin-bottom:15px; }
+th { text-align:left; font-size:11px; font-weight:500; padding:13px 18px; border-top:1px solid var(--ink); border-bottom:1px solid var(--line); color:var(--muted); background:var(--wash); }
+td { padding:13px 18px; border-bottom:1px solid var(--line); vertical-align:top; }
+td:first-child { font-weight:500; }
+.highlight { background:var(--tint); color:var(--accent); }
+.comparison td:not(:first-child) { font-family:var(--sans); }
+.comparison th:first-child { width:25%; }
+.comparison th:nth-child(2) { width:32%; }
+.workflow-grid { display:grid; grid-template-columns:repeat(3,1fr); }
+.workflow { display:flex; justify-content:space-between; border-top:1px solid var(--line); padding:17px 20px 17px 0; margin-right:30px; font-size:16px; }
+.factory-grid { display:grid; grid-template-columns:1.1fr 1fr; gap:64px; margin-top:42px; }
+.photo-placeholder { min-height:200px; border:1px solid var(--line); background:var(--wash); position:relative; display:grid; place-items:center; font:11px var(--mono); color:var(--muted); }
+.photo-placeholder:before,.photo-placeholder:after { content:''; position:absolute; width:18px; height:18px; border-color:var(--muted); border-style:solid; }
+.photo-placeholder:before { left:14px; top:14px; border-width:1px 0 0 1px; }
+.photo-placeholder:after { right:14px; bottom:14px; border-width:0 1px 1px 0; }
+.factory-caption { display:flex; justify-content:space-between; margin-top:12px; font-size:12px; }
+.founder-head { display:grid; grid-template-columns:110px 1fr; gap:24px; align-items:center; margin-bottom:20px; }
+.founder-head .photo-placeholder { min-height:124px; font-size:9px; text-align:center; padding:15px; }
+.founder-head h3 { margin:8px 0; }
+.founder-copy { font-size:15px; line-height:1.7; }
+.social-proof { display:grid; grid-template-columns:1fr 2fr; gap:40px; border-top:1px solid var(--line); padding-top:28px; margin-top:34px; }
+.logo-slots { display:grid; grid-template-columns:repeat(3,1fr); }
+.logo-slot { display:grid; place-items:center; min-height:65px; border:1px dashed var(--line); font:10px var(--mono); color:var(--muted); }
+.services-grid { display:grid; grid-template-columns:1fr 1fr; gap:64px; }
+.service-list { border-top:1px solid var(--ink); }
+.service-item { display:flex; justify-content:space-between; align-items:center; padding:17px 0; border-bottom:1px solid var(--line); }
+.service-item h3 { font-size:18px; }
+.service-item p { margin-top:5px; font-size:12px; }
+.lab-image { width:100%; height:245px; object-fit:cover; object-position:center 60%; }
+.evaluation { padding:28px; background:var(--tint); display:grid; grid-template-columns:1fr auto; align-items:center; gap:30px; margin-top:35px; }
+.evaluation h3 { margin:9px 0; font-size:27px; }
+.evaluation p { max-width:760px; font-size:14px; }
+.faq-grid { display:grid; grid-template-columns:1fr 2fr; gap:60px; }
+.faq-grid h2 { margin:14px 0; }
+details { border-top:1px solid var(--line); }
+details:last-child { border-bottom:1px solid var(--line); }
+summary { list-style:none; cursor:pointer; padding:17px 0; display:flex; justify-content:space-between; gap:16px; font-size:16px; }
+summary::-webkit-details-marker { display:none; }
+summary:after { content:'+'; font:20px var(--mono); color:var(--accent); }
+details[open] summary:after { content:'−'; }
+details p { padding:0 36px 20px 0; font-size:14px; }
+.final-cta { background:var(--wash); padding:45px 0; border-bottom:1px solid var(--line); }
+.final-cta .wrap { display:flex; justify-content:space-between; align-items:center; }
+.final-cta h2 { font-size:36px; }
+.final-cta p { margin-top:12px; font-size:14px; }
+.footer { padding:38px 0 22px; }
+.footer-grid { display:grid; grid-template-columns:1.3fr 1fr 1fr 1.4fr; gap:38px; }
+.footer .logo { width:120px; height:43px; }
+.footer p { margin-top:12px; font-size:12px; line-height:1.7; }
+.footer h4 { font-size:13px; font-weight:500; margin-bottom:14px; }
+.footer a:not(.brand) { display:block; font-size:12px; margin:8px 0; color:var(--muted); }
+.newsletter { display:flex; border-bottom:1px solid var(--ink); margin-top:15px; }
+.newsletter input { width:100%; border:0; padding:12px 0; font-size:13px; background:transparent; }
+.newsletter button { background:transparent; border:0; color:var(--accent); }
+.footer-bottom { border-top:1px solid var(--line); margin-top:32px; padding-top:16px; display:flex; justify-content:space-between; font:10px var(--mono); color:var(--muted); }
+.breadcrumb { font-size:12px; color:var(--muted); padding:25px 0; }
+.page-title { display:flex; justify-content:space-between; align-items:end; padding:12px 0 35px; }
+.page-title h1 { font-size:64px; letter-spacing:-3px; margin:12px 0; }
+.page-title p { font-size:15px; }
+.catalogue-layout { display:grid; grid-template-columns:218px 1fr; gap:44px; padding:32px 0 64px; border-top:1px solid var(--line); }
+.filters h2 { font-size:16px; letter-spacing:0; padding-bottom:20px; border-bottom:1px solid var(--line); display:flex; justify-content:space-between; }
+.filter-group { border:0; border-bottom:1px solid var(--line); margin:0; padding:24px 0; }
+.filter-group legend { float:left; width:100%; font:10px var(--mono); letter-spacing:1px; text-transform:uppercase; margin-bottom:16px; color:var(--muted); }
+.filter-option { display:flex; align-items:center; gap:9px; font-size:12px; padding:6px 0; clear:both; }
+.filter-option span:last-child { margin-left:auto; font:10px var(--mono); color:var(--muted); }
+input[type='checkbox'],input[type='radio'] { accent-color:var(--accent); width:14px; height:14px; margin:0; }
+.wizard { background:var(--tint); padding:18px 22px; margin-bottom:22px; }
+.wizard summary { padding:0; font-size:16px; }
+.wizard small { display:block; font-size:12px; color:var(--muted); margin-top:3px; }
+.wizard-body { display:flex; gap:16px; align-items:end; padding-top:20px; }
+.wizard-body label { flex:1; font-size:12px; }
+select,input[type='number'],textarea,input[type='email'],input[type='text'] { border:1px solid var(--line); background:white; border-radius:2px; padding:9px 11px; }
+select { min-height:39px; font-size:12px; width:100%; }
+.catalogue-toolbar { display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; font-size:13px; }
+.catalogue-toolbar label { display:flex; align-items:center; gap:12px; }
+.catalogue-toolbar select { width:166px; }
+.product-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; }
+.product-card { border:1px solid var(--line); padding:21px 18px 18px; min-width:0; background:white; }
+.card-top { display:flex; align-items:center; justify-content:space-between; margin-bottom:19px; }
+.card-top .label { font-size:9px; letter-spacing:.65px; color:var(--accent); }
+.status { font:10px var(--mono); color:var(--accent); display:inline-flex; gap:6px; align-items:center; }
+.status:before { content:''; width:5px; height:5px; background:var(--accent); border-radius:50%; }
+.status.mto { color:var(--muted); }
+.status.mto:before { background:transparent; border:1px solid var(--muted); }
+.product-card h3 { font-size:22px; min-height:53px; }
+.product-card .description { font-size:12px; min-height:39px; margin:8px 0 20px; }
+.card-specs { display:grid; grid-template-columns:1fr 1fr; border-top:1px solid var(--line); border-bottom:1px solid var(--line); padding:12px 0; gap:8px; min-height:88px; }
+.card-specs dt { font:9px var(--mono); color:var(--muted); text-transform:uppercase; margin-bottom:7px; }
+.card-specs dd { font:15px var(--mono); margin:0; line-height:1.4; }
+.card-specs dd small { display:block; font-size:9px; color:var(--muted); margin-top:3px; }
+.card-config { display:grid; grid-template-columns:1.2fr 1fr; gap:8px; margin:15px 0; }
+.card-config label { font:9px var(--mono); text-transform:uppercase; color:var(--muted); }
+.card-config select { margin-top:6px; font-family:var(--sans); color:var(--ink); padding:8px; font-size:11px; }
+.card-bottom { display:flex; align-items:center; justify-content:space-between; gap:6px; }
+.compare { display:flex; align-items:center; gap:6px; font-size:11px; }
+.card-bottom .btn { font-size:11px; padding:9px 10px; gap:7px; }
+.catalogue-note { margin-top:24px; border-top:1px solid var(--line); padding-top:18px; font-size:12px; }
+.product-hero { display:grid; grid-template-columns:1.3fr 1fr; gap:64px; padding:8px 0 44px; }
+.product-hero h1 { font-size:80px; margin:22px 0 7px; }
+.product-subtitle { font-size:23px; color:var(--accent); margin-bottom:20px; }
+.product-hero .description { max-width:660px; font-size:16px; }
+.product-facts { display:grid; grid-template-columns:1fr 1.5fr 1fr; gap:25px; margin-top:30px; border-top:1px solid var(--line); padding-top:20px; }
+.product-facts dt { font:10px var(--mono); color:var(--muted); margin-bottom:8px; text-transform:uppercase; }
+.product-facts dd { margin:0; font-size:13px; }
+.product-visual { border:1px solid var(--line); position:relative; display:grid; place-items:center; }
+.product-visual img { width:340px; height:340px; object-fit:contain; }
+.product-visual .label { position:absolute; left:20px; top:16px; font-size:10px; color:var(--muted); }
+.product-visual .visual-caption { position:absolute; bottom:12px; left:20px; right:20px; display:flex; justify-content:space-between; border-top:1px solid var(--line); padding-top:8px; font:10px var(--mono); color:var(--muted); }
+.section-nav { position:sticky; top:0; z-index:10; background:white; border-block:1px solid var(--line); }
+.section-nav .wrap { display:flex; align-items:center; gap:35px; height:66px; font-size:13px; }
+.section-nav .btn { margin-left:auto; }
+section[id] { scroll-margin-top:84px; }
+.overview-grid { display:grid; grid-template-columns:1fr 2fr; gap:60px; }
+.overview-grid p { font-size:16px; }
+.use-tags { display:flex; flex-wrap:wrap; gap:7px; margin-top:20px; }
+.tag { font-size:11px; border:1px solid var(--line); padding:6px 9px; }
+.grade-table td { font-size:12px; }
+.grade-table td small { display:block; color:var(--muted); font-size:10px; margin-top:5px; }
+.grade-table td:first-child { min-width:140px; }
+.grade-table th { font-size:10px; }
+.spec-table th:first-child { width:27%; }
+.spec-table th:nth-child(2) { width:37%; }
+.spec-table td { line-height:1.65; }
+.ordering-layout { display:grid; grid-template-columns:1fr 355px; gap:38px; align-items:start; }
+.order-controls { display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; }
+.order-controls label { display:flex; align-items:center; gap:14px; font-size:13px; }
+.order-controls select { width:160px; }
+.order-table td { vertical-align:middle; padding:10px 12px; }
+.order-table input { width:60px; padding:7px; font-size:12px; }
+.order-table .btn { font:12px var(--sans); }
+.drawer-mock { border:1px solid var(--ink); background:white; padding:24px; box-shadow:8px 8px 0 var(--wash); }
+.drawer-heading { display:flex; justify-content:space-between; align-items:center; padding-bottom:20px; border-bottom:1px solid var(--line); }
+.drawer-heading h3 { font-size:23px; }
+.drawer-item { padding:20px 0; border-bottom:1px solid var(--line); }
+.drawer-item h4 { font-size:16px; font-weight:500; margin-bottom:7px; }
+.drawer-item p { font:11px var(--mono); }
+.drawer-item .inline-row { padding-top:12px; }
+.drawer-form { margin-top:22px; }
+.drawer-form label { display:block; font-size:12px; margin-top:12px; }
+.drawer-form input,.drawer-form textarea { display:block; width:100%; margin-top:6px; }
+.drawer-form .btn { width:100%; margin-top:20px; }
+.documents { display:grid; grid-template-columns:repeat(3,1fr); gap:20px; }
+.document { border:1px solid var(--line); padding:22px; }
+.document h3 { font-size:18px; margin:20px 0 10px; }
+.document .textlink { margin-top:18px; }
+.related-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:20px; }
+.quote-bar { position:sticky; bottom:0; z-index:12; background:var(--ink); color:white; padding:14px 0; }
+.quote-bar .wrap { display:flex; align-items:center; justify-content:space-between; }
+.quote-bar p { color:#cbd6d6; font-size:12px; }
+.quote-bar .btn { background:white; color:var(--ink); border-color:white; }
+.quote-bar strong { font-weight:500; }
+.rfq-overlay { display:none; position:fixed; inset:0; z-index:100; background:rgb(23 37 38 / .22); }
+.rfq-overlay:target { display:block; }
+.rfq-panel { position:absolute; right:0; top:0; bottom:0; width:440px; overflow:auto; background:white; padding:32px; box-shadow:-8px 0 30px rgb(23 37 38 / .08); }
+.rfq-close { display:grid; place-items:center; width:32px; height:32px; }
+.empty-rfq { margin:24px 0; font-size:14px; }
+.notice { font-size:12px; color:var(--accent); margin-top:14px; }
+[hidden] { display:none !important; }
+@media(prefers-reduced-motion:reduce) { html { scroll-behavior:auto; } * { transition:none !important; } }
+
+html { width:390px; }
+body { font-size:15px; }
+.wrap { width:342px; }
+.topbar { height:27px; }
+.topbar .wrap { font-size:8px; justify-content:center; }
+.topbar .wrap span:last-child { display:none; }
+.nav { height:73px; }
+.nav .wrap { gap:20px; }
+.logo { width:108px; height:39px; }
+.navlinks { display:none; }
+.basket-link { margin-left:auto; gap:7px; min-height:44px; }
+.basket-link .basket-word { display:none; }
+.count { width:22px; height:22px; font-size:10px; }
+.mobile-menu { display:block; position:relative; border:0; }
+.mobile-menu summary { padding:8px 0 8px 8px; min-width:44px; min-height:44px; align-items:center; justify-content:end; }
+.mobile-menu summary:after { display:none; }
+.mobile-menu nav { position:absolute; top:46px; right:0; width:240px; padding:20px; background:white; border:1px solid var(--line); z-index:20; box-shadow:0 8px 24px rgb(23 37 38 / .08); }
+.mobile-menu nav a { display:block; padding:10px; }
+h1 { font-size:49px; line-height:1.04; letter-spacing:-2.8px; }
+h2 { font-size:32px; letter-spacing:-1.3px; }
+h3 { font-size:21px; }
+.label { font-size:9px; letter-spacing:.8px; }
+.home-hero { grid-template-columns:1fr; }
+.hero-copy { padding:37px 0 31px; }
+.hero-copy .label { margin-bottom:23px; }
+.hero-copy h1 { margin-bottom:23px; }
+.hero-copy p { font-size:15px; line-height:1.6; }
+.actions { gap:18px; flex-wrap:wrap; margin-top:24px; }
+.btn { font-size:13px; padding:12px 15px; gap:12px; }
+.textlink { font-size:12px; gap:8px; }
+.hero-drawing { border-left:0; border-top:1px solid var(--line); padding:18px 0; }
+.bead-diagram { height:247px; }
+.drawing-label,.drawing-note { font-size:8px; }
+.hero-metrics { padding:20px 0; gap:12px; }
+.metric { padding-left:12px; }
+.metric strong { font-size:25px; letter-spacing:-1.2px; }
+.metric strong span { display:block; font-size:12px; letter-spacing:0; margin-top:5px; }
+.metric p { font-size:10px; line-height:1.4; }
+.trust .wrap { display:grid; grid-template-columns:1fr 1fr; gap:14px 9px; padding:19px 0; }
+.trust span { font-size:10px; gap:7px; }
+.trust .icon { width:14px; height:14px; }
+.section { padding:38px 0; }
+.section-head { display:block; margin-bottom:23px; }
+.section-head p { margin-top:15px; font-size:14px; }
+.section-head .textlink { margin-top:17px; }
+.mode-grid { grid-template-columns:1fr; }
+.mode-card { padding:18px 15px; min-height:98px; grid-template-columns:30px 1fr 18px; gap:12px; }
+.mode-symbol { width:26px; height:26px; }
+.mode-card h3 { font-size:19px; margin-bottom:6px; }
+.mode-card p { font-size:12px; }
+.inline-row { flex-wrap:wrap; gap:12px; font-size:12px; }
+.platform-grid { grid-template-columns:1fr; gap:26px; }
+.platform-intro h2 { margin-bottom:15px; }
+.platform-intro .textlink { margin-top:16px; }
+.grade-axis,.grade-row { grid-template-columns:78px 1fr 48px 54px; gap:9px; }
+.grade-axis { font-size:8px; line-height:1.6; }
+.grade-name { font-size:12px; }
+.grade-name small { font-size:8px; }
+.grade-row { min-height:74px; }
+.grade-row .num { font-size:12px; }
+.axis-ticks { margin:10px 122px 0 87px; font-size:8px; }
+.footnote { font-size:10px; }
+.reason-grid { grid-template-columns:1fr 1fr; gap:25px 20px; margin-bottom:30px; }
+.reason .label { margin-bottom:10px; }
+.reason h3 { font-size:18px; }
+.reason p { font-size:12px; line-height:1.6; }
+.comparison { table-layout:fixed; }
+.comparison caption { font-size:19px; }
+.comparison th:first-child { width:24%; }
+.comparison th:nth-child(2) { width:33%; }
+.comparison th,.comparison td { padding:11px 7px; font-size:10px; line-height:1.6; overflow-wrap:break-word; }
+.workflow-grid { grid-template-columns:1fr; }
+.workflow { margin:0; font-size:15px; padding:14px 0; }
+.factory-grid { grid-template-columns:1fr; gap:27px; margin-top:30px; }
+.photo-placeholder { min-height:175px; }
+.factory-caption { font-size:10px; }
+.founder-head { grid-template-columns:96px 1fr; gap:17px; }
+.founder-head h3 { font-size:21px; }
+.founder-copy { font-size:14px; }
+.social-proof { grid-template-columns:1fr; gap:18px; }
+.logo-slot { font-size:8px; min-height:58px; }
+.services-grid { grid-template-columns:1fr; gap:25px; }
+.lab-image { height:210px; }
+.service-item h3 { font-size:17px; }
+.evaluation { grid-template-columns:1fr; gap:20px; padding:23px; margin-top:28px; }
+.evaluation h3 { font-size:25px; }
+.evaluation p { font-size:13px; }
+.evaluation .btn { justify-self:start; }
+.faq-grid { grid-template-columns:1fr; gap:22px; }
+summary { font-size:14px; }
+details p { font-size:13px; padding-right:15px; }
+.final-cta { padding:32px 0; }
+.final-cta .wrap { display:block; }
+.final-cta h2 { font-size:31px; }
+.final-cta p { font-size:13px; }
+.final-cta .btn { margin-top:23px; }
+.footer { padding:30px 0 22px; }
+.footer-grid { grid-template-columns:1fr 1fr; gap:28px 20px; }
+.footer-grid>div:first-child,.footer-grid>div:last-child { grid-column:1/-1; }
+.footer-bottom { display:block; font-size:8px; line-height:2; }
+.footer-bottom span { display:block; }
+.rfq-panel { width:390px; padding:24px; }
+
+</style>
+</head>
+<body>
+<div class="topbar"><div class="wrap"><span>MANUFACTURED IN ANAND, INDIA · SUPPLIED WORLDWIDE</span><span>SCIENTIST-TO-SCIENTIST SUPPORT · +91 94265 96644</span></div></div><header class="nav"><div class="wrap"><a class="brand" href="home.html" aria-label="Protpure home"><img class="logo" src="protpure-logo.png" alt="ProtPure"></a><nav class="navlinks" aria-label="Main navigation"><a class="" href="catalogue.html">Products</a><a class="" href="home.html#platform">Technology</a><a class="" href="home.html#applications">Applications</a><a class="" href="home.html#services">Services</a><a class="" href="home.html#company">Company</a></nav><a class="basket-link" href="#rfq"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 8h18l-2 12H5L3 8Zm4 0 3-5m7 5-3-5M9 11v6m6-6v6"></path></svg><span class="basket-word">RFQ basket</span><span class="count basket-count">0</span></a><details class="mobile-menu"><summary aria-label="Open menu"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 16h16"></path></svg></summary><nav aria-label="Mobile navigation"><a class="" href="catalogue.html">Products</a><a class="" href="home.html#platform">Technology</a><a class="" href="home.html#applications">Applications</a><a class="" href="home.html#services">Services</a><a class="" href="home.html#company">Company</a></nav></details></div></header><main><div class="wrap"><section class="home-hero"><div class="hero-copy"><div class="label">Agarose chromatography resins</div><h1>Purification.<br>Precisely<br><span>engineered.</span></h1><p>Ion exchange, IMAC, size exclusion, HIC and mixed-mode resins. One cross-linked agarose backbone, from research to manufacturing.</p><div class="actions"><a class="btn" href="#rfq">Request a quote<svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h16m-6-6 6 6-6 6"></path></svg></a><a class="textlink" href="catalogue.html">Explore the catalogue <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h16m-6-6 6 6-6 6"></path></svg></a></div></div><figure class="hero-drawing"><div class="drawing-label label"><span>Particle architecture</span><span>Fig. 01 / schematic</span></div><svg class="bead-diagram" viewBox="0 0 560 370" role="img" aria-label="Schematic cross-section of a porous cross-linked agarose bead, with ligand and open pore structure annotations"><defs><pattern id="hatch" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><path d="M0 0v7" stroke="#cbd6d6" stroke-width="1"></path></pattern></defs><path d="M260 24v315M89 191h343" stroke="#cbd6d6" stroke-dasharray="4 5" fill="none"></path><circle cx="260" cy="191" r="110" fill="url(#hatch)" stroke="#006e73" stroke-width="1.5"></circle><circle cx="260" cy="191" r="123" fill="none" stroke="#cbd6d6" stroke-dasharray="2 5"></circle><circle cx="201" cy="128" r="15" fill="white" stroke="#006e73" stroke-width="1"></circle><circle cx="240" cy="113" r="12" fill="white" stroke="#006e73" stroke-width="1"></circle><circle cx="285" cy="129" r="18" fill="white" stroke="#006e73" stroke-width="1"></circle><circle cx="321" cy="155" r="12" fill="white" stroke="#006e73" stroke-width="1"></circle><circle cx="202" cy="175" r="20" fill="white" stroke="#006e73" stroke-width="1"></circle><circle cx="245" cy="165" r="16" fill="white" stroke="#006e73" stroke-width="1"></circle><circle cx="284" cy="181" r="13" fill="white" stroke="#006e73" stroke-width="1"></circle><circle cx="325" cy="204" r="17" fill="white" stroke="#006e73" stroke-width="1"></circle><circle cx="190" cy="220" r="12" fill="white" stroke="#006e73" stroke-width="1"></circle><circle cx="231" cy="219" r="19" fill="white" stroke="#006e73" stroke-width="1"></circle><circle cx="273" cy="232" r="16" fill="white" stroke="#006e73" stroke-width="1"></circle><circle cx="309" cy="246" r="11" fill="white" stroke="#006e73" stroke-width="1"></circle><circle cx="224" cy="263" r="12" fill="white" stroke="#006e73" stroke-width="1"></circle><circle cx="270" cy="273" r="13" fill="white" stroke="#006e73" stroke-width="1"></circle><g fill="none" stroke="#006e73" stroke-width="1.2"><path d="m345 120 28-24h62m-74 132 43 25h39M158 157l-43-25H34M205 288v36h131"></path><path d="m343 113 10-12m-2 17 14-7m-212 55-15-5m18 12-15 2"></path><path d="M150 337h220m-220-5v10m220-10v10"></path></g><g font-family="IBM Plex Mono, monospace" font-size="10" fill="#526465"><text x="371" y="82">LIGAND</text><text x="393" y="273">OPEN PORES</text><text x="30" y="116">CROSS-LINKED</text><text x="30" y="129">AGAROSE</text><text x="226" y="358">6% MATRIX</text><text x="465" y="32">A—A</text></g><path d="M450 30h-25m12-12v25" stroke="#006e73" fill="none"></path></svg><figcaption class="drawing-note label"><span>Open pore structure</span><span>Low non-specific binding</span></figcaption></figure></section><div class="hero-metrics"><div class="metric"><strong>600 <span>L / month</span></strong><p>Manufacturing capacity</p></div><div class="metric"><strong>2–3 <span>weeks</span></strong><p>Standard lead time, ex-works</p></div><div class="metric"><strong>1,000 <span>cm/h</span></strong><p>Maximum linear flow · Faster grade</p></div></div></div><div class="trust"><div class="wrap"><span><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 4 4L19 6"></path></svg>BioProcess grade</span><span><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 4 4L19 6"></path></svg>Used in GMP facilities</span><span><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 4 4L19 6"></path></svg>CoA with every lot</span><span><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 4 4L19 6"></path></svg>Made in India</span></div></div><section class="section" id="catalogue"><div class="wrap"><div class="section-head"><div><div class="label">01 / Resin catalogue</div><h2>Every purification stage.<br>A chemistry to match.</h2></div><p>Browse by chromatography mode. Evaluation packs through to production volumes, with specifications you can compare.</p></div><div class="mode-grid"><a class="mode-card" href="catalogue.html"><svg class="mode-symbol" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.3" aria-hidden="true"><circle cx="16" cy="16" r="10"></circle><path d="M12 9v6m-3-3h6m3 8h6"></path></svg><div><h3>Ion exchange</h3><p>SP · CM · Q · DEAE / capture to polishing</p></div><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h16m-6-6 6 6-6 6"></path></svg></a><a class="mode-card" href="catalogue.html"><svg class="mode-symbol" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.3" aria-hidden="true"><path d="m7 8 9 5 9-5M7 15l9 5 9-5M7 22l9 5 9-5"></path></svg><div><h3>Affinity</h3><p>Ni / Co / Cu / Zn–NTA · Protein A</p></div><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h16m-6-6 6 6-6 6"></path></svg></a><a class="mode-card" href="catalogue.html"><svg class="mode-symbol" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.3" aria-hidden="true"><circle cx="10" cy="11" r="6"></circle><circle cx="24" cy="21" r="3"></circle><path d="M5 26 27 4"></path></svg><div><h3>Size exclusion</h3><p>Cross-linked agarose / separation & desalting</p></div><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h16m-6-6 6 6-6 6"></path></svg></a><a class="mode-card" href="catalogue.html"><svg class="mode-symbol" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.3" aria-hidden="true"><path d="m16 4 10 18-10 6-10-6L16 4Z"></path></svg><div><h3>Hydrophobic interaction</h3><p>Phenyl Agarose / orthogonal selectivity</p></div><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h16m-6-6 6 6-6 6"></path></svg></a><a class="mode-card" href="catalogue.html"><svg class="mode-symbol" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.3" aria-hidden="true"><circle cx="11" cy="16" r="8"></circle><circle cx="22" cy="16" r="8"></circle></svg><div><h3>Mixed-mode</h3><p>Hy-Ionic™ DP / DEAE + phenyl</p></div><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h16m-6-6 6 6-6 6"></path></svg></a><a class="mode-card" href="catalogue.html"><svg class="mode-symbol" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.3" aria-hidden="true"><path d="M6 8v12a10 10 0 0 0 20 0V8h-6v12a4 4 0 0 1-8 0V8H6Zm0 7h6m8 0h6"></path></svg><div><h3>Magnetic beads</h3><p>Ni-NTA / column-free His-tag screening</p></div><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h16m-6-6 6 6-6 6"></path></svg></a></div><div class="inline-row"><span class="muted">Also available: activated supports, pre-packed columns & evaluation kits.</span><a class="textlink" href="catalogue.html">All 16 products <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h16m-6-6 6 6-6 6"></path></svg></a></div></div></section><section class="section platform" id="platform"><div class="wrap platform-grid"><div class="platform-intro"><div class="label teal">02 / Particle platform</div><h2>Four bead sizes.<br>One chemistry.</h2><p>The same 6% cross-linked agarose backbone. Choose the flow–resolution balance for your workflow.</p><a class="textlink" href="product.html#grades">Compare SP grades <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h16m-6-6 6 6-6 6"></path></svg></a></div><div><div class="grade-axis"><div>Grade</div><div>Size range / µm</div><div>d50V<br>µm</div><div>Max flow<br>cm/h</div></div><div class="grade-row"><div class="grade-name">Faster<small>Industrial capture</small></div><div class="range-track"><span class="range-mark" style="left:40.0%;width:56.0%"></span><span class="range-dot" style="left:65.2%"></span></div><div class="num">~163</div><div class="num teal">1,000</div></div><div class="grade-row"><div class="grade-name">Fast Flow<small>Intermediate purification</small></div><div class="range-track"><span class="range-mark" style="left:18.0%;width:48.0%"></span><span class="range-dot" style="left:38.4%"></span></div><div class="num">~96</div><div class="num teal">700</div></div><div class="grade-row"><div class="grade-name">Precise<small>High resolution</small></div><div class="range-track"><span class="range-mark" style="left:10.0%;width:34.0%"></span><span class="range-dot" style="left:24.0%"></span></div><div class="num">~60</div><div class="num teal">380</div></div><div class="grade-row"><div class="grade-name">HR<small>Polishing</small></div><div class="range-track"><span class="range-mark" style="left:6.0%;width:24.0%"></span><span class="range-dot" style="left:16.0%"></span></div><div class="num">~40</div><div class="num teal">120</div></div><div class="axis-ticks"><span>0</span><span>125</span><span>250</span></div><p class="footnote">Range = particle size distribution. Marker = d50V. Platform maxima shown; product-specific flow and pressure conditions appear on each datasheet.</p></div></div></section><section class="section"><div class="wrap"><div class="section-head"><div><div class="label">03 / A qualified alternative</div><h2>Let the specifications<br>make the case.</h2></div><p>Benchmarked against imported media.<br>Evaluate side by side under your own SOPs.</p></div><div class="reason-grid"><article class="reason"><div class="label">01</div><h3>Reproducible batch quality</h3><p>Controlled bead-size distribution and stable ligand attachment give lot-to-lot consistency.</p></article><article class="reason"><div class="label">02</div><h3>2–3 week delivery</h3><p>Shorter lead times for faster R&D iterations and fewer production delays.</p></article><article class="reason"><div class="label">03</div><h3>Scientist-to-scientist support</h3><p>Every enquiry is answered by the team that makes the resin.</p></article><article class="reason"><div class="label">04</div><h3>Made in India. Supplied worldwide.</h3><p>Direct export with full documentation, from Anand, Gujarat.</p></article></div><table class="comparison"><caption>Imported resins vs Protpure</caption><thead><tr><th scope="col">Parameter</th><th scope="col">Typical imported supplier</th><th class="highlight" scope="col">Protpure</th></tr></thead><tbody><tr><td>Lead time</td><td>8–12 weeks, typical</td><td class="highlight">2–3 weeks ex-works</td></tr><tr><td>Technical support</td><td>Via distributors, indirect</td><td class="highlight">Direct scientist-to-scientist</td></tr><tr><td>Evaluation</td><td>Rigid MOQs, formal sampling</td><td class="highlight">Paid packs, credited on first bulk order</td></tr><tr><td>Pack sizes</td><td>Standard catalogue only</td><td class="highlight">5 mL to 25 L, bulk & custom</td></tr><tr><td>Documentation</td><td>Standard</td><td class="highlight">Datasheet + CoA per lot; filing support under NDA</td></tr></tbody></table><p class="footnote">Typical values; imported-supplier figures reflect customer-reported experience in India.</p></div></section><section class="section" id="applications"><div class="wrap"><div class="section-head"><div><div class="label">04 / Applications & expertise</div><h2>From your bench<br>to your process.</h2></div><p>Purification workflows for biologics, vaccines, diagnostics and industrial biotechnology.</p></div><div class="workflow-grid"><a class="workflow" href="catalogue.html"><span>Biologics & biosimilars</span><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h16m-6-6 6 6-6 6"></path></svg></a><a class="workflow" href="catalogue.html"><span>Vaccines</span><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h16m-6-6 6 6-6 6"></path></svg></a><a class="workflow" href="catalogue.html"><span>Diagnostics</span><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h16m-6-6 6 6-6 6"></path></svg></a><a class="workflow" href="catalogue.html"><span>Research & academia</span><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h16m-6-6 6 6-6 6"></path></svg></a><a class="workflow" href="catalogue.html"><span>Industrial biotechnology</span><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h16m-6-6 6 6-6 6"></path></svg></a><a class="workflow" href="catalogue.html"><span>Gene editing & advanced therapies</span><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h16m-6-6 6 6-6 6"></path></svg></a></div><div class="factory-grid" id="company"><figure><div class="photo-placeholder">[PHOTO: facility exterior]</div><figcaption class="factory-caption"><span>Anand, Gujarat, India</span><span class="mono">600 L / month</span></figcaption></figure><div><div class="founder-head"><div class="photo-placeholder">[PHOTO: Dr. Rucha Desai]</div><div><div class="label teal">Scientist-founded / May 2023</div><h3>Built for scale.<br>Grounded in science.</h3><p class="small">Dr. Rucha P. Desai · Founding Director</p></div></div><p class="founder-copy">In-house bead synthesis, ligand functionalisation and process evaluation. A semi-automated manufacturing and R&D facility, with resins already used in GMP facilities and repeat orders from Indian biopharma.</p></div></div><div class="social-proof"><div><div class="label teal">In customer processes</div><p class="small" style="margin-top:10px">Used in GMP facilities.<br>Repeat orders from Indian biopharma.</p></div><div class="logo-slots"><div class="logo-slot">[CUSTOMER LOGO]</div><div class="logo-slot">[CUSTOMER LOGO]</div><div class="logo-slot">[CUSTOMER LOGO]</div></div></div></div></section><section class="section" id="services"><div class="wrap"><div class="section-head"><div><div class="label">05 / Downstream services</div><h2>The scientists behind the resin.<br>Working on your process.</h2></div></div><div class="services-grid"><figure><img class="lab-image" src="fplc-system.webp" alt="Protpure laboratory FPLC system and chromatography column"><figcaption class="footnote">Process evaluation on FPLC systems, with columns up to 1 L.</figcaption></figure><div class="service-list"><a class="service-item" href="#rfq"><div><h3>Precision column packing</h3><p>5 mL–1 L columns, with a performance report</p></div><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h16m-6-6 6 6-6 6"></path></svg></a><a class="service-item" href="#rfq"><div><h3>Resin screening & selection</h3><p>Binding, recovery and selectivity, side by side</p></div><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h16m-6-6 6 6-6 6"></path></svg></a><a class="service-item" href="#rfq"><div><h3>Method development</h3><p>Buffers, loading and elution, documented</p></div><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h16m-6-6 6 6-6 6"></path></svg></a><a class="service-item" href="#rfq"><div><h3>Protein purification</h3><p>Clarified sample to a transferable process</p></div><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h16m-6-6 6 6-6 6"></path></svg></a></div></div><div class="evaluation"><div><div class="label teal">Paid evaluation / credited on first bulk order</div><h3>Start small. Qualify with confidence.</h3><p>Evaluate with 5–25 mL packs or a 1 mL pre-packed column. Scientist support and documentation included. Add your evaluation requirements to the RFQ basket.</p></div><a class="btn" href="#rfq">Request an evaluation<svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h16m-6-6 6 6-6 6"></path></svg></a></div></div></section><section class="section" id="faq"><div class="wrap faq-grid"><div><div class="label teal">06 / Before you begin</div><h2>Questions<br>buyers ask first.</h2><p class="small">Ordering, evaluation and documentation.</p></div><div><details open="open"><summary>How do I evaluate a resin?</summary><p>We quote paid evaluation packs, typically 5–25 mL or a 1 mL pre-packed column. Scientist support and documentation are included. The cost is credited against your first bulk order.</p></details><details><summary>What documentation do you provide?</summary><p>A technical datasheet and certificate of analysis per lot. For regulatory filings, additional documentation is available under a confidentiality agreement.</p></details><details><summary>Do you ship internationally?</summary><p>Yes. We supply worldwide ex-works Anand or via your preferred forwarder, with commercial invoice, packing list and technical documentation. Resins ship in 20% ethanol at ambient temperature; no cold chain is required.</p></details></div></div></section><section class="final-cta"><div class="wrap"><div><h2>Ready to qualify Protpure<br>in your process?</h2><p>Products, grades, volumes. One request. A scientist replies in 1–2 business days.</p></div><a class="btn" href="#rfq">Request a quote<svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h16m-6-6 6 6-6 6"></path></svg></a></div></section></main><footer class="footer"><div class="wrap"><div class="footer-grid"><div><a class="brand" href="home.html"><img class="logo" src="protpure-logo.png" alt="ProtPure"></a><p>Protpure Tech Pvt. Ltd.<br>Developed, manufactured and supported<br>in Anand, Gujarat, India.</p><a href="mailto:info@protpure.com">info@protpure.com</a></div><div><h4>Explore</h4><a href="catalogue.html">Resin catalogue</a><a href="home.html#platform">Particle platform</a><a href="home.html#services">Downstream services</a><a href="product.html#documents">Technical documents</a></div><div><h4>Connect</h4><a href="home.html#company">Our company</a><a href="mailto:info@protpure.com">Distribution enquiries</a><a href="https://www.linkedin.com/company/protpure-tech-pvt-ltd/">LinkedIn</a><a href="#rfq">Request a quote</a></div><div><h4>Notes from the bench</h4><p>Technical data, application notes<br>and updates from Protpure.</p><form class="newsletter demo-form"><label class="label" hidden="hidden" for="newsletter-email">Email address</label><input id="newsletter-email" type="email" placeholder="Your work email" required="required" aria-label="Newsletter email"><button type="submit" aria-label="Subscribe"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h16m-6-6 6 6-6 6"></path></svg></button></form><p class="form-feedback" aria-live="polite"></p></div></div><div class="footer-bottom"><span>© 2026 PROTPURE TECH PVT. LTD.</span><span>AGAROSE CHROMATOGRAPHY MEDIA / ANAND, GUJARAT</span></div></div></footer><aside class="rfq-overlay" id="rfq" aria-label="RFQ basket"><div class="rfq-panel"><div class="drawer-heading"><h3>Your RFQ <span class="mono basket-count">0</span></h3><a class="rfq-close" href="#" aria-label="Close basket"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 6 12 12M6 18 18 6"></path></svg></a></div><div id="basket-items"><p class="empty-rfq">Add products, grades and pack sizes from the catalogue. Send them together as one quote request.</p><a class="textlink" href="catalogue.html">Browse resins <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h16m-6-6 6 6-6 6"></path></svg></a></div><form class="drawer-form demo-form"><label>Work email<input type="email" required="required" placeholder="name@company.com"></label><label>Company<input type="text" required="required" placeholder="Company or institution"></label><label>Destination<input type="text" required="required" placeholder="Country / city"></label><label>Process or evaluation notes<textarea rows="3" placeholder="Target protein, scale, timing"></textarea></label><button type="submit" class="btn">Send one quote request <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h16m-6-6 6 6-6 6"></path></svg></button><p class="small" style="margin-top:14px">A scientist replies within 1–2 business days. Pricing, lead time and shipping in one response.</p><p class="form-feedback notice" aria-live="polite"></p></form></div></aside>
+<script>
+
+const basket = [];
+const renderBasket = () => {
+  document.querySelectorAll('.basket-count').forEach(el => el.textContent = basket.length);
+  const container = document.getElementById('basket-items');
+  container.replaceChildren();
+  if (!basket.length) {
+    const p = document.createElement('p');
+    p.className = 'empty-rfq';
+    p.textContent = 'Your RFQ is empty. Add a product or describe your requirements below.';
+    container.append(p);
+  }
+  basket.forEach((item, index) => {
+    const line = document.createElement('div');
+    line.className = 'drawer-item';
+    const heading = document.createElement('h4');
+    heading.textContent = item.name;
+    const facts = document.createElement('p');
+    facts.textContent = item.grade + ' · ' + item.pack + ' · ' + item.code + ' · Qty ' + item.qty;
+    const remove = document.createElement('button');
+    remove.type = 'button';
+    remove.className = 'btn secondary compact';
+    remove.style.marginTop = '12px';
+    remove.textContent = 'Remove';
+    remove.addEventListener('click', () => {
+      basket.splice(index, 1);
+      renderBasket();
+    });
+    line.append(heading, facts, remove);
+    container.append(line);
+  });
+};
+const addItem = item => {
+  const existing = basket.find(i => i.name === item.name && i.grade === item.grade && i.pack === item.pack);
+  if (existing) existing.qty += item.qty;
+  else basket.push(item);
+  renderBasket();
+  location.hash = 'rfq';
+};
+document.querySelectorAll('.add-rfq').forEach(button => button.addEventListener('click', () => {
+  const card = button.closest('.product-card');
+  const pack = card.querySelector('.pack-select');
+  addItem({ name:card.dataset.name, grade:card.querySelector('.grade-select').value, pack:pack.value, code:pack.selectedOptions[0].dataset.code, qty:1 });
+}));
+document.querySelectorAll('.add-order').forEach(button => button.addEventListener('click', () => {
+  const row = button.closest('tr');
+  const quantity = row.querySelector('input');
+  if (!quantity.reportValidity()) return;
+  addItem({ name:row.dataset.name, grade:document.getElementById('order-grade').value, pack:row.dataset.pack, code:row.dataset.code, qty:Number(quantity.value) });
+}));
+document.querySelectorAll('.demo-form').forEach(form => form.addEventListener('submit', event => {
+  event.preventDefault();
+  const feedback = form.querySelector('.form-feedback') || form.nextElementSibling;
+  feedback.textContent = 'Design preview — your information has not been sent.';
+}));
+document.addEventListener('keydown', event => {
+  if (event.key === 'Escape' && location.hash === '#rfq') location.hash = '';
+});
+const grid = document.getElementById('product-grid');
+if (grid) {
+  const cards = Array.from(grid.children);
+  const controls = Array.from(document.querySelectorAll('[data-filter]'));
+  const applyFilters = () => {
+    cards.forEach(card => {
+      card.hidden = ['mode','exchanger','grades','availability'].some(group => {
+        const values = controls.filter(c => c.checked && c.dataset.filter === group).map(c => c.value.toLowerCase());
+        return values.length > 0 && !values.some(value => card.dataset[group].toLowerCase().includes(value));
+      });
+    });
+    document.getElementById('result-count').textContent = cards.filter(card => !card.hidden).length;
+  };
+  controls.forEach(c => c.addEventListener('change', applyFilters));
+  document.getElementById('reset-filters').addEventListener('click', () => {
+    controls.forEach(c => c.checked = false);
+    applyFilters();
+  });
+  document.getElementById('sort').addEventListener('change', event => {
+    const sorted = cards.slice();
+    if (event.target.value !== 'default') sorted.sort((a,b) => a.dataset.name.localeCompare(b.dataset.name) * (event.target.value === 'za' ? -1 : 1));
+    sorted.forEach(card => grid.append(card));
+  });
+  document.querySelectorAll('.compare-check').forEach(box => box.addEventListener('change', () => {
+    const selected = cards.filter(card => card.querySelector('.compare-check').checked);
+    document.getElementById('compare-status').textContent = selected.length + ' products selected. Reference grades and specifications shown below.';
+    const region = document.getElementById('compare-table');
+    region.replaceChildren();
+    if (!selected.length) return;
+    const table = document.createElement('table');
+    const caption = document.createElement('caption');
+    caption.textContent = 'Reference specification comparison';
+    table.append(caption);
+    selected.forEach(card => {
+      const row = document.createElement('tr');
+      [card.dataset.name, card.querySelector('.label.muted').textContent, ...Array.from(card.querySelectorAll('.card-specs dd')).map(el => el.textContent)].forEach(value => {
+        const cell = document.createElement('td');
+        cell.textContent = value;
+        row.append(cell);
+      });
+      table.append(row);
+    });
+    region.append(table);
+  }));
+}
+
+</script>
+</body>
+</html>
