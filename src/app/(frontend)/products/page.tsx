@@ -8,7 +8,7 @@ import { EmptyState, ButtonLink } from '@/components/ui'
 import { getCategories, getPage, getProducts } from '@/lib/data'
 import { buildMetadata } from '@/lib/seo'
 import { cn } from '@/lib/utils'
-import type { ProductCategory } from '@/payload-types'
+import { categoryOf } from '@/lib/catalog'
 
 
 const GRADES = [
@@ -40,7 +40,7 @@ export default async function ProductsPage({ searchParams }: { searchParams: Pro
   }
 
   const grouped = categories
-    .map((c) => ({ category: c, items: filtered.filter((p) => (p.category as ProductCategory).id === c.id) }))
+    .map((c) => ({ category: c, items: filtered.filter((p) => categoryOf(p)?.id === c.id) }))
     .filter((g) => g.items.length)
 
   return (

@@ -12,7 +12,8 @@ import { InquiryForm } from '@/components/forms/InquiryForm'
 import { NewsletterForm } from '@/components/forms/NewsletterForm'
 import { getApplications, getCategories, getDocuments, getFaqs, getPosts, getProducts, getServices, getSiteSettings, getTeam, getTestimonials, getUpdates } from '@/lib/data'
 import { cn, resolveLink } from '@/lib/utils'
-import type { Page, Product, ProductCategory, Team, Testimonial } from '@/payload-types'
+import { categoryOf } from '@/lib/catalog'
+import type { Page, Product, Team, Testimonial } from '@/payload-types'
 
 type Block = NonNullable<Page['layout']>[number]
 
@@ -210,8 +211,7 @@ async function RenderBlock({ block }: { block: Block; index: number }) {
       const [cats, products] = await Promise.all([getCategories(), getProducts()])
       const counts = new Map<number, number>()
       for (const p of products) {
-        const cat = p.category
-        const id = typeof cat === 'object' && cat !== null ? (cat as ProductCategory).id : typeof cat === 'number' ? cat : null
+        const id = categoryOf(p)?.id ?? (typeof p.category === 'number' ? p.category : null)
         if (id == null) continue
         counts.set(id, (counts.get(id) ?? 0) + 1)
       }
@@ -480,7 +480,7 @@ async function RenderBlock({ block }: { block: Block; index: number }) {
               ) : (
                 <div className="card p-6 sm:p-8">
                   <React.Suspense>
-                    <InquiryForm type={block.form} products={products.map((p) => ({ id: p.id, name: p.name, category: (p.category as ProductCategory)?.name ?? 'Products' }))} responseTime={settings.responseTime} allowTypeChange={block.form === 'contact'} />
+                    <InquiryForm type={block.form} products={products.map((p) => ({ id: p.id, name: p.name, category: categoryOf(p)?.name ?? 'Products' }))} responseTime={settings.responseTime} allowTypeChange={block.form === 'contact'} />
                   </React.Suspense>
                 </div>
               )}
@@ -530,6 +530,6 @@ function BeadVisual({ index, total }: { index: number; total: number }) {
 }
 
 export function slimProduct(p: Product) {
-  const cat = p.category as ProductCategory
+  const cat = categoryOf(p)
   return { id: p.id, slug: p.slug!, name: p.name, subtitle: p.subtitle ?? null, category: cat?.slug ?? '', categoryName: cat?.name ?? '', ligand: p.chemistry?.ligand ?? null, functionalType: p.chemistry?.functionalType ?? null, grades: (p.grades ?? []).map((g) => g.grade) }
 }

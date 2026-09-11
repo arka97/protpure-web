@@ -1,5 +1,6 @@
 import * as React from 'react'
-import type { Application, Post, Product, ProductCategory, SiteSetting, Faq } from '@/payload-types'
+import { categoryOf } from './catalog'
+import type { Application, Post, Product, SiteSetting, Faq } from '@/payload-types'
 import { absoluteUrl, mediaUrl, SITE_URL } from './utils'
 import { lexicalToText } from './lexical-md'
 
@@ -49,7 +50,7 @@ export function breadcrumbJsonLd(items: { name: string; href: string }[]) {
 }
 
 export function productJsonLd(p: Product) {
-  const cat = p.category as ProductCategory
+  const cat = categoryOf(p)
   const img = mediaUrl(p.image, 'large')
   const props = [
     ...(p.chemistry?.ligand ? [{ '@type': 'PropertyValue', name: 'Ligand', value: p.chemistry.ligand }] : []),

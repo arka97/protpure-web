@@ -5,7 +5,7 @@ import { createInquiry, inquirySchema, rateLimit } from '@/lib/inquiries'
 import { applicationToMarkdown, companyMarkdown, productToMarkdown, serviceToMarkdown } from '@/lib/markdown'
 import { publicDocument, publicProduct } from '@/lib/public-api'
 import { SITE_URL } from '@/lib/utils'
-import type { ProductCategory } from '@/payload-types'
+import { categoryOf } from '@/lib/catalog'
 
 const text = (t: string) => ({ content: [{ type: 'text' as const, text: t }] })
 const readOnly = { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: false }
@@ -34,7 +34,7 @@ const handler = createMcpHandler(
       async ({ category, grade, query }) => {
         let products = await getProducts({ category, search: query })
         if (grade) products = products.filter((p) => p.grades?.some((g) => g.grade === grade))
-        const cats = Array.from(new Set(products.map((p) => (p.category as ProductCategory)?.slug))).filter(Boolean)
+        const cats = Array.from(new Set(products.map((p) => categoryOf(p)?.slug))).filter(Boolean)
         return { ...text(JSON.stringify({ count: products.length, categories: cats, products: products.map((p) => publicProduct(p)) }, null, 2)) }
       },
     )
@@ -70,7 +70,7 @@ const handler = createMcpHandler(
         const gradeStr = (p: (typeof products)[number], k: 'particleSizeRange' | 'maxFlowVelocity' | 'dynamicBindingCapacity') => (p.grades ?? []).map((g) => `${g.grade}: ${g[k] ?? '—'}`).join('; ')
         const lines = [
           header,
-          row('Category', (p) => (p.category as ProductCategory).name),
+          row('Category', (p) => categoryOf(p)?.name ?? ''),
           row('Type', (p) => p.chemistry?.functionalType ?? ''),
           row('Ligand', (p) => p.chemistry?.ligand ?? ''),
           row('Matrix', (p) => p.chemistry?.matrix ?? ''),

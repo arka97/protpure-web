@@ -4,14 +4,15 @@
  */
 import { GRADE_SHORT } from '@/components/product/cards'
 import { getApplications, getCategories, getDocuments, getFaqs, getPage, getPosts, getProducts, getServices, getSiteSettings, getUpdates } from './data'
+import { categoryOf } from './catalog'
 import { lexicalToMarkdown } from './lexical-md'
 import { SITE_URL, absoluteUrl, formatDate } from './utils'
-import type { Application, Document, Page, Post, Product, ProductCategory, Service } from '@/payload-types'
+import type { Application, Document, Page, Post, Product, Service } from '@/payload-types'
 
 const table = (headers: string[], rows: string[][]) => [`| ${headers.join(' | ')} |`, `| ${headers.map(() => '---').join(' | ')} |`, ...rows.map((r) => `| ${r.map((c) => (c ?? '').replace(/\|/g, '\\|')).join(' | ')} |`)].join('\n')
 
 export function productToMarkdown(p: Product, opts?: { brief?: boolean }): string {
-  const cat = p.category as ProductCategory
+  const cat = categoryOf(p)
   const out: string[] = []
   out.push(`# ${p.name}${p.subtitle ? ` — ${p.subtitle}` : ''}`)
   out.push(`Category: ${cat?.name ?? ''} · Availability: ${p.availability ?? 'available'} · URL: ${SITE_URL}/products/${p.slug}`)

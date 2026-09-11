@@ -2,12 +2,13 @@ import Link from 'next/link'
 import { ArrowRight, Download, FileText } from 'lucide-react'
 import { Badge, CmsImage, Icon, StatusBadge } from '@/components/ui'
 import { cn, formatDate } from '@/lib/utils'
+import { categoryOf } from '@/lib/catalog'
 import type { Application, Document, Product, ProductCategory, Service } from '@/payload-types'
 
 const GRADE_SHORT: Record<string, string> = { faster: 'Faster', 'fast-flow': 'Fast Flow', precise: 'Precise', hr: 'HR' }
 
 export function ProductCard({ product, compact }: { product: Product; compact?: boolean }) {
-  const cat = product.category as ProductCategory
+  const cat = categoryOf(product)
   const grades = (product.grades ?? []).map((g) => GRADE_SHORT[g.grade] ?? g.grade)
   return (
     <Link href={`/products/${product.slug}`} className="card-hover group flex h-full flex-col overflow-hidden">

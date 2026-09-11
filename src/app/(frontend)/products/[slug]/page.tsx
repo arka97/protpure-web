@@ -10,7 +10,8 @@ import { Breadcrumbs, ButtonLink, CmsImage, KeyValue, StatusBadge } from '@/comp
 import { getFaqs, getProduct, getSiteSettings } from '@/lib/data'
 import { buildMetadata } from '@/lib/seo'
 import { breadcrumbJsonLd, faqJsonLd, JsonLd, productJsonLd } from '@/lib/jsonld'
-import type { Application, Document, Product, ProductCategory } from '@/payload-types'
+import { categoryOf } from '@/lib/catalog'
+import type { Application, Document, Product } from '@/payload-types'
 
 
 
@@ -35,7 +36,7 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
   const product = await getProduct(slug)
   if (!product) notFound()
   const [settings, faqs] = await Promise.all([getSiteSettings(), getFaqs({ product: product.id })])
-  const cat = product.category as ProductCategory
+  const cat = categoryOf(product)
   const docs = (product.documents ?? []).filter((d): d is Document => typeof d === 'object')
   const datasheet = docs.find((d) => d.type === 'datasheet')
   const related = (product.relatedProducts ?? []).filter((p): p is Product => typeof p === 'object')
@@ -44,7 +45,7 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
   const crumbs = [
     { label: 'Home', href: '/' },
     { label: 'Products', href: '/products' },
-    { label: cat.name, href: `/products/category/${cat.slug}` },
+    ...(cat ? [{ label: cat.name, href: `/products/category/${cat.slug}` }] : []),
     { label: product.name },
   ]
   const quoteHref = `/request-quote?product=${product.id}`
@@ -59,9 +60,11 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
           <div className="lg:col-span-7">
             <Breadcrumbs items={crumbs} onDark />
             <div className="mt-6 flex flex-wrap items-center gap-3">
-              <Link href={`/products/category/${cat.slug}`} className="eyebrow hover:text-white">
-                {cat.name}
-              </Link>
+              {cat ? (
+                <Link href={`/products/category/${cat.slug}`} className="eyebrow hover:text-white">
+                  {cat.name}
+                </Link>
+              ) : null}
               <StatusBadge status={product.availability} />
             </div>
             <h1 className="heading-1 mt-3 text-white">{product.name}</h1>
