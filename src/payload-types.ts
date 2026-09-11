@@ -79,8 +79,10 @@ export interface Config {
     faqs: Faq;
     team: Team;
     testimonials: Testimonial;
+    certifications: Certification;
     inquiries: Inquiry;
     subscribers: Subscriber;
+    customers: Customer;
     users: User;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
@@ -101,8 +103,10 @@ export interface Config {
     faqs: FaqsSelect<false> | FaqsSelect<true>;
     team: TeamSelect<false> | TeamSelect<true>;
     testimonials: TestimonialsSelect<false> | TestimonialsSelect<true>;
+    certifications: CertificationsSelect<false> | CertificationsSelect<true>;
     inquiries: InquiriesSelect<false> | InquiriesSelect<true>;
     subscribers: SubscribersSelect<false> | SubscribersSelect<true>;
+    customers: CustomersSelect<false> | CustomersSelect<true>;
     users: UsersSelect<false> | UsersSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
@@ -975,6 +979,10 @@ export interface Page {
             heading?: string | null;
             intro?: string | null;
             limit?: number | null;
+            /**
+             * Optional: show only updates of this kind (set on each LinkedIn update).
+             */
+            kind?: ('product-launch' | 'data' | 'milestone' | 'services' | 'perspective') | null;
             id?: string | null;
             blockName?: string | null;
             blockType: 'linkedInFeed';
@@ -1116,6 +1124,85 @@ export interface Page {
             blockName?: string | null;
             blockType: 'cta';
           }
+        | {
+            /**
+             * Small label above the heading.
+             */
+            eyebrow?: string | null;
+            heading?: string | null;
+            source?: ('all' | 'picked') | null;
+            /**
+             * Only customers with a logo and "Show logo" ticked are rendered.
+             */
+            customers?: (number | Customer)[] | null;
+            /**
+             * Shown instead of logos while none can be published. Defaults to Site settings → Proof points → Customers statement.
+             */
+            fallbackStatement?: string | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'logoWall';
+          }
+        | {
+            heading?: string | null;
+            /**
+             * Leave empty for all kinds.
+             */
+            kinds?: ('quality-system' | 'product-claim' | 'regulatory' | 'membership' | 'award')[] | null;
+            limit?: number | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'certificationsStrip';
+          }
+        | {
+            /**
+             * Small label above the heading.
+             */
+            eyebrow?: string | null;
+            heading?: string | null;
+            /**
+             * Facility, lab and team photos. The block is hidden until at least one photo is added.
+             */
+            items?:
+              | {
+                  image: number | Media;
+                  /**
+                   * Small tag, e.g. "Production" or "QC lab".
+                   */
+                  label?: string | null;
+                  caption?: string | null;
+                  id?: string | null;
+                }[]
+              | null;
+            layout?: ('grid' | 'strip' | 'spread') | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'gallery';
+          }
+        | {
+            /**
+             * Small label above the heading.
+             */
+            eyebrow?: string | null;
+            heading?: string | null;
+            /**
+             * Leave empty to list publications of every team member marked "featured".
+             */
+            member?: (number | null) | Team;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'publications';
+          }
+        | {
+            /**
+             * Include the customers statement from Site settings → Proof points.
+             */
+            showStatement?: boolean | null;
+            style?: ('light' | 'dark') | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'proofBar';
+          }
       )[]
     | null;
   /**
@@ -1206,15 +1293,55 @@ export interface Team {
     };
     [k: string]: unknown;
   } | null;
+  /**
+   * Square portrait. Until one is uploaded the site shows the member’s initials.
+   */
   photo?: (number | null) | Media;
+  /**
+   * Degrees and titles, e.g. "Ph.D. (Physics)". Shown under the name and given to AI assistants.
+   */
+  credentials?:
+    | {
+        text: string;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Short phrases, e.g. "ligand coupling".
+   */
+  expertise?:
+    | {
+        text: string;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Peer-reviewed papers, patents or theses. Verify before publishing: title, journal, year and link must match the published record.
+   */
+  publications?:
+    | {
+        title: string;
+        /**
+         * Journal or publisher, with volume/pages if known.
+         */
+        journal?: string | null;
+        year?: number | null;
+        url?: string | null;
+        id?: string | null;
+      }[]
+    | null;
   linkedinUrl?: string | null;
   email?: string | null;
+  /**
+   * Featured members supply the publications block and the founder entry in structured data.
+   */
+  featured?: boolean | null;
   order?: number | null;
   updatedAt: string;
   createdAt: string;
 }
 /**
- * Customer quotes and logos. Only publish with written permission from the customer.
+ * Customer quotes and logos. Only publish with written permission from the customer — tick "Consent on file" once you have it.
  *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "testimonials".
@@ -1226,8 +1353,17 @@ export interface Testimonial {
   role?: string | null;
   organization: string;
   country?: string | null;
+  /**
+   * How the customer uses Protpure resins. Shown as a small label on the quote.
+   */
+  context?: ('evaluation' | 'production' | 'research' | 'distributor') | null;
   logo?: (number | null) | Media;
   products?: (number | Product)[] | null;
+  /**
+   * Only publish with written permission. Internal note — not shown on the site.
+   */
+  consentOnFile?: boolean | null;
+  featured?: boolean | null;
   order?: number | null;
   updatedAt: string;
   createdAt: string;
@@ -1264,7 +1400,35 @@ export interface Faq {
   createdAt: string;
 }
 /**
- * Paste the URL of a public LinkedIn post. The site embeds it automatically and shows your summary as a fallback for readers without LinkedIn.
+ * Customer references for the logo wall. Only tick "Show logo" with the customer’s permission.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "customers".
+ */
+export interface Customer {
+  id: number;
+  name: string;
+  /**
+   * Transparent PNG or SVG, ideally wider than tall.
+   */
+  logo?: (number | null) | Media;
+  website?: string | null;
+  sector?: ('biopharma' | 'vaccines' | 'diagnostics' | 'cdmo' | 'research' | 'distributor') | null;
+  country?: string | null;
+  /**
+   * How to refer to this customer without naming them, e.g. "Indian vaccine manufacturer". Used when the logo cannot be shown.
+   */
+  anonymisedLabel?: string | null;
+  /**
+   * Requires the customer’s permission and an uploaded logo.
+   */
+  showLogo?: boolean | null;
+  order?: number | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * Paste the URL of a public LinkedIn post. The site embeds it automatically and shows your summary as a fallback for readers without LinkedIn. Drafts are hidden from the site until you publish.
  *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "updates".
@@ -1275,6 +1439,9 @@ export interface Update {
    * Short headline for the update.
    */
   title: string;
+  /**
+   * Required to publish. Drafts can be saved without it.
+   */
   url: string;
   /**
    * Auto-filled from the URL. Only edit if the embed does not load.
@@ -1289,8 +1456,53 @@ export interface Update {
    */
   image?: (number | null) | Media;
   relatedProducts?: (number | Product)[] | null;
+  /**
+   * Lets page blocks show only one type of update, e.g. product launches.
+   */
+  kind?: ('product-launch' | 'data' | 'milestone' | 'services' | 'perspective') | null;
   publishedAt: string;
+  /**
+   * Pinned updates are listed first.
+   */
   pinned?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
+}
+/**
+ * Certifications, registrations and quality claims shown in the certifications strip and given to AI assistants. Upload the certificate PDF under Content → Documents and link it here.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "certifications".
+ */
+export interface Certification {
+  id: number;
+  /**
+   * e.g. "ISO 9001:2015" or "Certificate of analysis with every lot".
+   */
+  name: string;
+  kind: 'quality-system' | 'product-claim' | 'regulatory' | 'membership' | 'award';
+  /**
+   * Certifying body or authority. Leave empty for Protpure’s own claims.
+   */
+  issuer?: string | null;
+  /**
+   * One sentence explaining what this means for a buyer.
+   */
+  statement?: string | null;
+  /**
+   * Expiry date of the certificate, if any.
+   */
+  validUntil?: string | null;
+  /**
+   * The certificate PDF (Content → Documents).
+   */
+  document?: (number | null) | Document;
+  /**
+   * Badge or issuer logo (optional).
+   */
+  logo?: (number | null) | Media;
+  order?: number | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -1488,12 +1700,20 @@ export interface PayloadLockedDocument {
         value: number | Testimonial;
       } | null)
     | ({
+        relationTo: 'certifications';
+        value: number | Certification;
+      } | null)
+    | ({
         relationTo: 'inquiries';
         value: number | Inquiry;
       } | null)
     | ({
         relationTo: 'subscribers';
         value: number | Subscriber;
+      } | null)
+    | ({
+        relationTo: 'customers';
+        value: number | Customer;
       } | null)
     | ({
         relationTo: 'users';
@@ -1941,6 +2161,7 @@ export interface PagesSelect<T extends boolean = true> {
               heading?: T;
               intro?: T;
               limit?: T;
+              kind?: T;
               id?: T;
               blockName?: T;
             };
@@ -2032,6 +2253,60 @@ export interface PagesSelect<T extends boolean = true> {
               id?: T;
               blockName?: T;
             };
+        logoWall?:
+          | T
+          | {
+              eyebrow?: T;
+              heading?: T;
+              source?: T;
+              customers?: T;
+              fallbackStatement?: T;
+              id?: T;
+              blockName?: T;
+            };
+        certificationsStrip?:
+          | T
+          | {
+              heading?: T;
+              kinds?: T;
+              limit?: T;
+              id?: T;
+              blockName?: T;
+            };
+        gallery?:
+          | T
+          | {
+              eyebrow?: T;
+              heading?: T;
+              items?:
+                | T
+                | {
+                    image?: T;
+                    label?: T;
+                    caption?: T;
+                    id?: T;
+                  };
+              layout?: T;
+              id?: T;
+              blockName?: T;
+            };
+        publications?:
+          | T
+          | {
+              eyebrow?: T;
+              heading?: T;
+              member?: T;
+              id?: T;
+              blockName?: T;
+            };
+        proofBar?:
+          | T
+          | {
+              showStatement?: T;
+              style?: T;
+              id?: T;
+              blockName?: T;
+            };
       };
   generateSlug?: T;
   slug?: T;
@@ -2083,10 +2358,12 @@ export interface UpdatesSelect<T extends boolean = true> {
   summary?: T;
   image?: T;
   relatedProducts?: T;
+  kind?: T;
   publishedAt?: T;
   pinned?: T;
   updatedAt?: T;
   createdAt?: T;
+  _status?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -2197,8 +2474,30 @@ export interface TeamSelect<T extends boolean = true> {
   role?: T;
   bio?: T;
   photo?: T;
+  credentials?:
+    | T
+    | {
+        text?: T;
+        id?: T;
+      };
+  expertise?:
+    | T
+    | {
+        text?: T;
+        id?: T;
+      };
+  publications?:
+    | T
+    | {
+        title?: T;
+        journal?: T;
+        year?: T;
+        url?: T;
+        id?: T;
+      };
   linkedinUrl?: T;
   email?: T;
+  featured?: T;
   order?: T;
   updatedAt?: T;
   createdAt?: T;
@@ -2213,8 +2512,27 @@ export interface TestimonialsSelect<T extends boolean = true> {
   role?: T;
   organization?: T;
   country?: T;
+  context?: T;
   logo?: T;
   products?: T;
+  consentOnFile?: T;
+  featured?: T;
+  order?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "certifications_select".
+ */
+export interface CertificationsSelect<T extends boolean = true> {
+  name?: T;
+  kind?: T;
+  issuer?: T;
+  statement?: T;
+  validUntil?: T;
+  document?: T;
+  logo?: T;
   order?: T;
   updatedAt?: T;
   createdAt?: T;
@@ -2276,6 +2594,22 @@ export interface SubscribersSelect<T extends boolean = true> {
   token?: T;
   confirmedAt?: T;
   source?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "customers_select".
+ */
+export interface CustomersSelect<T extends boolean = true> {
+  name?: T;
+  logo?: T;
+  website?: T;
+  sector?: T;
+  country?: T;
+  anonymisedLabel?: T;
+  showLogo?: T;
+  order?: T;
   updatedAt?: T;
   createdAt?: T;
 }
@@ -2362,12 +2696,40 @@ export interface SiteSetting {
    * Variant for dark backgrounds (optional).
    */
   logoDark?: (number | null) | Media;
+  /**
+   * Short claims for the trust strip under the hero. Detailed certifications with issuer and certificate PDF live under Company → Certifications & claims.
+   */
   certifications?:
     | {
         text: string;
         id?: string | null;
       }[]
     | null;
+  /**
+   * Facts about the company shown in the proof bar and given to AI assistants and search engines. Leave a field empty to hide it.
+   */
+  proof?: {
+    /**
+     * e.g. Founded May 2023
+     */
+    foundedText?: string | null;
+    /**
+     * e.g. 8–10 person team
+     */
+    teamSize?: string | null;
+    /**
+     * e.g. 600 L / month
+     */
+    capacity?: string | null;
+    /**
+     * One or two sentences about who uses Protpure resins. Shown where customer logos would go until logos can be published.
+     */
+    customersStatement?: string | null;
+    /**
+     * Optional. Update occasionally; shown next to the LinkedIn link.
+     */
+    linkedinFollowers?: number | null;
+  };
   /**
    * Public contact email.
    */
@@ -2685,6 +3047,15 @@ export interface SiteSettingsSelect<T extends boolean = true> {
     | {
         text?: T;
         id?: T;
+      };
+  proof?:
+    | T
+    | {
+        foundedText?: T;
+        teamSize?: T;
+        capacity?: T;
+        customersStatement?: T;
+        linkedinFollowers?: T;
       };
   email?: T;
   phone?: T;

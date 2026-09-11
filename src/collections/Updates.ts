@@ -1,6 +1,16 @@
 import type { CollectionConfig } from 'payload'
-import { anyone, editors } from '@/access'
+import { editors, publishedOrEditor } from '@/access'
 import { revalidateAll, revalidateAllDelete } from '@/hooks/revalidate'
+
+export const UPDATE_KINDS = [
+  { label: 'Product launch', value: 'product-launch' },
+  { label: 'Data / performance', value: 'data' },
+  { label: 'Milestone', value: 'milestone' },
+  { label: 'Services', value: 'services' },
+  { label: 'Perspective', value: 'perspective' },
+] as const
+
+export type UpdateKind = (typeof UPDATE_KINDS)[number]['value']
 
 /**
  * Extracts the activity/share id from a public LinkedIn post URL.
@@ -19,17 +29,23 @@ export function linkedInUrn(url: string): string | null {
   return null
 }
 
+/**
+ * LinkedIn updates. Drafts are enabled so summaries can be prepared ahead of the post (the seed
+ * ships five drafts without a URL); only published updates reach the site, the Markdown/JSON
+ * surfaces and the MCP server (see `getUpdates` in src/lib/data.ts).
+ */
 export const Updates: CollectionConfig = {
   slug: 'updates',
   labels: { singular: 'LinkedIn update', plural: 'LinkedIn updates' },
   admin: {
     useAsTitle: 'title',
     group: 'Content',
-    defaultColumns: ['title', 'publishedAt', 'pinned'],
+    defaultColumns: ['title', 'kind', 'publishedAt', '_status', 'pinned'],
     description:
-      'Paste the URL of a public LinkedIn post. The site embeds it automatically and shows your summary as a fallback for readers without LinkedIn.',
+      'Paste the URL of a public LinkedIn post. The site embeds it automatically and shows your summary as a fallback for readers without LinkedIn. Drafts are hidden from the site until you publish.',
   },
-  access: { read: anyone, create: editors, update: editors, delete: editors },
+  versions: { drafts: true, maxPerDoc: 10 },
+  access: { read: publishedOrEditor, create: editors, update: editors, delete: editors, readVersions: editors },
   hooks: {
     beforeChange: [
       ({ data }) => {
@@ -43,12 +59,13 @@ export const Updates: CollectionConfig = {
   defaultSort: '-publishedAt',
   fields: [
     { name: 'title', type: 'text', required: true, admin: { description: 'Short headline for the update.' } },
-    { name: 'url', type: 'text', required: true, label: 'LinkedIn post URL' },
+    { name: 'url', type: 'text', required: true, label: 'LinkedIn post URL', admin: { description: 'Required to publish. Drafts can be saved without it.' } },
     { name: 'urn', type: 'text', admin: { description: 'Auto-filled from the URL. Only edit if the embed does not load.' } },
     { name: 'summary', type: 'textarea', required: true, admin: { description: 'Two or three sentences. Shown as the card text and used by AI assistants.' } },
     { name: 'image', type: 'upload', relationTo: 'media', admin: { description: 'Optional: the post image, so the card looks good without loading LinkedIn.' } },
     { name: 'relatedProducts', type: 'relationship', relationTo: 'products', hasMany: true },
+    { name: 'kind', type: 'select', options: [...UPDATE_KINDS], admin: { position: 'sidebar', description: 'Lets page blocks show only one type of update, e.g. product launches.' } },
     { name: 'publishedAt', type: 'date', required: true, defaultValue: () => new Date().toISOString(), admin: { position: 'sidebar' } },
-    { name: 'pinned', type: 'checkbox', defaultValue: false, admin: { position: 'sidebar' } },
+    { name: 'pinned', type: 'checkbox', defaultValue: false, admin: { position: 'sidebar', description: 'Pinned updates are listed first.' } },
   ],
 }
