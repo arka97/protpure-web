@@ -24,7 +24,7 @@ export const pages = [
     layout: [
       { blockType: 'stats', style: 'light', items: [
         { value: '600 L', label: 'Monthly production capacity', note: 'Agarose-based resins, semi-automated plant' },
-        { value: '17', label: 'Products across six chromatography modes' },
+        { value: '16', label: 'Products across six chromatography modes' },
         { value: '2–3 wk', label: 'Standard lead time ex-works', note: 'vs 8–12 weeks typical for imports' },
         { value: '1000 cm/h', label: 'Max linear flow, Faster grade', note: 'Fast Flow 700 · Precise 380 · HR 120' },
       ] },
