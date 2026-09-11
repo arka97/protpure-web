@@ -54,7 +54,7 @@ export function Modal({
         // Only clicks on the backdrop / empty panel area close it, never clicks inside the content.
         if (e.target === ref.current || e.target === panelRef.current) onClose()
       }}
-      className={cn('fixed inset-0 m-0 h-full max-h-none w-full max-w-none border-0 bg-transparent p-0 backdrop:bg-navy-950/50 backdrop:backdrop-blur-[2px]', className)}
+      className={cn('fixed inset-0 m-0 h-full max-h-none w-full max-w-none border-0 bg-transparent p-0 text-ink backdrop:bg-[#081f2980]', className)}
     >
       <div ref={panelRef} className={cn('pointer-events-auto', panelClassName)}>
         {open ? children : null}

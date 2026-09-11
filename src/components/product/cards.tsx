@@ -1,7 +1,7 @@
 import Link from 'next/link'
-import { ArrowRight, Download, FileText } from 'lucide-react'
 import { AddToBasketButton } from '@/components/rfq/AddToBasketButton'
-import { Badge, CmsImage, Icon, StatusBadge } from '@/components/ui'
+import { CmsImage, StatusBadge } from '@/components/ui'
+import { ArrowIcon, DocumentIcon, DownloadIcon, ModeEmblem } from '@/components/visual/icons'
 import { GRADE_LABELS, toBasketProduct } from '@/lib/rfq'
 import { cn, formatDate } from '@/lib/utils'
 import { categoryOf } from '@/lib/catalog'
@@ -9,65 +9,87 @@ import type { Application, Document, Product, ProductCategory, Service } from '@
 
 const GRADE_SHORT: Record<string, string> = GRADE_LABELS
 
+/**
+ * Product card in the Deep Field system: white card, 2 px corners, category eyebrow + availability
+ * word-and-dot, serif title, scanned specs in mono and one Add to RFQ action. The catalogue agent
+ * will extend the spec lines (DBC, flow, grades + d50) and add the grade / pack selects.
+ */
 export function ProductCard({ product, compact }: { product: Product; compact?: boolean }) {
   const cat = categoryOf(product)
   const grades = (product.grades ?? []).map((g) => GRADE_SHORT[g.grade] ?? g.grade)
+  const d50s = (product.grades ?? []).map((g) => g.d50).filter(Boolean)
   const href = `/products/${product.slug}`
   // The card is an <article> with a stretched title link (a button cannot live inside an <a>);
   // the basket button sits above the stretched link via `relative z-10`.
   return (
-    <article className="card-hover group relative flex h-full flex-col overflow-hidden focus-within:shadow-card-hover">
-      <Link href={href} className="relative block aspect-[4/3] w-full bg-gradient-to-b from-surface-2 to-white p-6" tabIndex={-1} aria-hidden>
-        {product.image && typeof product.image === 'object' ? (
-          <CmsImage media={product.image} size="card" className="mx-auto h-full w-full object-contain transition-transform duration-300 group-hover:scale-[1.03]" sizes="(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 100vw" />
-        ) : (
-          <div className="flex h-full items-center justify-center text-navy-100">
-            <Icon name={cat?.icon} className="h-16 w-16" />
+    <article className="card-hover group relative flex h-full flex-col px-5 pb-[18px] pt-[22px] focus-within:border-rule-strong">
+      <div className="mb-4 flex items-center justify-between gap-2">
+        <p className="eyebrow text-[9px] tracking-[0.08em]">{cat?.shortName || cat?.name}</p>
+        <StatusBadge status={product.availability} className="text-[10px]" />
+      </div>
+      <h3 className="font-display text-[29px] leading-[1.08] tracking-[-0.03em] text-ink group-hover:text-teal-deep">
+        <Link href={href} className="after:absolute after:inset-0 after:content-[''] focus-visible:outline-none">
+          {product.name}
+        </Link>
+      </h3>
+      {product.subtitle ? <p className="mt-2 min-h-[35px] text-[12px] leading-[1.45] text-text-2">{product.subtitle}</p> : null}
+      {!compact && product.summary ? <p className="mt-3 line-clamp-3 text-[13px] leading-relaxed text-text-2">{product.summary}</p> : null}
+      {!compact && product.image && typeof product.image === 'object' ? (
+        <div className="relative mt-4 aspect-[4/3] w-full bg-white p-4">
+          <CmsImage media={product.image} size="card" className="mx-auto h-full w-full object-contain" sizes="(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 100vw" />
+        </div>
+      ) : null}
+      <dl className="mt-4 grid gap-2.5">
+        {grades.length ? (
+          <div className="grid grid-cols-[72px_1fr] gap-2">
+            <dt className="text-[10px] text-text-2">Grades</dt>
+            <dd className="mono text-[12px] font-medium leading-[1.5]">
+              {grades.join(' · ')}
+              {d50s.length ? <small className="block font-sans text-[10px] font-normal text-text-2">d50V {d50s.join(' / ')}</small> : null}
+            </dd>
           </div>
-        )}
-        <div className="absolute left-4 top-4">
-          <StatusBadge status={product.availability} />
-        </div>
-      </Link>
-      <div className="flex flex-1 flex-col p-5">
-        <p className="text-xs font-semibold uppercase tracking-wide text-teal-600">{cat?.name}</p>
-        <h3 className="mt-1.5 font-display text-lg font-bold text-navy-900 group-hover:text-teal-600">
-          <Link href={href} className="after:absolute after:inset-0 after:content-[''] focus-visible:outline-none">
-            {product.name}
-          </Link>
-        </h3>
-        {product.subtitle ? <p className="text-sm text-muted">{product.subtitle}</p> : null}
-        {!compact ? <p className="mt-3 line-clamp-3 text-sm leading-relaxed text-ink-soft">{product.summary}</p> : null}
-        <div className="mt-auto flex flex-wrap items-center gap-1.5 pt-4">
-          {grades.map((g) => (
-            <Badge key={g}>{g}</Badge>
-          ))}
-          <span className="ml-auto inline-flex items-center gap-1 text-sm font-semibold text-navy-900">
-            Details <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
-          </span>
-        </div>
-        <div className="relative z-10 mt-4">
-          <AddToBasketButton product={toBasketProduct(product)} className="w-full" />
+        ) : null}
+        {product.leadTime ? (
+          <div className="grid grid-cols-[72px_1fr] gap-2">
+            <dt className="text-[10px] text-text-2">Lead time</dt>
+            <dd className="mono text-[12px] font-medium leading-[1.5]">{product.leadTime}</dd>
+          </div>
+        ) : null}
+      </dl>
+      <div className="mt-auto flex items-center justify-between gap-3 border-t border-rule pt-3.5">
+        <span className="inline-flex items-center gap-2 text-[12px] font-medium text-ink">
+          Details <ArrowIcon className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
+        </span>
+        <div className="relative z-10">
+          <AddToBasketButton product={toBasketProduct(product)} appearance="teal" size="xs" />
         </div>
       </div>
     </article>
   )
 }
 
-export function CategoryCard({ category, count }: { category: ProductCategory; count?: number }) {
+/** Category as a "mode" cell: number + short name, serif title, product line, bead emblem. */
+export function CategoryCard({ category, count, index, products }: { category: ProductCategory; count?: number; index?: number; products?: string[] }) {
+  const line = products?.length ? products.join(' · ') : category.tagline
   return (
-    <Link href={`/products/category/${category.slug}`} className="card-hover group flex h-full flex-col p-6">
-      <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-teal-50 text-teal-600">
-        <Icon name={category.icon} className="h-6 w-6" />
-      </div>
-      <h3 className="mt-5 font-display text-lg font-bold text-navy-900 group-hover:text-teal-600">{category.name}</h3>
-      {category.tagline ? <p className="mt-1.5 text-sm leading-relaxed text-ink-soft">{category.tagline}</p> : null}
-      <div className="mt-auto flex items-center justify-between pt-5 text-sm">
-        {typeof count === 'number' ? <span className="text-muted">{count} product{count === 1 ? '' : 's'}</span> : <span />}
-        <span className="inline-flex items-center gap-1 font-semibold text-navy-900">
-          Browse <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
-        </span>
-      </div>
+    <Link href={`/products/category/${category.slug}`} className="group grid min-h-[115px] grid-cols-[1fr_44px] gap-x-3 gap-y-1.5 border-b border-r border-rule bg-surface px-[18px] py-[19px] transition-colors hover:bg-surface-recessed lg:min-h-[170px] lg:grid-cols-[1fr_60px] lg:px-[27px] lg:pb-[22px] lg:pt-[25px]">
+      <span className="num col-start-1 text-[9px] uppercase tracking-[0.12em] text-teal-deep lg:text-[11px]">
+        {typeof index === 'number' ? `${String(index + 1).padStart(2, '0')} / ` : null}
+        {category.shortName || category.name}
+      </span>
+      <h3 className="serif-md col-start-1 text-ink">{category.name}</h3>
+      <p className="col-start-1 max-w-[310px] text-[12px] leading-[1.5] text-text-2 lg:text-[13px]">
+        {line}
+        {typeof count === 'number' && !products?.length ? (
+          <>
+            {line ? ' · ' : null}
+            <span className="num">
+              {count} product{count === 1 ? '' : 's'}
+            </span>
+          </>
+        ) : null}
+      </p>
+      <ModeEmblem icon={category.icon} className="col-start-2 row-span-3 row-start-1 h-[42px] w-[42px] self-center text-teal-deep lg:h-[58px] lg:w-[58px]" />
     </Link>
   )
 }
@@ -81,17 +103,20 @@ export function ApplicationCard({ application }: { application: Application }) {
         </div>
       ) : null}
       <div className="flex flex-1 flex-col p-6">
-        <h3 className="font-display text-lg font-bold text-navy-900 group-hover:text-teal-600">{application.name}</h3>
-        <p className="mt-2 text-sm leading-relaxed text-ink-soft">{application.summary}</p>
+        <h3 className="serif-md text-ink group-hover:text-teal-deep">{application.name}</h3>
+        <p className="mt-2 text-[14px] leading-relaxed text-text-2">{application.summary}</p>
         {application.workflows?.length ? (
           <ul className="mt-4 flex flex-wrap gap-1.5">
             {application.workflows.slice(0, 4).map((w) => (
-              <li key={w.id} className="chip">
+              <li key={w.id} className="chip text-text-2">
                 {w.text}
               </li>
             ))}
           </ul>
         ) : null}
+        <span className="mt-auto inline-flex items-center gap-2 pt-5 text-[13px] font-medium text-ink">
+          Explore <ArrowIcon className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+        </span>
       </div>
     </Link>
   )
@@ -100,24 +125,22 @@ export function ApplicationCard({ application }: { application: Application }) {
 export function ServiceCard({ service, index }: { service: Service; index: number }) {
   return (
     <div className="card flex h-full flex-col p-6">
-      <div className="flex items-center gap-3">
-        <span className="font-display text-3xl font-bold text-teal-500/60">{String(index + 1).padStart(2, '0')}</span>
-        <h3 className="font-display text-lg font-bold text-navy-900">{service.name}</h3>
-      </div>
-      {service.tagline ? <p className="mt-1 text-sm font-medium text-teal-600">{service.tagline}</p> : null}
-      <p className="mt-3 text-sm leading-relaxed text-ink-soft">{service.summary}</p>
+      <span className="mono block text-[12px] text-teal-deep">{String(index + 1).padStart(2, '0')}</span>
+      <h3 className="serif-md mt-3 text-ink">{service.name}</h3>
+      {service.tagline ? <p className="mt-1 text-[13px] font-medium text-teal-deep">{service.tagline}</p> : null}
+      <p className="mt-3 text-[14px] leading-relaxed text-text-2">{service.summary}</p>
       {service.deliverables?.length ? (
-        <ul className="mt-4 space-y-1.5 text-sm text-ink-soft">
+        <ul className="mt-4 space-y-1.5 text-[13px] text-text-2">
           {service.deliverables.map((d) => (
-            <li key={d.id} className="flex gap-2">
-              <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-teal-500" />
+            <li key={d.id} className="flex gap-2.5">
+              <span className="mt-[9px] h-1 w-1 shrink-0 rounded-full bg-teal-deep" aria-hidden />
               {d.text}
             </li>
           ))}
         </ul>
       ) : null}
-      <Link href={`/services#${service.slug}`} className="mt-auto inline-flex items-center gap-1 pt-5 text-sm font-semibold text-navy-900 hover:text-teal-600">
-        Learn more <ArrowRight className="h-4 w-4" />
+      <Link href={`/services#${service.slug}`} className="text-link mt-auto self-start pt-5 text-[13px]">
+        Learn more <ArrowIcon />
       </Link>
     </div>
   )
@@ -139,21 +162,19 @@ const DOC_LABEL: Record<string, string> = {
 export function DocumentRow({ doc, className }: { doc: Document; className?: string }) {
   const size = doc.filesize ? `${(doc.filesize / 1024 / 1024).toFixed(1)} MB` : ''
   return (
-    <a href={doc.url ?? '#'} target="_blank" rel="noopener noreferrer" className={cn('group flex items-start gap-4 rounded-xl border border-line bg-white p-4 transition hover:border-teal-400 hover:shadow-card', className)}>
-      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-navy-50 text-navy-800">
-        <FileText className="h-5 w-5" />
-      </div>
+    <a href={doc.url ?? '#'} target="_blank" rel="noopener noreferrer" className={cn('group flex items-start gap-4 border-b border-t border-rule border-t-rule-strong bg-transparent py-5 transition-colors hover:border-t-ink', className)}>
+      <DocumentIcon className="mt-1 h-5 w-5 shrink-0 text-teal-deep" />
       <div className="min-w-0 flex-1">
-        <p className="font-medium text-navy-900 group-hover:text-teal-600">{doc.title}</p>
-        <p className="mt-0.5 text-xs text-muted">
+        <p className="text-[17px] font-medium leading-tight text-ink group-hover:text-teal-deep">{doc.title}</p>
+        <p className="mono mt-1.5 text-[11px] text-text-2">
           {DOC_LABEL[doc.type] ?? 'Document'}
           {doc.revision ? ` · ${doc.revision}` : ''}
           {doc.documentDate ? ` · ${formatDate(doc.documentDate, { month: 'short', year: 'numeric' })}` : ''}
           {size ? ` · PDF, ${size}` : ' · PDF'}
         </p>
-        {doc.summary ? <p className="mt-1.5 line-clamp-2 text-sm text-ink-soft">{doc.summary}</p> : null}
+        {doc.summary ? <p className="mt-2 line-clamp-2 text-[13px] leading-relaxed text-text-2">{doc.summary}</p> : null}
       </div>
-      <Download className="mt-2 h-4 w-4 shrink-0 text-muted group-hover:text-teal-600" />
+      <DownloadIcon className="mt-1 h-4 w-4 shrink-0 text-text-2 group-hover:text-teal-deep" />
     </a>
   )
 }

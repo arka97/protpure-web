@@ -2,13 +2,13 @@
 
 import * as React from 'react'
 import Link from 'next/link'
-import { Trash2 } from 'lucide-react'
 import { useBasket } from './BasketProvider'
+import { TrashIcon } from '@/components/visual/icons'
 import { GRADE_LABELS, ITEM_PURPOSES, SAMPLE_KIT_POLICY, type BasketItem, type GradeValue, type PurposeValue } from '@/lib/rfq'
 import { cn } from '@/lib/utils'
 
 /** Shared control styling: 44 px targets on touch screens, denser on desktop. */
-export const controlClass = 'min-h-11 w-full rounded-lg border border-line bg-white px-3 py-2 text-sm text-ink outline-none transition focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 sm:min-h-9 sm:py-1.5'
+export const controlClass = 'field-control text-[13px] sm:min-h-10 sm:py-2'
 
 export const OTHER_PACK = '__other__'
 
@@ -19,7 +19,7 @@ export function LineFields({ item, layout = 'stack', idPrefix }: { item: BasketI
   const packOptions = product.packSizes.filter((ps) => !ps.grade || !item.grade || ps.grade === item.grade)
   const packValue = item.packSize ? (packOptions.some((ps) => ps.size === item.packSize) ? item.packSize : OTHER_PACK) : ''
   const label = (text: string, htmlFor: string) => (
-    <label htmlFor={htmlFor} className={cn('mb-1 block text-xs font-medium text-muted', layout === 'row' && 'sm:sr-only')}>
+    <label htmlFor={htmlFor} className={cn('mb-1.5 block text-[11px] font-medium text-text-2', layout === 'row' && 'sm:sr-only')}>
       {text}
     </label>
   )
@@ -89,17 +89,20 @@ export function LineFields({ item, layout = 'stack', idPrefix }: { item: BasketI
 export function LineTitle({ item, link = true, onNavigate }: { item: BasketItem; link?: boolean; onNavigate?: () => void }) {
   const { product } = item
   const title = link && product.slug ? (
-    <Link href={`/products/${product.slug}`} onClick={onNavigate} className="font-semibold text-navy-900 hover:text-teal-600">
+    <Link href={`/products/${product.slug}`} onClick={onNavigate} className="text-[17px] font-medium leading-tight text-ink hover:text-teal-deep">
       {product.name}
     </Link>
   ) : (
-    <span className="font-semibold text-navy-900">{product.name}</span>
+    <span className="text-[17px] font-medium leading-tight text-ink">{product.name}</span>
   )
   return (
     <div className="min-w-0">
       {title}
-      <p className="text-xs text-muted">
-        {[product.category, item.catalogNumber ? `Cat. ${item.catalogNumber}` : null].filter(Boolean).join(' · ') || 'Protpure resin'}
+      <p className="mt-1 text-[11px] text-text-2">
+        {product.category ? <span>{product.category}</span> : null}
+        {product.category && item.catalogNumber ? ' · ' : null}
+        {item.catalogNumber ? <span className="mono">Cat. {item.catalogNumber}</span> : null}
+        {!product.category && !item.catalogNumber ? 'Protpure resin' : null}
       </p>
     </div>
   )
@@ -108,8 +111,8 @@ export function LineTitle({ item, link = true, onNavigate }: { item: BasketItem;
 export function RemoveLineButton({ item, className }: { item: BasketItem; className?: string }) {
   const { remove } = useBasket()
   return (
-    <button type="button" onClick={() => remove(item.key)} className={cn('inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-lg text-muted transition hover:bg-red-50 hover:text-red-600 sm:h-9 sm:w-9', className)} aria-label={`Remove ${item.product.name} from basket`}>
-      <Trash2 className="h-4 w-4" aria-hidden />
+    <button type="button" onClick={() => remove(item.key)} className={cn('icon-button -mr-2 shrink-0 text-text-2 hover:text-error', className)} aria-label={`Remove ${item.product.name} from basket`}>
+      <TrashIcon className="h-4 w-4" />
     </button>
   )
 }
@@ -118,9 +121,9 @@ export function RemoveLineButton({ item, className }: { item: BasketItem; classN
 export function BasketLineList({ onNavigate }: { onNavigate?: () => void }) {
   const { items } = useBasket()
   return (
-    <ul className="divide-y divide-line">
+    <ul className="divide-y divide-rule">
       {items.map((item, i) => (
-        <li key={item.key} className="py-4">
+        <li key={item.key} className="py-5">
           <div className="flex items-start justify-between gap-3">
             <LineTitle item={item} onNavigate={onNavigate} />
             <RemoveLineButton item={item} />
@@ -139,8 +142,8 @@ export function BasketTable() {
   const { items } = useBasket()
   const hasSampleKit = items.some((i) => i.purpose === 'sample-kit')
   return (
-    <div className="overflow-hidden rounded-xl border border-line bg-surface-2/50">
-      <div className="hidden grid-cols-[minmax(0,1.4fr)_1fr_1fr_5rem_1fr_2.25rem] gap-3 border-b border-line bg-surface-2 px-4 py-2 text-xs font-semibold uppercase tracking-wide text-muted sm:grid" aria-hidden>
+    <div className="border border-rule bg-white">
+      <div className="hidden grid-cols-[minmax(0,1.4fr)_1fr_1fr_5rem_1fr_2.25rem] gap-3 border-b border-rule-strong bg-surface-recessed px-4 py-2.5 text-[11px] font-medium uppercase tracking-[0.08em] text-text-2 sm:grid" aria-hidden>
         <span>Product</span>
         <span>Grade</span>
         <span>Pack size</span>
@@ -148,9 +151,9 @@ export function BasketTable() {
         <span>Purpose</span>
         <span />
       </div>
-      <ul className="divide-y divide-line">
+      <ul className="divide-y divide-rule">
         {items.map((item, i) => (
-          <li key={item.key} className="grid gap-3 px-4 py-3 sm:grid-cols-[minmax(0,1.4fr)_1fr_1fr_5rem_1fr_2.25rem] sm:items-start">
+          <li key={item.key} className="grid gap-3 px-4 py-4 sm:grid-cols-[minmax(0,1.4fr)_1fr_1fr_5rem_1fr_2.25rem] sm:items-start">
             <div className="flex items-start justify-between gap-2 sm:block">
               <LineTitle item={item} />
               <RemoveLineButton item={item} className="sm:hidden" />
@@ -164,7 +167,7 @@ export function BasketTable() {
           </li>
         ))}
       </ul>
-      {hasSampleKit ? <p className="border-t border-line px-4 py-2.5 text-xs text-ink-soft">{SAMPLE_KIT_POLICY}</p> : null}
+      {hasSampleKit ? <p className="border-t border-rule bg-surface px-4 py-3 text-[12px] leading-[1.6] text-text-2">{SAMPLE_KIT_POLICY}</p> : null}
     </div>
   )
 }

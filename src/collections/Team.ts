@@ -12,6 +12,7 @@ export const Team: CollectionConfig = {
   fields: [
     { name: 'name', type: 'text', required: true },
     { name: 'role', type: 'text', required: true },
+    { name: 'tagline', type: 'text', admin: { description: 'One-line bio for compact layouts, e.g. "Materials scientist · bead synthesis and ligand chemistry".' } },
     { name: 'bio', type: 'richText' },
     { name: 'photo', type: 'upload', relationTo: 'media' },
     { name: 'linkedinUrl', type: 'text', label: 'LinkedIn URL' },

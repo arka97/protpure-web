@@ -1,18 +1,27 @@
+import Image from 'next/image'
 import * as React from 'react'
-import { Badge, Breadcrumbs, CmsImage, CmsLinks } from '@/components/ui'
-import { cn } from '@/lib/utils'
-import type { Page } from '@/payload-types'
+import { Badge, Breadcrumbs, CmsLinks } from '@/components/ui'
+import { BeadField } from '@/components/visual/BeadField'
+import { cn, mediaAlt, mediaUrl } from '@/lib/utils'
+import type { Media, Page } from '@/payload-types'
 
 type Hero = NonNullable<Page['hero']>
 
-/** Highlights `highlight` words in the heading in the accent colour. */
-function Highlighted({ text, highlight }: { text: string; highlight?: string | null }) {
+/**
+ * Serif headline with the `highlight` words set in italic luminous teal. When the highlight closes
+ * the heading it takes its own line — the short scientific proposition ("From the bead up.").
+ */
+export function Highlighted({ text, highlight, className }: { text: string; highlight?: string | null; className?: string }) {
   if (!highlight || !text.includes(highlight)) return <>{text}</>
-  const [before, after] = text.split(highlight)
+  const idx = text.indexOf(highlight)
+  const before = text.slice(0, idx).trimEnd()
+  const after = text.slice(idx + highlight.length)
+  const ownLine = after.trim() === '' && before !== ''
   return (
     <>
       {before}
-      <span className="text-teal-300">{highlight}</span>
+      {ownLine ? <br /> : before ? ' ' : null}
+      <em className={cn('italic text-teal-lum', className)}>{highlight}</em>
       {after}
     </>
   )
@@ -34,41 +43,68 @@ export function PageHero({
   const heading = hero?.heading || title
 
   if (style === 'standard') {
-    const hasImage = hero?.image && typeof hero.image === 'object'
+    const image = hero?.image && typeof hero.image === 'object' ? (hero.image as Media) : null
+    const imageUrl = image ? mediaUrl(image, 'large') ?? mediaUrl(image) : null
+    const hasImage = Boolean(imageUrl)
     return (
-      <section className="hex-bg relative overflow-hidden text-white">
-        <div className={cn('container-x relative grid items-center gap-12 py-20 lg:py-28', hasImage && 'lg:grid-cols-12')}>
-          <div className={cn(hasImage ? 'lg:col-span-7' : 'max-w-3xl')}>
-            {breadcrumbs ? <div className="mb-6"><Breadcrumbs items={breadcrumbs} onDark /></div> : null}
+      <section className="surface-dark relative overflow-hidden">
+        <BeadField density="normal" opacity={0.16} className="bottom-[250px] left-[145px] w-[350px] lg:bottom-[-45px] lg:left-[235px] lg:w-[650px]" />
+        <div className={cn('container-x relative grid gap-7 pb-8 pt-8 lg:gap-6 lg:pb-12 lg:pt-[58px]', hasImage ? 'lg:min-h-[725px] lg:grid-cols-[1.08fr_1fr]' : 'lg:min-h-[420px]')}>
+          <div className={cn('relative z-[2] lg:pt-[18px]', !hasImage && 'max-w-[820px]')}>
+            {breadcrumbs ? (
+              <div className="mb-8">
+                <Breadcrumbs items={breadcrumbs} onDark />
+              </div>
+            ) : null}
             {hero?.eyebrow ? (
-              <p className="mb-5 inline-flex items-center gap-2 rounded-full border border-teal-400/30 bg-teal-400/10 px-3 py-1 text-xs font-semibold text-teal-300">
-                <span className="h-1.5 w-1.5 rounded-full bg-teal-300" />
+              <p className="eyebrow mb-5 flex items-center gap-3">
+                <span className="dot" aria-hidden />
                 {hero.eyebrow}
               </p>
             ) : null}
-            <h1 className="heading-1 text-white">
+            <h1 className="heading-display">
               <Highlighted text={heading} highlight={hero?.highlight} />
             </h1>
-            {hero?.text ? <p className="mt-6 max-w-2xl text-lg leading-relaxed text-white/80 sm:text-xl">{hero.text}</p> : null}
-            <CmsLinks links={hero?.links} onDark className="mt-8" />
+            {hero?.text ? <p className="lede mt-6 max-w-[470px] lg:mt-[30px]">{hero.text}</p> : null}
+            <CmsLinks links={hero?.links} onDark className="mt-6 lg:mt-[30px]" />
             {hero?.badges?.length ? (
-              <div className="mt-8 flex flex-wrap gap-2">
+              <ul className="mt-8 flex flex-wrap gap-2">
                 {hero.badges.map((b) => (
-                  <Badge key={b.id} tone="onDark">
-                    {b.text}
-                  </Badge>
+                  <li key={b.id}>
+                    <Badge tone="onDark">{b.text}</Badge>
+                  </li>
                 ))}
-              </div>
+              </ul>
             ) : null}
             {children}
           </div>
-          {hasImage ? (
-            <div className="relative lg:col-span-5">
-              <div className="absolute -inset-6 rounded-[2rem] bg-teal-400/10 blur-2xl" aria-hidden />
-              <div className="relative overflow-hidden rounded-2xl border border-white/10 shadow-2xl">
-                <CmsImage media={hero!.image} size="large" className="h-auto w-full object-cover" sizes="(min-width: 1024px) 40vw, 100vw" priority />
+
+          {hasImage && image ? (
+            <figure className="relative self-start lg:ml-2.5">
+              <div className="arch relative h-[338px] bg-field-raised lg:h-[550px]">
+                <Image
+                  src={imageUrl!}
+                  alt={mediaAlt(image, heading)}
+                  fill
+                  priority
+                  sizes="(min-width: 1024px) 45vw, 100vw"
+                  className="object-cover object-top"
+                  style={{ objectPosition: 'center 20%' }}
+                />
               </div>
-            </div>
+              {hero?.imageMarker ? (
+                <div className="absolute bottom-[49px] left-[-8px] flex h-[97px] w-[97px] flex-col items-center justify-center rounded-full bg-teal-lum text-center text-field shadow-[0_0_0_6px_var(--color-field)] lg:bottom-[68px] lg:left-[-45px] lg:h-[134px] lg:w-[134px] lg:shadow-[0_0_0_9px_var(--color-field)]" aria-label={[hero.imageMarker, hero.imageMarkerNote].filter(Boolean).join(', ')}>
+                  <strong className="serif-lg num">{hero.imageMarker}</strong>
+                  {hero.imageMarkerNote ? <span className="mt-1.5 px-2 text-[8px] uppercase tracking-[0.08em] lg:mt-2 lg:text-[10px]">{hero.imageMarkerNote}</span> : null}
+                </div>
+              ) : null}
+              {hero?.imageCaption || hero?.imageCaptionNote ? (
+                <figcaption className="mt-3.5 flex justify-between gap-4 text-[9px] leading-[1.5] text-text-2-dark lg:text-[11px]">
+                  <span>{hero.imageCaption}</span>
+                  {hero.imageCaptionNote ? <span className="text-right">{hero.imageCaptionNote}</span> : null}
+                </figcaption>
+              ) : null}
+            </figure>
           ) : null}
         </div>
       </section>
@@ -76,12 +112,16 @@ export function PageHero({
   }
 
   return (
-    <section className="border-b border-line bg-surface-2">
-      <div className="container-x py-12 sm:py-16">
-        {breadcrumbs ? <div className="mb-5"><Breadcrumbs items={breadcrumbs} /></div> : null}
-        {hero?.eyebrow ? <p className="eyebrow mb-3">{hero.eyebrow}</p> : null}
-        <h1 className="heading-1 max-w-4xl text-4xl sm:text-5xl">{heading}</h1>
-        {hero?.text ? <p className="lede mt-4 max-w-3xl">{hero.text}</p> : null}
+    <section className="border-b border-rule bg-surface">
+      <div className="container-x py-10 lg:py-11">
+        {breadcrumbs ? (
+          <div className="mb-6">
+            <Breadcrumbs items={breadcrumbs} />
+          </div>
+        ) : null}
+        {hero?.eyebrow ? <p className="eyebrow mb-4">{hero.eyebrow}</p> : null}
+        <h1 className="heading-1 max-w-[900px]">{heading}</h1>
+        {hero?.text ? <p className="lede mt-4 max-w-[650px]">{hero.text}</p> : null}
         <CmsLinks links={hero?.links} className="mt-6" />
         {children}
       </div>

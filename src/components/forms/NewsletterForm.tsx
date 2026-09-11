@@ -2,46 +2,77 @@
 
 import * as React from 'react'
 import { useActionState } from 'react'
-import { Send, CircleCheck } from 'lucide-react'
 import { subscribeNewsletter, type FormState } from '@/app/actions'
+import { ArrowIcon, CheckIcon } from '@/components/visual/icons'
 import { cn } from '@/lib/utils'
 
-export function NewsletterForm({ compact, onDark }: { compact?: boolean; onDark?: boolean }) {
+/**
+ * Single labelled email field. `variant="underline"` is the footer treatment (hairline underline,
+ * arrow submit); the default is a bordered field with a button for light surfaces.
+ */
+export function NewsletterForm({ compact, onDark, variant = 'default', label = 'Email address' }: { compact?: boolean; onDark?: boolean; variant?: 'default' | 'underline'; label?: string }) {
   const [state, action, pending] = useActionState<FormState, FormData>(subscribeNewsletter, null)
+  const id = React.useId()
 
   if (state?.ok) {
     return (
-      <p className={cn('flex items-start gap-2 text-sm', onDark ? 'text-teal-300' : 'text-teal-600')} role="status">
-        <CircleCheck className="mt-0.5 h-4 w-4 shrink-0" /> {state.message}
+      <p className={cn('flex items-start gap-2 text-[13px]', onDark ? 'text-teal-lum' : 'text-teal-deep')} role="status">
+        <CheckIcon className="mt-0.5 h-4 w-4 shrink-0" /> {state.message}
       </p>
     )
   }
 
+  const error = state && !state.ok ? state.message : null
+
+  if (variant === 'underline') {
+    return (
+      <form action={action}>
+        <label htmlFor={`${id}-email`} className={cn('block text-[13px]', onDark ? 'text-surface' : 'text-ink')}>
+          {label}
+        </label>
+        <input type="text" name="website" tabIndex={-1} autoComplete="off" className="hidden" aria-hidden />
+        <div className={cn('mt-4 flex items-stretch border-b', onDark ? 'border-[#72918f] focus-within:border-teal-lum' : 'border-rule-strong focus-within:border-teal-deep')}>
+          <input
+            id={`${id}-email`}
+            name="email"
+            type="email"
+            required
+            autoComplete="email"
+            placeholder="Your work email"
+            aria-invalid={error ? true : undefined}
+            aria-describedby={error ? `${id}-error` : undefined}
+            className={cn('min-w-0 flex-1 bg-transparent py-3 text-[13px] outline-none focus-visible:outline-none', onDark ? 'text-surface placeholder:text-text-2-dark' : 'text-ink placeholder:text-text-2')}
+          />
+          <button type="submit" className={cn('icon-button -mr-2 min-h-[44px] min-w-[44px]', onDark ? 'text-teal-lum hover:bg-white/5' : 'text-teal-deep')} aria-label="Subscribe to newsletter" disabled={pending}>
+            <ArrowIcon />
+          </button>
+        </div>
+        {error ? (
+          <p id={`${id}-error`} className={cn('mt-2 text-[12px]', onDark ? 'text-[#f0c9a0]' : 'text-error')} role="alert">
+            {error}
+          </p>
+        ) : null}
+      </form>
+    )
+  }
+
   return (
-    <form action={action} className={cn('flex gap-2', compact ? 'flex-col sm:flex-row' : 'flex-col sm:flex-row')}>
-      <label className="sr-only" htmlFor="newsletter-email">
-        Email address
-      </label>
-      <input type="text" name="website" tabIndex={-1} autoComplete="off" className="hidden" aria-hidden />
-      <input
-        id="newsletter-email"
-        name="email"
-        type="email"
-        required
-        placeholder="you@company.com"
-        className={cn(
-          'min-w-0 flex-1 rounded-lg border px-3.5 py-2.5 text-sm outline-none transition focus:ring-2',
-          onDark ? 'border-white/15 bg-white/5 text-white placeholder:text-white/40 focus:border-teal-300 focus:ring-teal-300/30' : 'border-line bg-white text-ink focus:border-teal-500 focus:ring-teal-500/20',
-        )}
-      />
-      <button type="submit" className="btn-primary btn-sm shrink-0" disabled={pending}>
-        {pending ? 'Sending…' : 'Subscribe'} <Send className="h-4 w-4" aria-hidden />
+    <form action={action} className={cn('flex flex-col gap-3', !compact && 'sm:flex-row sm:items-start')}>
+      <div className="min-w-0 flex-1">
+        <label className="mb-1.5 block text-[13px] font-medium" htmlFor={`${id}-email`}>
+          {label}
+        </label>
+        <input type="text" name="website" tabIndex={-1} autoComplete="off" className="hidden" aria-hidden />
+        <input id={`${id}-email`} name="email" type="email" required autoComplete="email" placeholder="you@company.com" className="field-control" aria-invalid={error ? true : undefined} aria-describedby={error ? `${id}-error` : undefined} />
+        {error ? (
+          <p id={`${id}-error`} className="mt-2 text-[12px] text-error" role="alert">
+            {error}
+          </p>
+        ) : null}
+      </div>
+      <button type="submit" className="btn-primary shrink-0 sm:mt-[26px]" disabled={pending}>
+        {pending ? 'Sending…' : 'Subscribe'} <ArrowIcon />
       </button>
-      {state && !state.ok ? (
-        <p className={cn('basis-full text-xs', onDark ? 'text-amber-300' : 'text-amber-700')} role="alert">
-          {state.message}
-        </p>
-      ) : null}
     </form>
   )
 }
