@@ -577,7 +577,7 @@ export interface Page {
   id: number;
   title: string;
   hero?: {
-    style?: ('standard' | 'compact' | 'none') | null;
+    style?: ('standard' | 'schematic' | 'compact' | 'none') | null;
     eyebrow?: string | null;
     /**
      * Defaults to the page title.
@@ -590,15 +590,15 @@ export interface Page {
     text?: string | null;
     image?: (number | null) | Media;
     /**
-     * Medallion on the photo, e.g. "BPG 200".
+     * Standard: medallion on the photo, e.g. "BPG 200". Schematic: label above the drawing, e.g. "Particle architecture".
      */
     imageMarker?: string | null;
     /**
-     * Small line in the medallion, e.g. "Client deployment".
+     * Standard: small line in the medallion, e.g. "Client deployment". Schematic: right-hand label, e.g. "Fig. 01 / Schematic".
      */
     imageMarkerNote?: string | null;
     /**
-     * Caption under the photo, e.g. "Ni-NTA Agarose in a process column".
+     * Caption under the photo or drawing, e.g. "Ni-NTA Agarose in a process column".
      */
     imageCaption?: string | null;
     /**
@@ -667,6 +667,10 @@ export interface Page {
               [k: string]: unknown;
             };
             width?: ('narrow' | 'wide') | null;
+            /**
+             * Number the H2 headings 01, 02, 03… like the site’s chapters (legal pages, long policies).
+             */
+            numbered?: boolean | null;
             id?: string | null;
             blockName?: string | null;
             blockType: 'richText';
@@ -2097,6 +2101,7 @@ export interface PagesSelect<T extends boolean = true> {
           | {
               content?: T;
               width?: T;
+              numbered?: T;
               id?: T;
               blockName?: T;
             };

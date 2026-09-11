@@ -38,11 +38,14 @@ type Block = NonNullable<Page['layout']>[number]
 const CHAPTER_BLOCKS = new Set<Block['blockType']>([
   'productCategories', 'gradesPlatform', 'featureGrid', 'twoColumn', 'resinSelector', 'featuredProducts', 'teamGrid', 'timeline', 'testimonials',
   'latestPosts', 'linkedInFeed', 'applicationsGrid', 'servicesGrid', 'documentList', 'formBlock', 'faqBlock', 'cta', 'comparisonTable', 'logoWall',
+  'gallery', 'publications',
 ])
 
 function opensChapter(b: Block): boolean {
   if (!('eyebrow' in b) || !b.eyebrow) return false
   if (b.blockType === 'cta' && b.style !== 'evaluation') return false
+  // An empty gallery is only a slot editors see in preview; visitors must not get a numbering gap.
+  if (b.blockType === 'gallery' && !b.items?.length) return false
   return CHAPTER_BLOCKS.has(b.blockType)
 }
 
@@ -171,11 +174,12 @@ async function RenderBlock({ block, meta }: { block: Block; meta: Meta }) {
 
   switch (block.blockType) {
     case 'richText':
+      // Reading layout: 680 px measure when narrow; `numbered` counts the H2s like chapters (legal pages).
       return (
-        <section className="py-10 lg:py-[60px]">
+        <section className="py-10 lg:py-[64px]">
           <div className="container-x">
-            <div className={cn(block.width === 'narrow' && 'max-w-[840px]')}>
-              <RichText data={block.content} />
+            <div className={cn(block.width === 'narrow' && 'max-w-[680px]')}>
+              <RichText data={block.content} className={cn(block.numbered && 'prose-numbered')} />
             </div>
           </div>
         </section>
@@ -621,6 +625,14 @@ async function RenderBlock({ block, meta }: { block: Block; meta: Meta }) {
           </Chapter>
         )
       }
+      if (!logos.length) {
+        // Standalone with no publishable logos yet: the statement sits beside the heading; editors see the slot.
+        return (
+          <Chapter tone={tone} number={number} eyebrow={block.eyebrow} heading={<Heading text={block.heading} dark={dark} />} intro={statement} tight={tight}>
+            {isDraft ? <div className="placeholder-slot min-h-[75px]">[CUSTOMER LOGOS — add customers with a logo under Sales → Customers and tick “Show logo”. Visitors do not see this slot.]</div> : null}
+          </Chapter>
+        )
+      }
       return (
         <Chapter tone={tone} number={number} eyebrow={block.eyebrow} heading={<Heading text={block.heading} dark={dark} />} tight={tight}>
           {wall}
@@ -966,13 +978,13 @@ async function RenderBlock({ block, meta }: { block: Block; meta: Meta }) {
 
     // ---------- Trust & proof (src/components/blocks/trust/*) ----------
     case 'certificationsStrip':
-      return <CertificationsStrip block={block} />
+      return <CertificationsStrip block={block} meta={meta} />
 
     case 'gallery':
-      return <Gallery block={block} />
+      return <Gallery block={block} meta={meta} />
 
     case 'publications':
-      return <Publications block={block} />
+      return <Publications block={block} meta={meta} />
 
     case 'proofBar':
       return <ProofBar block={block} />

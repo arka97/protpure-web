@@ -20,6 +20,7 @@ export const RichTextBlock: Block = {
   fields: [
     { name: 'content', type: 'richText', required: true },
     { name: 'width', type: 'select', defaultValue: 'narrow', options: [{ label: 'Narrow (reading width)', value: 'narrow' }, { label: 'Wide', value: 'wide' }] },
+    { name: 'numbered', type: 'checkbox', defaultValue: false, admin: { description: 'Number the H2 headings 01, 02, 03… like the site’s chapters (legal pages, long policies).' } },
   ],
 }
 

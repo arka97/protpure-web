@@ -1,51 +1,66 @@
-import { CmsImage, SectionHeader } from '@/components/ui'
+import { draftMode } from 'next/headers'
+import { CmsImage } from '@/components/ui'
+import { Chapter, type ChapterTone } from '@/components/visual/Chapter'
 import { cn } from '@/lib/utils'
 import type { Media } from '@/payload-types'
-import type { TrustBlock } from './types'
+import type { TrustBlock, TrustMeta } from './types'
 
 /**
- * Facility / lab / team photo gallery. Renders nothing until the editor adds at least one photo,
- * so the seeded (empty) block on the About page is an invisible slot rather than a placeholder.
+ * Facility / lab / team photo gallery in the arch-image treatment. Visitors see nothing until the
+ * editor adds at least one photo; in draft mode (admin preview) the empty block shows a dashed
+ * placeholder slot so the editor knows where the photos will go.
  */
-export function Gallery({ block }: { block: TrustBlock<'gallery'> }) {
+export async function Gallery({ block, meta }: { block: TrustBlock<'gallery'>; meta?: TrustMeta }) {
   const items = (block.items ?? []).filter((it): it is typeof it & { image: Media } => Boolean(it.image) && typeof it.image === 'object')
-  if (!items.length) return null
+  const { isEnabled: isDraft } = await draftMode()
+  if (!items.length && !isDraft) return null
   const layout = block.layout ?? 'grid'
+  const tone: ChapterTone = meta?.tone ?? 'light'
   return (
-    <section className="section" data-block="gallery">
-      <div className="container-x">
-        <SectionHeader eyebrow={block.eyebrow} heading={block.heading} />
+    <Chapter tone={tone} number={meta?.number} eyebrow={block.eyebrow} heading={block.heading} attached={meta?.attached} tight={meta?.tight} data-block="gallery" id="gallery">
+      {items.length ? (
         <ul
           className={cn(
-            'mt-10',
-            layout === 'grid' && 'grid gap-5 sm:grid-cols-2 lg:grid-cols-3',
+            layout === 'grid' && 'grid gap-5 sm:grid-cols-2 lg:grid-cols-3 lg:gap-6',
             layout === 'strip' && 'flex snap-x gap-5 overflow-x-auto pb-2',
-            layout === 'spread' && 'grid gap-5 sm:grid-cols-2 lg:grid-cols-3',
+            layout === 'spread' && 'grid gap-5 sm:grid-cols-2 lg:grid-cols-3 lg:gap-6',
           )}
         >
-          {items.map((it, i) => (
-            <li
-              key={it.id ?? i}
-              className={cn(
-                layout === 'strip' && 'w-[min(80vw,28rem)] shrink-0 snap-start',
-                layout === 'spread' && i === 0 && 'sm:col-span-2 sm:row-span-2',
-              )}
-            >
-              <figure className="card overflow-hidden">
-                <div className={cn('relative', layout === 'spread' && i === 0 ? 'aspect-[4/3]' : 'aspect-[3/2]')}>
-                  <CmsImage media={it.image} size={layout === 'spread' && i === 0 ? 'large' : 'card'} fill className="object-cover" sizes={layout === 'spread' && i === 0 ? '(min-width: 1024px) 66vw, 100vw' : '(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw'} fallbackAlt={it.caption ?? ''} />
-                </div>
-                {it.caption || it.label ? (
-                  <figcaption className="flex items-start gap-3 p-4 text-sm">
-                    {it.label ? <span className="chip shrink-0">{it.label}</span> : null}
-                    {it.caption ? <span className="text-ink-soft">{it.caption}</span> : null}
-                  </figcaption>
-                ) : null}
-              </figure>
-            </li>
-          ))}
+          {items.map((it, i) => {
+            const lead = layout === 'spread' && i === 0
+            return (
+              <li key={it.id ?? i} className={cn(layout === 'strip' && 'w-[min(78vw,24rem)] shrink-0 snap-start', lead && 'sm:col-span-2 sm:row-span-2')}>
+                <figure>
+                  <div className={cn('arch relative bg-surface-recessed', lead ? 'aspect-[4/3] sm:aspect-[5/4]' : 'aspect-[4/5]')}>
+                    <CmsImage
+                      media={it.image}
+                      size={lead ? 'large' : 'card'}
+                      fill
+                      className="object-cover"
+                      sizes={lead ? '(min-width: 1024px) 66vw, 100vw' : '(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw'}
+                      fallbackAlt={it.caption ?? ''}
+                    />
+                  </div>
+                  {it.caption || it.label ? (
+                    <figcaption className="mt-3 flex items-start justify-between gap-4 text-[11px] leading-[1.5] text-secondary lg:text-[12px]">
+                      {it.caption ? <span>{it.caption}</span> : <span />}
+                      {it.label ? <span className="eyebrow shrink-0 text-[9px] tracking-[0.12em]">{it.label}</span> : null}
+                    </figcaption>
+                  ) : null}
+                </figure>
+              </li>
+            )
+          })}
         </ul>
-      </div>
-    </section>
+      ) : (
+        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 lg:gap-6">
+          {[0, 1, 2].map((i) => (
+            <div key={i} className="placeholder-slot arch aspect-[4/5] min-h-0 text-[11px]">
+              {i === 0 ? '[PHOTO GALLERY — add facility, lab and team photos to this block. Visitors do not see these slots.]' : '[PHOTO SLOT]'}
+            </div>
+          ))}
+        </div>
+      )}
+    </Chapter>
   )
 }

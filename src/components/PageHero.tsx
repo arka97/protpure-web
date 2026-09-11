@@ -2,6 +2,7 @@ import Image from 'next/image'
 import * as React from 'react'
 import { Badge, Breadcrumbs, CmsLinks } from '@/components/ui'
 import { BeadField } from '@/components/visual/BeadField'
+import { BeadSchematic } from '@/components/visual/BeadSchematic'
 import { cn, mediaAlt, mediaUrl } from '@/lib/utils'
 import type { Media, Page } from '@/payload-types'
 
@@ -106,6 +107,51 @@ export function PageHero({
               ) : null}
             </figure>
           ) : null}
+        </div>
+      </section>
+    )
+  }
+
+  if (style === 'schematic') {
+    // Light hero with the annotated bead cross-section (BUILD-BRIEF item 1). The label row above the
+    // drawing and the caption under it come from the hero's marker / caption fields.
+    return (
+      <section className="relative overflow-hidden border-b border-rule bg-surface">
+        <div className="container-x grid gap-8 pb-10 pt-8 lg:min-h-[600px] lg:grid-cols-[1.08fr_1fr] lg:gap-[70px] lg:pb-[64px] lg:pt-[58px]">
+          <div className="relative z-[2] lg:pt-[18px]">
+            {breadcrumbs ? (
+              <div className="mb-8">
+                <Breadcrumbs items={breadcrumbs} />
+              </div>
+            ) : null}
+            {hero?.eyebrow ? (
+              <p className="eyebrow mb-5 flex items-center gap-3">
+                <span className="dot" aria-hidden />
+                {hero.eyebrow}
+              </p>
+            ) : null}
+            <h1 className="heading-display">
+              <Highlighted text={heading} highlight={hero?.highlight} className="text-teal-deep" />
+            </h1>
+            {hero?.text ? <p className="lede mt-6 max-w-[470px] lg:mt-[30px]">{hero.text}</p> : null}
+            <CmsLinks links={hero?.links} className="mt-6 lg:mt-[30px]" />
+            {children}
+          </div>
+          <figure className="self-center lg:pl-2">
+            {hero?.imageMarker || hero?.imageMarkerNote ? (
+              <div className="mb-4 flex items-center justify-between gap-4 border-b border-rule pb-3 text-[10px] uppercase tracking-[0.14em] text-text-2 lg:text-[11px]">
+                <span>{hero.imageMarker}</span>
+                {hero.imageMarkerNote ? <span className="num text-right">{hero.imageMarkerNote}</span> : null}
+              </div>
+            ) : null}
+            <BeadSchematic tone="light" className="mx-auto max-w-[560px]" />
+            {hero?.imageCaption || hero?.imageCaptionNote ? (
+              <figcaption className="mt-4 flex justify-between gap-4 border-t border-rule pt-3 text-[10px] uppercase tracking-[0.14em] text-text-2 lg:text-[11px]">
+                <span>{hero.imageCaption}</span>
+                {hero.imageCaptionNote ? <span className="text-right">{hero.imageCaptionNote}</span> : null}
+              </figcaption>
+            ) : null}
+          </figure>
         </div>
       </section>
     )
