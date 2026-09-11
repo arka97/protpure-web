@@ -7,6 +7,8 @@ const __filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(__filename)
 
 const nextConfig: NextConfig = {
+  // Allow Windows browser via WSL localhost forwarding
+  allowedDevOrigins: ['127.0.0.1', 'localhost'],
   output: 'standalone',
   images: {
     localPatterns: [

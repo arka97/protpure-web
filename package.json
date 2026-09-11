@@ -1,7 +1,7 @@
 {
   "name": "protpure-web",
   "version": "1.0.0",
-  "description": "Protpure Tech website — Next.js + Payload CMS",
+  "description": "Protpure Tech website \u2014 Next.js + Payload CMS",
   "license": "UNLICENSED",
   "type": "module",
   "scripts": {
@@ -74,5 +74,6 @@
       "unrs-resolver"
     ]
   },
-  "private": true
+  "private": true,
+  "packageManager": "pnpm@9.15.9"
 }

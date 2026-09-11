@@ -209,7 +209,12 @@ async function RenderBlock({ block }: { block: Block; index: number }) {
     case 'productCategories': {
       const [cats, products] = await Promise.all([getCategories(), getProducts()])
       const counts = new Map<number, number>()
-      for (const p of products) counts.set((p.category as ProductCategory).id, (counts.get((p.category as ProductCategory).id) ?? 0) + 1)
+      for (const p of products) {
+        const cat = p.category
+        const id = typeof cat === 'object' && cat !== null ? (cat as ProductCategory).id : typeof cat === 'number' ? cat : null
+        if (id == null) continue
+        counts.set(id, (counts.get(id) ?? 0) + 1)
+      }
       return (
         <section className="section">
           <div className="container-x">
