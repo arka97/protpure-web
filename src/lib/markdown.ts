@@ -2,12 +2,13 @@
  * Markdown renderings of site content for AI assistants and crawlers.
  * Served at /md/<path>, via `Accept: text/markdown`, in /llms-full.txt and through the MCP server.
  */
-import { getApplications, getCategories, getDocuments, getFaqs, getPage, getPosts, getProducts, getServices, getSiteSettings, getUpdates } from './data'
+import { getApplications, getCategories, getCertifications, getDocuments, getFaqs, getPage, getPosts, getProducts, getServices, getSiteSettings, getTeam, getUpdates } from './data'
 import { categoryOf } from './catalog'
 import { lexicalToMarkdown } from './lexical-md'
 import { GRADE_LABELS as GRADE_SHORT, SAMPLE_KIT_POLICY, type GradeValue } from './rfq'
+import { extraClaims, proofItems, publicationCitation, type Proof } from './trust'
 import { SITE_URL, absoluteUrl, formatDate } from './utils'
-import type { Application, Document, Page, Post, Product, Service } from '@/payload-types'
+import type { Application, Certification, Document, Page, Post, Product, Service, Team, Update } from '@/payload-types'
 
 const table = (headers: string[], rows: string[][]) => [`| ${headers.join(' | ')} |`, `| ${headers.map(() => '---').join(' | ')} |`, ...rows.map((r) => `| ${r.map((c) => (c ?? '').replace(/\|/g, '\\|')).join(' | ')} |`)].join('\n')
 
@@ -86,6 +87,17 @@ export function pageToMarkdown(page: Page): string {
       case 'cta':
         out.push('', `## ${b.heading}`, b.text ?? '')
         break
+      case 'gallery':
+        // Photos only render once the editor adds them; captions are the useful text for an agent.
+        if (b.items?.length) out.push('', b.heading ? `## ${b.heading}` : '', ...b.items.map((i) => `- ${[i.label, i.caption].filter(Boolean).join(': ') || 'Photo'}`))
+        break
+      case 'logoWall':
+        if (b.heading || b.fallbackStatement) out.push('', b.heading ? `## ${b.heading}` : '', b.fallbackStatement ?? '')
+        break
+      case 'proofBar':
+        break
+      case 'publications':
+      case 'certificationsStrip':
       case 'productCategories':
       case 'featuredProducts':
       case 'applicationsGrid':
@@ -129,9 +141,47 @@ export function serviceToMarkdown(s: Service): string {
   return [`## ${s.name}${s.tagline ? ` — ${s.tagline}` : ''}`, '', s.summary, '', lexicalToMarkdown(s.description as never), ...(s.deliverables?.length ? ['', 'Deliverables:', ...s.deliverables.map((d) => `- ${d.text}`)] : [])].join('\n')
 }
 
+/** "- **Founded:** May 2023" style lines for the proof points; empty array when nothing is set. */
+export function proofToMarkdown(proof?: Proof | null): string[] {
+  const labels: Record<string, string> = { founded: 'Founded', team: 'Team', capacity: 'Manufacturing capacity', customers: 'Customers', linkedin: 'LinkedIn' }
+  return proofItems(proof).map((it) => `- ${labels[it.key] ?? it.key}: ${it.key === 'founded' ? it.value.replace(/^Founded\s+/i, '') : it.value}`)
+}
+
+/**
+ * "## Quality & claims" list: entries from the Certifications collection (with issuer, validity and
+ * certificate link) followed by any site-settings claims not already covered. Empty string when both are empty.
+ */
+export function certificationsToMarkdown(certs: Certification[], claims?: { text: string }[] | null): string {
+  const lines = certs.map((c) => {
+    const doc = c.document && typeof c.document === 'object' ? c.document : null
+    const meta = [c.issuer ? `issued by ${c.issuer}` : null, c.validUntil ? `valid until ${formatDate(c.validUntil)}` : null].filter(Boolean).join(', ')
+    const tail = [c.statement, doc?.url ? `[certificate](${absoluteUrl(doc.url)})` : null].filter(Boolean).join(' ')
+    return `- ${c.name}${meta ? ` (${meta})` : ''}${tail ? ` — ${tail}` : ''}`
+  })
+  for (const t of extraClaims(claims, certs)) lines.push(`- ${t}`)
+  return lines.length ? ['## Quality & claims', ...lines].join('\n') : ''
+}
+
+/** One team member: name, role, credentials, expertise, publications with links. */
+export function teamMemberToMarkdown(m: Team): string {
+  const out = [`### ${m.name}${m.credentials?.length ? `, ${m.credentials.map((c) => c.text).join(', ')}` : ''}`, m.role]
+  if (m.bio) out.push('', lexicalToMarkdown(m.bio as never))
+  if (m.expertise?.length) out.push('', `Expertise: ${m.expertise.map((e) => e.text).join('; ')}`)
+  if (m.publications?.length) out.push('', 'Publications:', ...m.publications.map((p) => `- ${p.url ? `[${publicationCitation(p)}](${p.url})` : publicationCitation(p)}`))
+  if (m.linkedinUrl) out.push('', `LinkedIn: ${m.linkedinUrl}`)
+  return out.join('\n')
+}
+
+/** One LinkedIn update as a list line (published updates only reach this). */
+export function updateToMarkdown(u: Update): string {
+  return `- ${formatDate(u.publishedAt)} — **${u.title}**${u.kind ? ` [${u.kind}]` : ''}: ${u.summary}${u.url ? ` (${u.url})` : ''}`
+}
+
 export async function companyMarkdown(): Promise<string> {
-  const s = await getSiteSettings()
+  const [s, certs, team] = await Promise.all([getSiteSettings(), getCertifications(), getTeam()])
   const out = [`# ${s.legalName || s.name || 'Protpure'}`, '', s.aiSummary || s.description || '']
+  const proof = proofToMarkdown(s.proof)
+  if (proof.length) out.push('', '## Company facts', ...proof)
   out.push('', '## Contact')
   if (s.email) out.push(`- Email: ${s.email}`)
   if (s.phone) out.push(`- Phone: ${s.phone}`)
@@ -147,7 +197,9 @@ export async function companyMarkdown(): Promise<string> {
     for (const r of s.regions ?? []) out.push(`- ${r.name}: ${r.status}${r.note ? ` (${r.note})` : ''}`)
     for (const n of s.exportNotes ?? []) out.push(`- ${n.text}`)
   }
-  if (s.certifications?.length) out.push('', '## Quality & claims', ...s.certifications.map((c) => `- ${c.text}`))
+  const quality = certificationsToMarkdown(certs, s.certifications)
+  if (quality) out.push('', quality)
+  if (team.length) out.push('', '## Team', ...team.map((m) => `\n${teamMemberToMarkdown(m)}`))
   return out.join('\n')
 }
 
@@ -158,12 +210,12 @@ export async function llmsTxt(): Promise<string> {
   out.push(`> ${s.aiSummary || s.description || 'Indian manufacturer of agarose-based chromatography resins for biopharmaceutical purification, supplying worldwide.'}`, '')
   out.push(`Pricing is by quotation. ${SAMPLE_KIT_POLICY} Buyers use the RFQ basket on the website (add products with grade, pack size, quantity and purpose, then submit one request); agents can file the same request with \`items[]\` via the MCP \`request_quote\` tool or \`POST /api/public/inquiries\`. Every request is confirmed by email and handled by a scientist.`, '')
   out.push('## Machine-readable access', '')
-  out.push(`- MCP server (Streamable HTTP): ${SITE_URL}/mcp — tools: list_products, get_product, compare_products, search_documents, list_applications, get_company_info, request_quote`)
+  out.push(`- MCP server (Streamable HTTP): ${SITE_URL}/mcp — tools: list_products, get_product, compare_products, search_documents, list_applications, get_company_info, list_updates, request_quote`)
   out.push(`- Public JSON API: ${SITE_URL}/api/public/products, ${SITE_URL}/api/public/products/{slug}, ${SITE_URL}/api/public/documents, ${SITE_URL}/api/public/company`)
   out.push(`- Markdown for any page: ${SITE_URL}/md/<path> or send \`Accept: text/markdown\` to the HTML URL`)
   out.push(`- Full site as one Markdown file: ${SITE_URL}/llms-full.txt`)
   out.push(`- Blog RSS: ${SITE_URL}/blog/rss.xml`, '')
-  out.push('## Company', '', `- [About](${SITE_URL}/md/about): who we are, facility, team`, `- [Company info](${SITE_URL}/md/company): contact, regions served, export notes`, `- [Technology](${SITE_URL}/md/technology): the particle-size platform (Faster / Fast Flow / Precise / HR grades)`, `- [Request a quote](${SITE_URL}/request-quote)`, `- [Contact](${SITE_URL}/contact)`, '')
+  out.push('## Company', '', `- [About](${SITE_URL}/md/about): who we are, facility, team`, `- [Company info](${SITE_URL}/md/company): contact, company facts, quality claims and certifications, team credentials and publications, regions served, export notes`, `- [Technology](${SITE_URL}/md/technology): the particle-size platform (Faster / Fast Flow / Precise / HR grades)`, `- [Request a quote](${SITE_URL}/request-quote)`, `- [Contact](${SITE_URL}/contact)`, '')
   out.push('## Product categories', '', ...categories.map((c) => `- [${c.name}](${SITE_URL}/products/category/${c.slug}): ${c.tagline ?? ''}`), '')
   out.push('## Products', '', ...products.map((p) => `- [${p.name}](${SITE_URL}/md/products/${p.slug}): ${p.subtitle ? `${p.subtitle}. ` : ''}${p.summary}`), '')
   out.push('## Applications', '', ...apps.map((a) => `- [${a.name}](${SITE_URL}/md/applications/${a.slug}): ${a.summary}`), '')
@@ -186,7 +238,7 @@ export async function llmsFullTxt(): Promise<string> {
   out.push('', '---', '', '# Services')
   for (const s of services) out.push('', serviceToMarkdown(s))
   if (faqs.length) out.push('', '---', '', '# FAQ', ...faqs.map((f) => `\n### ${f.question}\n${lexicalToMarkdown(f.answer as never)}`))
-  if (updates.length) out.push('', '---', '', '# Recent LinkedIn updates', ...updates.map((u) => `- ${formatDate(u.publishedAt)} — **${u.title}**: ${u.summary} (${u.url})`))
+  if (updates.length) out.push('', '---', '', '# Recent LinkedIn updates', ...updates.map(updateToMarkdown))
   for (const post of posts.docs) out.push('', '---', '', postToMarkdown(post))
   return out.join('\n')
 }
