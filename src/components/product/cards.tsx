@@ -1,18 +1,23 @@
 import Link from 'next/link'
 import { ArrowRight, Download, FileText } from 'lucide-react'
+import { AddToBasketButton } from '@/components/rfq/AddToBasketButton'
 import { Badge, CmsImage, Icon, StatusBadge } from '@/components/ui'
+import { GRADE_LABELS, toBasketProduct } from '@/lib/rfq'
 import { cn, formatDate } from '@/lib/utils'
 import { categoryOf } from '@/lib/catalog'
 import type { Application, Document, Product, ProductCategory, Service } from '@/payload-types'
 
-const GRADE_SHORT: Record<string, string> = { faster: 'Faster', 'fast-flow': 'Fast Flow', precise: 'Precise', hr: 'HR' }
+const GRADE_SHORT: Record<string, string> = GRADE_LABELS
 
 export function ProductCard({ product, compact }: { product: Product; compact?: boolean }) {
   const cat = categoryOf(product)
   const grades = (product.grades ?? []).map((g) => GRADE_SHORT[g.grade] ?? g.grade)
+  const href = `/products/${product.slug}`
+  // The card is an <article> with a stretched title link (a button cannot live inside an <a>);
+  // the basket button sits above the stretched link via `relative z-10`.
   return (
-    <Link href={`/products/${product.slug}`} className="card-hover group flex h-full flex-col overflow-hidden">
-      <div className="relative aspect-[4/3] w-full bg-gradient-to-b from-surface-2 to-white p-6">
+    <article className="card-hover group relative flex h-full flex-col overflow-hidden focus-within:shadow-card-hover">
+      <Link href={href} className="relative block aspect-[4/3] w-full bg-gradient-to-b from-surface-2 to-white p-6" tabIndex={-1} aria-hidden>
         {product.image && typeof product.image === 'object' ? (
           <CmsImage media={product.image} size="card" className="mx-auto h-full w-full object-contain transition-transform duration-300 group-hover:scale-[1.03]" sizes="(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 100vw" />
         ) : (
@@ -23,10 +28,14 @@ export function ProductCard({ product, compact }: { product: Product; compact?: 
         <div className="absolute left-4 top-4">
           <StatusBadge status={product.availability} />
         </div>
-      </div>
+      </Link>
       <div className="flex flex-1 flex-col p-5">
         <p className="text-xs font-semibold uppercase tracking-wide text-teal-600">{cat?.name}</p>
-        <h3 className="mt-1.5 font-display text-lg font-bold text-navy-900 group-hover:text-teal-600">{product.name}</h3>
+        <h3 className="mt-1.5 font-display text-lg font-bold text-navy-900 group-hover:text-teal-600">
+          <Link href={href} className="after:absolute after:inset-0 after:content-[''] focus-visible:outline-none">
+            {product.name}
+          </Link>
+        </h3>
         {product.subtitle ? <p className="text-sm text-muted">{product.subtitle}</p> : null}
         {!compact ? <p className="mt-3 line-clamp-3 text-sm leading-relaxed text-ink-soft">{product.summary}</p> : null}
         <div className="mt-auto flex flex-wrap items-center gap-1.5 pt-4">
@@ -37,8 +46,11 @@ export function ProductCard({ product, compact }: { product: Product; compact?: 
             Details <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
           </span>
         </div>
+        <div className="relative z-10 mt-4">
+          <AddToBasketButton product={toBasketProduct(product)} className="w-full" />
+        </div>
       </div>
-    </Link>
+    </article>
   )
 }
 

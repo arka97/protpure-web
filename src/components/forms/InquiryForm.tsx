@@ -5,9 +5,10 @@ import { useActionState } from 'react'
 import { usePathname, useSearchParams } from 'next/navigation'
 import { CircleCheck, TriangleAlert } from 'lucide-react'
 import { submitInquiry, type FormState } from '@/app/actions'
+import { useBasket } from '@/components/rfq/BasketProvider'
+import { BasketTable, controlClass } from '@/components/rfq/BasketLines'
+import { toInquiryItem, type BasketProduct, type PurposeValue } from '@/lib/rfq'
 import { cn } from '@/lib/utils'
-
-export type ProductOption = { id: number; name: string; category: string }
 
 const TYPE_LABELS: Record<string, string> = {
   quote: 'Request a quote',
@@ -17,35 +18,62 @@ const TYPE_LABELS: Record<string, string> = {
   contact: 'Send a message',
 }
 
+/** Default line purpose when a product is pre-added from a `?type=` link. */
+const PURPOSE_FOR_TYPE: Record<string, PurposeValue> = { quote: 'production', evaluation: 'evaluation', technical: 'other' }
+
 export function InquiryForm({
   type: initialType = 'quote',
   products,
-  preselected = [],
   allowTypeChange = true,
   responseTime,
 }: {
   type?: string
-  products: ProductOption[]
-  preselected?: number[]
+  /** Catalogue (slim) so the buyer can add products without leaving the form and `?product=` links can pre-fill the basket. */
+  products: BasketProduct[]
   allowTypeChange?: boolean
   responseTime?: string | null
 }) {
   const [state, action, pending] = useActionState<FormState, FormData>(submitInquiry, null)
   const params = useSearchParams()
   const pathname = usePathname()
+  const basket = useBasket()
   const [type, setType] = React.useState(params.get('type') || initialType)
-  const paramProducts = params.getAll('product').map(Number).filter(Boolean)
-  const [selected, setSelected] = React.useState<number[]>(preselected.length ? preselected : paramProducts)
   const pageUrlRef = React.useRef<HTMLInputElement>(null)
+  const addSelectId = React.useId()
 
   React.useEffect(() => {
     // Populated client-side only; the server action reads it from the form data.
     if (pageUrlRef.current) pageUrlRef.current.value = window.location.href
   }, [pathname])
 
+  // `?product=ID` links (product pages, compare, category, AI surfaces) pre-add those products
+  // to the basket once, then drop the parameter so a removed line does not come back on reload.
+  const paramProducts = params.getAll('product').join(',')
+  const preAdded = React.useRef<string | null>(null)
+  React.useEffect(() => {
+    if (!basket.ready || !paramProducts || preAdded.current === paramProducts) return
+    preAdded.current = paramProducts
+    const purpose = PURPOSE_FOR_TYPE[params.get('type') || initialType] ?? 'production'
+    for (const id of paramProducts.split(',').map(Number)) {
+      const product = products.find((p) => p.id === id)
+      if (product && !basket.has(product.id)) basket.add({ product, purpose })
+    }
+    const url = new URL(window.location.href)
+    url.searchParams.delete('product')
+    window.history.replaceState(window.history.state, '', url)
+  }, [basket, paramProducts, params, products, initialType])
+
+  // Submitted: the basket has been turned into an inquiry.
+  const clearedFor = React.useRef<unknown>(null)
+  React.useEffect(() => {
+    if (state?.ok && clearedFor.current !== state) {
+      clearedFor.current = state
+      basket.clear()
+    }
+  }, [state, basket])
+
   const err = (k: string) => state?.errors?.[k]
-  const input = (k: string) =>
-    cn('w-full rounded-lg border bg-white px-3.5 py-2.5 text-sm text-ink outline-none transition focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20', err(k) ? 'border-red-400' : 'border-line')
+  const input = (k: string) => cn(controlClass, 'px-3.5 py-2.5 sm:py-2.5', err(k) && 'border-red-400')
 
   if (state?.ok) {
     return (
@@ -57,16 +85,27 @@ export function InquiryForm({
     )
   }
 
-  const byCategory = products.reduce<Record<string, ProductOption[]>>((acc, p) => {
-    ;(acc[p.category] ||= []).push(p)
-    return acc
-  }, {})
   const showProducts = type === 'quote' || type === 'evaluation' || type === 'technical'
+  const items = basket.ready ? basket.items : []
+  const itemsJson = JSON.stringify(items.map(toInquiryItem))
 
   return (
-    <form action={action} className="grid gap-5" noValidate>
+    <form
+      action={action}
+      // Submitting through the transition (rather than letting React run the form action) keeps
+      // typed values and the basket selects intact when validation fails; without JS the plain
+      // `action` still works.
+      onSubmit={(e) => {
+        e.preventDefault()
+        const data = new FormData(e.currentTarget)
+        React.startTransition(() => action(data))
+      }}
+      className="grid gap-5"
+      noValidate
+    >
       <input type="text" name="website" tabIndex={-1} autoComplete="off" className="hidden" aria-hidden />
       <input type="hidden" name="pageUrl" defaultValue="" ref={pageUrlRef} />
+      {showProducts ? <input type="hidden" name="items" value={itemsJson} /> : null}
 
       {allowTypeChange ? (
         <div>
@@ -85,6 +124,46 @@ export function InquiryForm({
         <input type="hidden" name="type" value={type} />
       )}
 
+      {showProducts ? (
+        <fieldset>
+          <legend className="mb-1.5 text-sm font-medium text-ink">
+            {type === 'technical' ? 'Products this question is about' : 'Items to quote'}{' '}
+            <span className="font-normal text-muted">{basket.ready && items.length ? `(${items.length})` : '(optional)'}</span>
+          </legend>
+          {basket.ready && items.length ? (
+            <BasketTable />
+          ) : (
+            <p className="rounded-lg border border-dashed border-line bg-surface-2/50 px-4 py-3 text-sm text-ink-soft">
+              {basket.ready ? 'Your RFQ basket is empty. Add a product below, or describe what you need in the message.' : 'Loading your basket…'}
+            </p>
+          )}
+          {products.length ? (
+            <div className="mt-3 flex flex-wrap items-center gap-2">
+              <label htmlFor={addSelectId} className="sr-only">
+                Add a product
+              </label>
+              <select
+                id={addSelectId}
+                className={cn(controlClass, 'w-auto min-w-56 flex-1')}
+                value=""
+                onChange={(e) => {
+                  const product = products.find((p) => p.id === Number(e.target.value))
+                  if (product) basket.add({ product, purpose: PURPOSE_FOR_TYPE[type] ?? 'production' })
+                }}
+              >
+                <option value="">+ Add a product…</option>
+                {products.map((p) => (
+                  <option key={p.id} value={p.id}>
+                    {p.name}
+                    {p.category ? ` — ${p.category}` : ''}
+                  </option>
+                ))}
+              </select>
+            </div>
+          ) : null}
+        </fieldset>
+      ) : null}
+
       <div className="grid gap-5 sm:grid-cols-2">
         <Field label="Full name" name="name" error={err('name')}>
           <input id="name" name="name" required autoComplete="name" className={input('name')} />
@@ -92,7 +171,7 @@ export function InquiryForm({
         <Field label="Work email" name="email" error={err('email')}>
           <input id="email" name="email" type="email" required autoComplete="email" className={input('email')} />
         </Field>
-        <Field label="Organisation" name="organization" error={err('organization')}>
+        <Field label="Company / organisation" name="organization" error={err('organization')}>
           <input id="organization" name="organization" autoComplete="organization" className={input('organization')} />
         </Field>
         <Field label="Job title" name="jobTitle" optional error={err('jobTitle')}>
@@ -106,38 +185,6 @@ export function InquiryForm({
         </Field>
       </div>
 
-      {showProducts && products.length ? (
-        <fieldset>
-          <legend className="mb-1.5 text-sm font-medium text-ink">
-            Products of interest <span className="font-normal text-muted">(select any)</span>
-          </legend>
-          <div className="max-h-56 space-y-3 overflow-y-auto rounded-lg border border-line bg-surface-2/50 p-3">
-            {Object.entries(byCategory).map(([cat, list]) => (
-              <div key={cat}>
-                <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-muted">{cat}</p>
-                <div className="flex flex-wrap gap-2">
-                  {list.map((p) => {
-                    const on = selected.includes(p.id)
-                    return (
-                      <label key={p.id} className={cn('cursor-pointer select-none rounded-full border px-3 py-1 text-sm transition', on ? 'border-teal-500 bg-teal-50 text-teal-600' : 'border-line bg-white text-ink-soft hover:border-navy-900/30')}>
-                        <input type="checkbox" name="productIds" value={p.id} checked={on} onChange={() => setSelected((s) => (on ? s.filter((x) => x !== p.id) : [...s, p.id]))} className="sr-only" />
-                        {p.name}
-                      </label>
-                    )
-                  })}
-                </div>
-              </div>
-            ))}
-          </div>
-        </fieldset>
-      ) : null}
-
-      {showProducts ? (
-        <Field label="Quantities, grades and pack sizes" name="requestedItems" optional error={err('requestedItems')}>
-          <textarea id="requestedItems" name="requestedItems" rows={3} className={input('requestedItems')} placeholder="e.g. SP Agarose Precise — 2 × 1 L; Ni-NTA Agarose — 5 L bulk" />
-        </Field>
-      ) : null}
-
       {type !== 'partnership' && type !== 'contact' ? (
         <Field label="What are you purifying?" name="application" optional error={err('application')}>
           <input id="application" name="application" className={input('application')} placeholder="e.g. His-tagged recombinant enzyme, 5 L fermentation, capture step" />
@@ -145,7 +192,13 @@ export function InquiryForm({
       ) : null}
 
       <Field label="Message" name="message" optional={type !== 'contact' && type !== 'partnership'} error={err('message')}>
-        <textarea id="message" name="message" rows={5} className={input('message')} placeholder={type === 'partnership' ? 'Tell us about your company, territories and the customers you serve.' : 'Anything else we should know — timelines, documentation needs, column formats…'} />
+        <textarea
+          id="message"
+          name="message"
+          rows={5}
+          className={input('message')}
+          placeholder={type === 'partnership' ? 'Tell us about your company, territories and the customers you serve.' : showProducts ? 'Anything else we should know — other items, timelines, documentation needs, column formats…' : 'How can we help?'}
+        />
       </Field>
 
       <label className={cn('flex items-start gap-3 text-sm text-ink-soft', err('consent') && 'text-red-600')}>
@@ -156,12 +209,13 @@ export function InquiryForm({
       {state && !state.ok ? (
         <p className="flex items-start gap-2 rounded-lg border border-amber-200 bg-amber-50 px-3.5 py-3 text-sm text-amber-800" role="alert">
           <TriangleAlert className="mt-0.5 h-4 w-4 shrink-0" /> {state.message}
+          {err('items') ? <> Items: {err('items')}</> : null}
         </p>
       ) : null}
 
       <div className="flex flex-wrap items-center gap-4">
-        <button type="submit" className="btn-primary" disabled={pending}>
-          {pending ? 'Sending…' : TYPE_LABELS[type] ?? 'Send'}
+        <button type="submit" className="btn-primary min-h-11" disabled={pending}>
+          {pending ? 'Sending…' : showProducts && items.length ? `${TYPE_LABELS[type] ?? 'Send'} (${items.length} item${items.length === 1 ? '' : 's'})` : TYPE_LABELS[type] ?? 'Send'}
         </button>
         {responseTime ? <p className="text-sm text-muted">We reply {responseTime}.</p> : null}
       </div>

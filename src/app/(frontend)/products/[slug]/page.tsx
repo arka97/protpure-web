@@ -6,8 +6,10 @@ import { RichText } from '@/components/RichText'
 import { LivePreview } from '@/components/LivePreview'
 import { FaqList } from '@/components/FaqList'
 import { DocumentRow, GRADE_SHORT, ProductCard } from '@/components/product/cards'
+import { AddToBasketButton } from '@/components/rfq/AddToBasketButton'
 import { Breadcrumbs, ButtonLink, CmsImage, KeyValue, StatusBadge } from '@/components/ui'
 import { getFaqs, getProduct, getSiteSettings } from '@/lib/data'
+import { SAMPLE_KIT_POLICY, toBasketProduct } from '@/lib/rfq'
 import { buildMetadata } from '@/lib/seo'
 import { breadcrumbJsonLd, faqJsonLd, JsonLd, productJsonLd } from '@/lib/jsonld'
 import { categoryOf } from '@/lib/catalog'
@@ -49,6 +51,7 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
     { label: product.name },
   ]
   const quoteHref = `/request-quote?product=${product.id}`
+  const basketProduct = toBasketProduct(product)
   const hasGradeRow = (key: keyof (typeof grades)[number]) => grades.some((g) => g[key])
 
   return (
@@ -71,7 +74,10 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
             {product.subtitle ? <p className="mt-2 text-xl text-teal-300">{product.subtitle}</p> : null}
             <p className="mt-5 max-w-2xl text-lg leading-relaxed text-white/80">{product.summary}</p>
             <div className="mt-8 flex flex-wrap gap-3">
-              <ButtonLink href={quoteHref}>Request a quote</ButtonLink>
+              <AddToBasketButton product={basketProduct} appearance="primary" size="md" />
+              <ButtonLink href={quoteHref} appearance="onDark">
+                Request a quote
+              </ButtonLink>
               {datasheet ? (
                 <ButtonLink href={datasheet.url ?? '#'} appearance="onDark" newTab>
                   <Download className="h-4 w-4" /> Datasheet
@@ -110,9 +116,9 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
               {s.label}
             </a>
           ))}
-          <Link href={quoteHref} className="btn-primary btn-sm ml-auto shrink-0">
-            Request a quote
-          </Link>
+          <div className="ml-auto shrink-0">
+            <AddToBasketButton product={basketProduct} appearance="primary" className="min-h-0" />
+          </div>
         </nav>
       </div>
 
@@ -268,23 +274,30 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
         <div className="container-x grid gap-10 lg:grid-cols-12">
           <div className="lg:col-span-7">
             <h2 className="heading-2">Ordering</h2>
-            <p className="mt-2 text-ink-soft">Pricing is by quotation and depends on grade, volume and destination. Bulk and custom volumes are available{product.bulkAvailable ? '' : ' on request'}.</p>
+            <p className="mt-2 text-ink-soft">Pricing is by quotation and depends on grade, volume and destination. Bulk and custom volumes are available{product.bulkAvailable ? '' : ' on request'}. Add the pack sizes you need to your RFQ basket and send one request for all of them.</p>
+            <p className="mt-2 text-sm text-muted">{SAMPLE_KIT_POLICY}</p>
             {product.packSizes?.length ? (
-              <div className="mt-6 overflow-hidden rounded-2xl border border-line bg-white">
+              <div className="mt-6 overflow-x-auto rounded-2xl border border-line bg-white">
                 <table className="w-full text-sm">
                   <thead>
                     <tr className="bg-surface-2/70 text-left text-xs font-semibold uppercase tracking-wide text-muted">
                       <th className="px-4 py-3">Pack size</th>
                       <th className="px-4 py-3">Grade</th>
                       <th className="px-4 py-3">Catalog no.</th>
+                      <th className="px-4 py-3">
+                        <span className="sr-only">Add to RFQ basket</span>
+                      </th>
                     </tr>
                   </thead>
                   <tbody>
                     {product.packSizes.map((ps) => (
                       <tr key={ps.id} className="border-t border-line">
                         <td className="px-4 py-2.5 font-medium text-navy-900">{ps.size}</td>
-                        <td className="px-4 py-2.5 text-ink-soft">{ps.grade ? GRADE_SHORT[ps.grade] ?? ps.grade : '—'}</td>
+                        <td className="px-4 py-2.5 text-ink-soft">{ps.grade ? GRADE_SHORT[ps.grade] ?? ps.grade : grades.length ? 'Any' : '—'}</td>
                         <td className="px-4 py-2.5 font-mono text-xs text-ink-soft">{ps.catalogNumber || 'On request'}</td>
+                        <td className="px-2 py-1.5 text-right">
+                          <AddToBasketButton product={basketProduct} preset={{ grade: ps.grade ?? null, packSize: ps.size, catalogNumber: ps.catalogNumber ?? null }} label={`Add ${ps.size}`} addedLabel="Added" className="whitespace-nowrap" />
+                        </td>
                       </tr>
                     ))}
                   </tbody>
@@ -305,9 +318,12 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
                 ]}
               />
               <div className="mt-5 grid gap-2">
-                <ButtonLink href={quoteHref}>Request a quote</ButtonLink>
-                <ButtonLink href={`/request-quote?type=evaluation&product=${product.id}`} appearance="secondary">
-                  Discuss an evaluation
+                <AddToBasketButton product={basketProduct} appearance="primary" size="md" />
+                <ButtonLink href={quoteHref} appearance="secondary">
+                  Request a quote
+                </ButtonLink>
+                <ButtonLink href={`/request-quote?type=evaluation&product=${product.id}`} appearance="ghost">
+                  Discuss an evaluation or sample kit
                 </ButtonLink>
               </div>
               {settings.email ? (
