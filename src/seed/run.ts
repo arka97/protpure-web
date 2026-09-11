@@ -175,7 +175,8 @@ export async function runSeed(payload: Payload, opts: { reset?: boolean } = {}) 
   const resolveLinks = (links?: Link[]) => (links ?? []).map((l) => ({ link: resolveLink(l) }))
   const faqIdByQuestion = new Map((await payload.find({ collection: 'faqs', limit: 200, ...ctx })).docs.map((f) => [f.question, f.id] as const))
   for (const p of pages) {
-    const hero = { ...p.hero, image: media((p.hero as { image?: string }).image), links: resolveLinks((p.hero as { links?: Link[] }).links) }
+    // Explicit empty arrays: a group update keeps existing array values it is not told about.
+    const hero = { badges: [], ...p.hero, image: media((p.hero as { image?: string }).image), links: resolveLinks((p.hero as { links?: Link[] }).links) }
     const layout = p.layout.map((b) => {
       const blk = { ...b } as Record<string, unknown>
       if ('image' in blk && typeof blk.image === 'string') blk.image = media(blk.image)

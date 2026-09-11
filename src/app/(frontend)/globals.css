@@ -690,6 +690,25 @@ input[type='radio'] {
 .compare-table .mono {
   font-size: 13px;
 }
+/* Phones: tighter cells, and the parameter column never breaks a word like "Documentation". */
+@media (max-width: 640px) {
+  .spec-table,
+  .compare-table {
+    font-size: 13px;
+  }
+  .spec-table th,
+  .spec-table td,
+  .compare-table th,
+  .compare-table td {
+    padding: 12px 12px;
+  }
+  .spec-table th:first-child,
+  .spec-table td:first-child,
+  .compare-table th:first-child,
+  .compare-table td:first-child {
+    min-width: 7.5em;
+  }
+}
 .compare-table th.highlight,
 .compare-table td.highlight,
 .spec-table th.highlight,
