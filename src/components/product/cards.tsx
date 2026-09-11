@@ -18,10 +18,18 @@ export function SpecFigure({ spec, className }: { spec: CardSpec; className?: st
   const small = [tail, spec.note].filter(Boolean).join(' · ')
   return (
     <span className={className}>
-      <span className="mono block text-[12px] font-medium leading-[1.5] text-ink">{head}</span>
+      <span className="mono block text-[12px] font-medium leading-[1.5] text-ink [text-wrap:balance]">{head}</span>
       {small ? <small className="block font-sans text-[10px] font-normal leading-[1.45] text-text-2">{small}</small> : null}
     </span>
   )
+}
+
+/** "Sulfopropyl · Strong cation exchanger": a short ligand name in front of the subtitle when it adds something. */
+function cardLine(p: Product) {
+  const subtitle = p.subtitle || p.chemistry?.functionalType || p.summary || ''
+  const ligand = (p.chemistry?.ligand ?? '').replace(/\s*\(.*\)\s*$/, '').trim()
+  if (!ligand || ligand.length > 24 || /^none\b/i.test(ligand) || subtitle.toLowerCase().includes(ligand.toLowerCase())) return subtitle
+  return `${ligand} · ${subtitle}`
 }
 
 /**
@@ -40,7 +48,7 @@ export function ProductCard({ product, compact }: { product: Product; compact?: 
   return (
     <article className={cn('card-hover group relative flex h-full flex-col px-5 pb-[18px] pt-[22px] focus-within:border-rule-strong', !compact && 'lg:min-h-[393px]')}>
       <div className="mb-4 flex items-center justify-between gap-2">
-        <p className="eyebrow text-[9px] tracking-[0.08em]">{cat?.shortName || cat?.name}</p>
+        <p className="eyebrow truncate text-[9px] tracking-[0.08em]">{cat?.name}</p>
         <StatusBadge status={product.availability} className="text-[10px]" />
       </div>
       <h3 className="font-display text-[29px] leading-[1.08] tracking-[-0.03em] text-ink group-hover:text-teal-deep">
@@ -48,7 +56,7 @@ export function ProductCard({ product, compact }: { product: Product; compact?: 
           {product.name}
         </Link>
       </h3>
-      <p className="mt-2 min-h-[35px] text-[12px] leading-[1.45] text-text-2">{product.subtitle || product.chemistry?.functionalType || product.summary}</p>
+      <p className="mt-2 line-clamp-2 min-h-[35px] text-[12px] leading-[1.45] text-text-2">{cardLine(product)}</p>
       <dl className="mb-4 mt-4 grid gap-2.5">
         {specs.map((spec) => (
           <div key={spec.label} className="grid grid-cols-[72px_1fr] gap-2">

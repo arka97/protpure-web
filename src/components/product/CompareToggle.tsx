@@ -3,6 +3,7 @@
 import * as React from 'react'
 import Link from 'next/link'
 import { ArrowIcon, CloseIcon } from '@/components/visual/icons'
+import { useDockOffset } from './useDockOffset'
 import { cn } from '@/lib/utils'
 
 /**
@@ -81,15 +82,17 @@ export function CompareCheckbox({ slug, name, className }: { slug: string; name:
  */
 export function CompareBar({ names }: { names: Record<string, string> }) {
   const { list, clear } = useCompare()
+  const ref = React.useRef<HTMLDivElement>(null)
+  useDockOffset(ref, list.length > 0)
   if (!list.length) return null
   const ready = list.length >= 2
   const picked = list.map((s) => names[s] ?? s)
   return (
-    <div className="pointer-events-none fixed inset-x-4 bottom-4 z-30 flex justify-center sm:inset-x-6 lg:bottom-6" role="region" aria-label="Product comparison" aria-live="polite">
+    <div ref={ref} className="pointer-events-none fixed inset-x-0 bottom-0 z-30 flex justify-center px-4 pb-4 sm:px-6 lg:pb-6" role="region" aria-label="Product comparison" aria-live="polite" style={{ paddingBottom: 'calc(16px + env(safe-area-inset-bottom))' }}>
       <div className="pointer-events-auto flex w-full max-w-[720px] flex-wrap items-center justify-between gap-x-5 gap-y-2 border border-rule-dark bg-ink px-4 py-3 text-[12px] text-surface shadow-bar sm:px-5">
         <div className="min-w-0 flex-1">
           <p className="font-medium">
-            Compare <span className="num">({list.length})</span>
+            Compare <span className="mono">({list.length})</span>
             <span className="text-text-2-dark"> · {ready ? picked.join(' · ') : `${picked[0]} — pick one more to compare`}</span>
           </p>
         </div>

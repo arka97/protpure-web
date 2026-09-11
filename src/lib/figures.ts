@@ -54,12 +54,21 @@ export function splitFigure(s?: string | null): [string, string] {
   const range = s.match(RANGE)
   const m = range ?? s.match(NUM)
   if (!m || m.index == null) return [s.trim(), '']
-  const end = m.index + m[0].length
+  // A percent sign belongs to the number ("6% agarose" → "6%").
+  const end = m.index + m[0].length + (s[m.index + m[0].length] === '%' ? 1 : 0)
   const before = s.slice(0, m.index)
+  const tail = s.slice(end).trim().replace(/^[·,;:]\s*/, '')
   const symbolPrefix = /^[\s≈~≥≤<>±]*$/.test(before)
-  const head = symbolPrefix ? (before.trim() + m[0]).trim() : `${before.trim()} ${m[0]}`.trim()
-  return [head, s.slice(end).trim().replace(/^[·,;:]\s*/, '')]
+  // Only a qualifier ("up to", "≈", "about") may precede the number, and the tail must read as a
+  // unit — otherwise the text is a composite ("DEAE mode 100 mg/mL; phenyl mode 30 mg/mL",
+  // "7 × 37 mm") and is kept whole.
+  if (!symbolPrefix && !QUALIFIER.test(before.trim())) return [s.trim(), '']
+  if (tail && !/^[\p{L}%°µ(]/u.test(tail)) return [s.trim(), '']
+  const num = s.slice(m.index, end)
+  const head = symbolPrefix ? (before.trim() + num).trim() : `${before.trim()} ${num}`.trim()
+  return [head, tail]
 }
+const QUALIFIER = /^(up to|about|approx\.?|approximately|typically|typ\.?|min\.?|max\.?|minimum|maximum|from|over|under|at least|≥|≤|>|<|~|≈)$/i
 
 /** "~90 µm" → "90"; keeps the approximation mark out so several d50 values can share one unit. */
 export function stripUnit(s?: string | null): string {

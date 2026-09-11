@@ -143,6 +143,8 @@ describe('catalogue query, filters and sort', () => {
       { value: 'ion-exchange', label: 'Ion Exchange', count: 1 },
       { value: 'affinity', label: 'Affinity (IMAC)', count: 3 },
     ])
+    // A functional type only discriminates inside a mode with several types: the lone IEX type is not repeated.
+    expect(groups[1].options.map((o) => o.value)).toEqual(['activated-support-for-ligand-immobilisation', 'affinity', 'magnetic-affinity-beads'])
     expect(groups[2].selected).toEqual(['hr'])
     expect(groups[2].options.find((o) => o.value === 'fast-flow')).toEqual({ value: 'fast-flow', label: 'Fast Flow', count: 3, note: '~90 µm' })
     expect(groups[3].options).toEqual([

@@ -221,20 +221,27 @@ export function buildFilterGroups(products: Product[], categories: ProductCatego
       options: categories.map((c) => ({ value: c.slug!, label: c.name, count: count((p) => categoryOf(p)?.id === c.id) })).filter((o) => o.count > 0),
     })
   }
-  const types = new Map<string, { label: string; count: number }>()
+  // Functional types only discriminate inside a mode that has more than one (strong / weak cation
+  // and anion exchangers; IMAC beside Protein A affinity). A mode with a single type is already
+  // the mode filter, so its type is not repeated here.
+  const types = new Map<string, { label: string; count: number; category: number | string }>()
   for (const p of products) {
     const t = p.chemistry?.functionalType?.trim()
     if (!t) continue
     const key = typeSlug(t)
     const cur = types.get(key)
     if (cur) cur.count += 1
-    else types.set(key, { label: shortType(t), count: 1 })
+    else types.set(key, { label: shortType(t), count: 1, category: categoryOf(p)?.id ?? '' })
   }
+  const typesPerCategory = new Map<number | string, number>()
+  for (const t of types.values()) typesPerCategory.set(t.category, (typesPerCategory.get(t.category) ?? 0) + 1)
   groups.push({
     name: 'type',
     legend: opts?.scoped ? 'Functional type' : 'Exchanger / functional type',
     selected: q.type,
-    options: Array.from(types, ([value, t]) => ({ value, label: t.label, count: t.count })),
+    options: Array.from(types, ([value, t]) => ({ value, label: t.label, count: t.count, category: t.category }))
+      .filter((o) => (typesPerCategory.get(o.category) ?? 0) > 1 || q.type.includes(o.value))
+      .map(({ value, label, count }) => ({ value, label, count })),
   })
   groups.push({
     name: 'grade',
@@ -250,7 +257,8 @@ export function buildFilterGroups(products: Product[], categories: ProductCatego
       .map(([value, label]) => ({ value, label, count: count((p) => p.availability === value) }))
       .filter((o) => o.count > 0),
   })
-  return groups.filter((g) => g.options.length > 0)
+  // A group with one option cannot narrow anything (unless it is the active selection).
+  return groups.filter((g) => g.options.length > 1 || g.selected.length)
 }
 
 /** Reference grade for a card's selects / compare rows: Fast Flow (Standard) when present, else the first. */
@@ -271,3 +279,9 @@ export function pickCompared(all: Product[], sp: SearchParams, max = 3): Product
 }
 
 export const specValue = (p: Pick<Product, 'specs'>, parameter: string): Spec | undefined => p.specs?.find((s) => s.parameter === parameter)
+
+/** The slice of a product the resin selector needs (client component, so keep it small). */
+export function slimProduct(p: Product) {
+  const cat = categoryOf(p)
+  return { id: p.id, slug: p.slug!, name: p.name, subtitle: p.subtitle ?? null, category: cat?.slug ?? '', categoryName: cat?.name ?? '', ligand: p.chemistry?.ligand ?? null, functionalType: p.chemistry?.functionalType ?? null, grades: (p.grades ?? []).map((g) => g.grade) }
+}

@@ -20,7 +20,7 @@ import { getApplications, getCategories, getCustomers, getDocuments, getFaqs, ge
 import { displayableCustomers } from '@/lib/trust'
 import { toBasketProduct } from '@/lib/rfq'
 import { cn, resolveLink } from '@/lib/utils'
-import { categoryOf } from '@/lib/catalog'
+import { categoryOf, slimProduct } from '@/lib/catalog'
 import type { Customer, Page, Product, ProductCategory, Team, Testimonial } from '@/payload-types'
 
 type Block = NonNullable<Page['layout']>[number]
@@ -1035,7 +1035,3 @@ async function FaqColumn({ block, number, dark, stacked }: { block: Extract<Bloc
   )
 }
 
-export function slimProduct(p: Product) {
-  const cat = categoryOf(p)
-  return { id: p.id, slug: p.slug!, name: p.name, subtitle: p.subtitle ?? null, category: cat?.slug ?? '', categoryName: cat?.name ?? '', ligand: p.chemistry?.ligand ?? null, functionalType: p.chemistry?.functionalType ?? null, grades: (p.grades ?? []).map((g) => g.grade) }
-}

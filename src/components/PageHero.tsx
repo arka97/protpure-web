@@ -55,11 +55,17 @@ export function PageHero({
   title,
   breadcrumbs,
   children,
+  tone = 'light',
+  aside,
 }: {
   hero?: Hero | null
   title: string
   breadcrumbs?: { label: string; href?: string }[]
   children?: React.ReactNode
+  /** Compact heroes are light by default; the catalogue and category pages use the dark field with a bead field at the edge. */
+  tone?: 'light' | 'dark'
+  /** Right-hand column of a compact hero (e.g. the category emblem). */
+  aside?: React.ReactNode
 }) {
   const style = hero?.style ?? 'compact'
   if (style === 'none') return null
@@ -133,29 +139,40 @@ export function PageHero({
     )
   }
 
+  const dark = tone === 'dark'
   return (
-    <section className="border-b border-rule bg-surface">
-      <div className="container-x py-10 lg:py-11">
-        {breadcrumbs ? (
-          <div className="mb-6">
-            <Breadcrumbs items={breadcrumbs} />
-          </div>
-        ) : null}
-        {hero?.eyebrow ? <p className="eyebrow mb-4">{hero.eyebrow}</p> : null}
-        <h1 className="heading-1 max-w-[900px]">{heading}</h1>
-        {hero?.text ? <p className="lede mt-4 max-w-[650px]">{hero.text}</p> : null}
-        <CmsLinks links={hero?.links} className="mt-6" />
-        {children}
+    <section className={cn('relative overflow-hidden', dark ? 'surface-dark' : 'border-b border-rule bg-surface')}>
+      {dark ? <BeadField density="normal" opacity={0.14} className="bottom-[-190px] right-[-60px] w-[420px] lg:bottom-[-155px] lg:right-[35px] lg:w-[630px]" /> : null}
+      <div className={cn('container-x relative py-10 lg:py-11', aside && 'grid gap-8 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-end')}>
+        <div className="min-w-0">
+          {breadcrumbs ? (
+            <div className="mb-6">
+              <Breadcrumbs items={breadcrumbs} onDark={dark} />
+            </div>
+          ) : null}
+          {hero?.eyebrow ? <p className="eyebrow mb-4">{hero.eyebrow}</p> : null}
+          <h1 className="heading-1 max-w-[900px]">
+            <Lines text={heading} />
+          </h1>
+          {hero?.text ? (
+            <p className={cn('lede mt-4 max-w-[650px]', dark && 'lg:mt-[18px]')}>
+              <Lines text={hero.text} />
+            </p>
+          ) : null}
+          <CmsLinks links={hero?.links} onDark={dark} className="mt-6" />
+          {children}
+        </div>
+        {aside}
       </div>
     </section>
   )
 }
 
 /** Hero for listing routes that may or may not have a CMS page behind them. */
-export function ListingHero({ page, fallback, breadcrumbs, children }: { page: Page | null; fallback: { title: string; text?: string; eyebrow?: string }; breadcrumbs?: { label: string; href?: string }[]; children?: React.ReactNode }) {
+export function ListingHero({ page, fallback, breadcrumbs, children, tone, aside }: { page: Page | null; fallback: { title: string; text?: string; eyebrow?: string }; breadcrumbs?: { label: string; href?: string }[]; children?: React.ReactNode; tone?: 'light' | 'dark'; aside?: React.ReactNode }) {
   const hero = page?.hero?.style && page.hero.style !== 'none' ? page.hero : { style: 'compact' as const, eyebrow: fallback.eyebrow, heading: fallback.title, text: fallback.text }
   return (
-    <PageHero hero={hero as Hero} title={page?.title ?? fallback.title} breadcrumbs={breadcrumbs}>
+    <PageHero hero={hero as Hero} title={page?.title ?? fallback.title} breadcrumbs={breadcrumbs} tone={tone} aside={aside}>
       {children}
     </PageHero>
   )

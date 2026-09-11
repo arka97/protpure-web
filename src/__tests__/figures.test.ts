@@ -29,6 +29,12 @@ describe('figure parsers', () => {
     expect(splitFigure('~1000 cm/h @ 0.12 MPa')).toEqual(['~1000', 'cm/h @ 0.12 MPa'])
     expect(splitFigure('Up to 20 mg human IgG/mL resin')).toEqual(['Up to 20', 'mg human IgG/mL resin'])
     expect(splitFigure('Not applicable')).toEqual(['Not applicable', ''])
+    // Composite values stay whole: a word before the number that is not a qualifier, or a tail that is not a unit.
+    expect(splitFigure('DEAE mode 100 mg BSA/mL; phenyl mode 30 mg BSA/mL')).toEqual(['DEAE mode 100 mg BSA/mL; phenyl mode 30 mg BSA/mL', ''])
+    expect(splitFigure('7 × 37 mm (1 mL); 12 × 40 mm (5 mL)')).toEqual(['7 × 37 mm (1 mL); 12 × 40 mm (5 mL)', ''])
+    expect(splitFigure('0.09–0.13 mmol (H⁺)/mL medium')).toEqual(['0.09–0.13', 'mmol (H⁺)/mL medium'])
+    expect(splitFigure('6% spherical cross-linked agarose')).toEqual(['6%', 'spherical cross-linked agarose'])
+    expect(splitFigure('4–30 °C, 20% ethanol')).toEqual(['4–30', '°C, 20% ethanol'])
     expect(splitFigure(null)).toEqual(['', ''])
   })
 

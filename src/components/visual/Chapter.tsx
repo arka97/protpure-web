@@ -40,6 +40,7 @@ export function ChapterHead({
   headingClassName,
   introClassName,
   as: Tag = 'h2',
+  size = 'lg',
 }: {
   number?: string | number | null
   eyebrow?: React.ReactNode
@@ -50,6 +51,8 @@ export function ChapterHead({
   headingClassName?: string
   introClassName?: string
   as?: 'h1' | 'h2' | 'h3'
+  /** `lg` is the primary chapter heading (64 px); `md` the product content heading (52 px). */
+  size?: 'lg' | 'md'
 }) {
   if (!eyebrow && !heading && !intro && !aside) return null
   return (
@@ -60,7 +63,7 @@ export function ChapterHead({
             {eyebrow}
           </ChapterEyebrow>
         ) : null}
-        {heading ? <Tag className={cn('heading-2 max-w-[660px]', headingClassName)}>{heading}</Tag> : null}
+        {heading ? <Tag className={cn(size === 'md' ? 'heading-2-md' : 'heading-2', 'max-w-[660px]', headingClassName)}>{heading}</Tag> : null}
       </div>
       {intro || aside ? (
         <div className="flex shrink-0 flex-col gap-4 lg:max-w-[380px] lg:items-start lg:pb-1">
@@ -97,6 +100,7 @@ export function Chapter({
   beads,
   reveal = true,
   as: Tag = 'section',
+  size,
   ...rest
 }: {
   id?: string
@@ -117,12 +121,13 @@ export function Chapter({
   beads?: boolean | BeadFieldProps
   reveal?: boolean
   as?: 'section' | 'div' | 'aside'
+  size?: 'lg' | 'md'
 } & Omit<React.HTMLAttributes<HTMLElement>, 'className' | 'children' | 'id'>) {
   const padding = cn(attached ? 'pt-0' : 'pt-12 lg:pt-20', tight ? 'pb-8 lg:pb-10' : 'pb-12 lg:pb-20')
   const beadProps: BeadFieldProps | null = beads ? (beads === true ? { density: 'normal', opacity: 0.12, className: 'right-[-120px] top-3 w-[470px] max-w-[70vw]' } : beads) : null
   const inner = (
     <div className={cn('container-x relative', innerClassName)}>
-      <ChapterHead number={number} eyebrow={eyebrow} heading={heading} intro={intro} aside={aside} className={headClassName} headingClassName={headingClassName} />
+      <ChapterHead number={number} eyebrow={eyebrow} heading={heading} intro={intro} aside={aside} className={headClassName} headingClassName={headingClassName} size={size} />
       {children}
     </div>
   )
