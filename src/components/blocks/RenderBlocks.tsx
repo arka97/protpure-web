@@ -11,6 +11,7 @@ import { ResinSelector } from '@/components/product/ResinSelector'
 import { InquiryForm } from '@/components/forms/InquiryForm'
 import { NewsletterForm } from '@/components/forms/NewsletterForm'
 import { getApplications, getCategories, getDocuments, getFaqs, getPosts, getProducts, getServices, getSiteSettings, getTeam, getTestimonials, getUpdates } from '@/lib/data'
+import { toBasketProduct } from '@/lib/rfq'
 import { cn, resolveLink } from '@/lib/utils'
 import { categoryOf } from '@/lib/catalog'
 import type { Page, Product, Team, Testimonial } from '@/payload-types'
@@ -480,7 +481,7 @@ async function RenderBlock({ block }: { block: Block; index: number }) {
               ) : (
                 <div className="card p-6 sm:p-8">
                   <React.Suspense>
-                    <InquiryForm type={block.form} products={products.map((p) => ({ id: p.id, name: p.name, category: categoryOf(p)?.name ?? 'Products' }))} responseTime={settings.responseTime} allowTypeChange={block.form === 'contact'} />
+                    <InquiryForm type={block.form} products={products.map(toBasketProduct)} responseTime={settings.responseTime} allowTypeChange={block.form === 'contact'} />
                   </React.Suspense>
                 </div>
               )}

@@ -1,5 +1,5 @@
-import { GRADE_SHORT } from '@/components/product/cards'
 import { categoryOf } from './catalog'
+import { GRADE_LABELS, type GradeValue } from './rfq'
 import { SITE_URL, absoluteUrl } from './utils'
 import type { Application, Document, Product } from '@/payload-types'
 
@@ -17,7 +17,7 @@ export function publicProduct(p: Product, opts?: { full?: boolean }) {
     ligand: p.chemistry?.ligand ?? null,
     matrix: p.chemistry?.matrix ?? null,
     functionalType: p.chemistry?.functionalType ?? null,
-    grades: (p.grades ?? []).map((g) => ({ grade: g.grade, gradeLabel: GRADE_SHORT[g.grade] ?? g.grade, label: g.label ?? null, particleSizeRange: g.particleSizeRange ?? null, d50: g.d50 ?? null, maxFlowVelocity: g.maxFlowVelocity ?? null, dynamicBindingCapacity: g.dynamicBindingCapacity ?? null, pressureFlow: g.pressureFlow ?? null })),
+    grades: (p.grades ?? []).map((g) => ({ grade: g.grade, gradeLabel: GRADE_LABELS[g.grade as GradeValue] ?? g.grade, label: g.label ?? null, particleSizeRange: g.particleSizeRange ?? null, d50: g.d50 ?? null, maxFlowVelocity: g.maxFlowVelocity ?? null, dynamicBindingCapacity: g.dynamicBindingCapacity ?? null, pressureFlow: g.pressureFlow ?? null })),
     url: `${SITE_URL}/products/${p.slug}`,
     markdownUrl: `${SITE_URL}/md/products/${p.slug}`,
     quoteUrl: `${SITE_URL}/request-quote?product=${p.id}`,

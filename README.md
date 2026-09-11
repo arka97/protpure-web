@@ -76,7 +76,7 @@ Configured through `RESEND_API_KEY`, `EMAIL_FROM`, `EMAIL_FROM_NAME` (verify the
 
 | Trigger | Emails |
 | --- | --- |
-| Quote / evaluation / technical / partnership / contact request (website, API or MCP) | Confirmation to the requester (reply-to = sales inbox) + notification to every address in **Site settings → Sales & email → Inquiry notification emails** (reply-to = requester) |
+| Quote / evaluation / technical / partnership / contact request (website RFQ basket, API or MCP) | Confirmation to the requester (reply-to = sales inbox) + notification to every address in **Site settings → Sales & email → Inquiry notification emails** (reply-to = requester). Both list the requested line items (product, grade, pack size, quantity, purpose) and repeat the paid-sample-kit policy when a line is a sample kit |
 | Newsletter signup | Double opt-in confirmation, then welcome email with unsubscribe link |
 | Admin forgot-password | Payload default |
 
@@ -84,12 +84,36 @@ Without `RESEND_API_KEY` emails are logged to the console instead of sent. `EMAI
 
 Inquiries are stored in **Sales → Inquiries** with status, assignee and internal notes; subscribers in **Sales → Newsletter subscribers** (export confirmed ones to your mailing tool).
 
+### RFQ basket
+
+Protpure sells by quotation and ships **no free samples** — paid sample kits (5–25 mL packs or a 1 mL pre-packed column) are credited against the first bulk order. Buyers therefore collect several products in one request:
+
+* **Add to RFQ basket** on every product card, in the product hero and per row of the pack-size table (pre-filled with that grade / pack / catalogue number). A picker asks for grade, pack size, quantity and purpose (`sample-kit`, `evaluation`, `production`, `other`) when the product offers a choice.
+* The header shows a basket icon with a line count; it opens a slide-over drawer (`src/components/rfq/BasketDrawer.tsx`) where lines can be edited or removed. "Request a quote" opens the drawer when the basket has items.
+* `/request-quote` shows the basket as an editable table above the form and submits **one** inquiry with an `items[]` array. `?product=ID` (and `?type=`) links still work: the product is added to the basket on arrival.
+* State lives in `localStorage` (`protpure.rfq.v1`), survives navigation and follows other tabs; the shared reducer and validation are in `src/lib/rfq.ts` (unit-tested in `src/__tests__/rfq.test.ts`).
+* In the admin, **Sales → Inquiries** lists the item count and shows each line (product link, name snapshot, grade, pack size, catalogue number, quantity, purpose, note). The legacy `products` / `requestedItems` fields remain for older API callers.
+
 ## AI / agent access
 
 * `GET /llms.txt` — site map for LLMs; `GET /llms-full.txt` — the whole site as Markdown.
 * `GET /md/<path>` (e.g. `/md/products/sp-agarose`, `/md/about`, `/md/company`) or any HTML URL with `Accept: text/markdown`.
 * `GET /api/public/products[?category=&grade=&q=]`, `/api/public/products/{slug}`, `/api/public/documents[?type=]`, `/api/public/company`; `POST /api/public/inquiries` (JSON, rate-limited).
 * MCP server: `POST /mcp` (Streamable HTTP, no auth). Tools: `list_products`, `get_product`, `compare_products`, `search_documents`, `list_applications`, `get_company_info`, `request_quote`. Client config: `{ "protpure": { "url": "https://protpure.com/mcp" } }`.
+* Filing a quote from an agent or integration — `POST /api/public/inquiries` and the MCP `request_quote` tool take the same `items[]` the website basket sends:
+
+  ```json
+  {
+    "type": "quote", "name": "Ada Lovelace", "email": "ada@example.com", "organization": "Example Biologics", "country": "Germany",
+    "application": "His-tagged enzyme capture",
+    "items": [
+      { "productSlug": "ni-nta-agarose", "grade": "fast-flow", "packSize": "25 mL", "quantity": 1, "purpose": "sample-kit" },
+      { "productSlug": "sp-agarose", "grade": "precise", "packSize": "1 L", "quantity": 2, "purpose": "production", "notes": "10 cm column" }
+    ]
+  }
+  ```
+
+  Each item needs `productId`, `productSlug` or a free-text `productName`; `grade` is `faster | fast-flow | precise | hr`, `purpose` is `sample-kit | evaluation | production | other` (default `production`). The legacy `productIds[]` / `productSlugs[]` + `requestedItems` fields are still accepted. `llms.txt`, `/md/products/*` and `get_company_info` describe the basket and the paid-sample-kit policy so assistants file lines correctly.
 * JSON-LD on every page (Organization, WebSite, Product with `additionalProperty` specs, BreadcrumbList, Article, FAQPage); `robots.txt` explicitly allows major AI crawlers; `sitemap.xml`; `blog/rss.xml`.
 
 ## Deployment (Dokploy)
@@ -116,5 +140,5 @@ Edit collections → `pnpm generate:types` → `pnpm migrate:create` → commit 
 * **Blog** → *Content → Blog posts*. **LinkedIn** → *Content → LinkedIn updates*: title, post URL, two-sentence summary, optional image.
 * **Homepage & pages** → *Content → Pages*: hero + blocks (stats, feature grids, comparison tables, particle-size platform, resin selector, categories, featured products, applications, services, documents, blog, LinkedIn feed, testimonials, team, timeline, FAQ, image, forms, CTA). Drag to reorder.
 * **Company details, contact, notification emails, regions served, announcement bar, AI summary** → *Settings → Site settings*. Navigation → *Settings → Header / Footer*.
-* **Inquiries** → *Sales → Inquiries*: every quote/contact request with status tracking. Reply to the notification email directly — its reply-to is the requester.
+* **Inquiries** → *Sales → Inquiries*: every quote/contact request with status tracking and the requested items (grade, pack size, quantity, sample kit vs production). Reply to the notification email directly — its reply-to is the requester.
 * **Users** (admins only) → *Admin → Users*: add editors.

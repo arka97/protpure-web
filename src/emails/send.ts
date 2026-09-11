@@ -39,6 +39,7 @@ async function safeSend(payload: Payload, opts: Parameters<Payload['sendEmail']>
 export async function sendInquiryEmails({ payload, inquiry }: { payload: Payload; inquiry: Inquiry }) {
   const brand = await getBrand(payload)
   const products = (inquiry.products ?? []).map((p) => (typeof p === 'object' ? (p as Product).name : String(p)))
+  const items = (inquiry.items ?? []).map((i) => ({ productName: i.productName, grade: i.grade, packSize: i.packSize, catalogNumber: i.catalogNumber, quantity: i.quantity, purpose: i.purpose, notes: i.notes }))
   const data: InquiryEmailData = {
     id: inquiry.id,
     type: inquiry.type,
@@ -49,6 +50,7 @@ export async function sendInquiryEmails({ payload, inquiry }: { payload: Payload
     jobTitle: inquiry.jobTitle,
     phone: inquiry.phone,
     country: inquiry.country,
+    items,
     productNames: products,
     requestedItems: inquiry.requestedItems,
     application: inquiry.application,
@@ -75,7 +77,7 @@ export async function sendInquiryEmails({ payload, inquiry }: { payload: Payload
       payload,
       {
         to: brand.notificationEmails,
-        subject: `[${data.typeLabel}] ${inquiry.name}${inquiry.organization ? ` · ${inquiry.organization}` : ''}${inquiry.country ? ` · ${inquiry.country}` : ''}`,
+        subject: `[${data.typeLabel}${items.length ? `, ${items.length} item${items.length === 1 ? '' : 's'}` : ''}] ${inquiry.name}${inquiry.organization ? ` · ${inquiry.organization}` : ''}${inquiry.country ? ` · ${inquiry.country}` : ''}`,
         html: await render(InquiryNotification({ brand, data })),
         replyTo: inquiry.email,
       },

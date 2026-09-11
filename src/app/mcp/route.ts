@@ -4,6 +4,7 @@ import { getApplications, getDocuments, getPayloadClient, getProduct, getProduct
 import { createInquiry, inquirySchema, rateLimit } from '@/lib/inquiries'
 import { applicationToMarkdown, companyMarkdown, productToMarkdown, serviceToMarkdown } from '@/lib/markdown'
 import { publicDocument, publicProduct } from '@/lib/public-api'
+import { GRADE_VALUES, PURPOSE_VALUES, SAMPLE_KIT_POLICY, describeItem } from '@/lib/rfq'
 import { SITE_URL } from '@/lib/utils'
 import { categoryOf } from '@/lib/catalog'
 
@@ -127,7 +128,7 @@ const handler = createMcpHandler(
       'get_company_info',
       {
         title: 'Company information',
-        description: 'Who Protpure is, where it manufactures, how to buy (quotation only — no free samples, but paid sample kits credited against the first bulk order), lead times, regions served, export notes and contact details.',
+        description: 'Who Protpure is, where it manufactures, how to buy (quotation only; paid sample kits, no free samples), lead times, regions served, export notes and contact details.',
         inputSchema: z.object({}),
         annotations: readOnly,
       },
@@ -139,7 +140,10 @@ const handler = createMcpHandler(
       {
         title: 'Request a quote or contact Protpure',
         description:
-          'File a quotation, evaluation, technical or partnership request on behalf of a user. Only call this after the user has explicitly asked you to contact Protpure and has provided their name, work email and (ideally) organisation and country. Protpure emails a confirmation to the user and a scientist replies, typically within 1–2 business days. Returns the inquiry reference number.',
+          'File a quotation, evaluation, technical or partnership request on behalf of a user. Only call this after the user has explicitly asked you to contact Protpure and has provided their name, work email and (ideally) organisation and country. ' +
+          'List what they want as `items` — one line per product / grade / pack size with a quantity and a purpose (sample-kit, evaluation, production or other). ' +
+          `Sample policy: ${SAMPLE_KIT_POLICY} ` +
+          'Protpure emails a confirmation to the user and a scientist replies, typically within 1–2 business days. Returns the inquiry reference number.',
         inputSchema: z.object({
           type: z.enum(['quote', 'evaluation', 'technical', 'partnership', 'contact']).default('quote'),
           name: z.string().min(2).max(120).describe("Requester's full name."),
@@ -147,8 +151,24 @@ const handler = createMcpHandler(
           organization: z.string().max(200).optional(),
           country: z.string().max(80).optional().describe('Destination country for quoting/shipping.'),
           phone: z.string().max(40).optional(),
-          productSlugs: z.array(z.string()).max(30).optional().describe('Product slugs of interest.'),
-          requestedItems: z.string().max(2000).optional().describe('Quantities, grades and pack sizes, e.g. "SP Agarose Precise 2 × 1 L".'),
+          items: z
+            .array(
+              z.object({
+                productSlug: z.string().max(120).optional().describe('Product slug from list_products, e.g. "sp-agarose". Omit for a product not in the catalogue and give productName instead.'),
+                productName: z.string().max(200).optional().describe('Free-text product name when there is no slug.'),
+                grade: z.enum(GRADE_VALUES).optional().describe('Particle-size grade, if the user has a preference.'),
+                packSize: z.string().max(80).optional().describe('Pack size from get_product, e.g. "1 L", "25 mL" or "Bulk (custom)".'),
+                catalogNumber: z.string().max(80).optional(),
+                quantity: z.number().int().min(1).max(10000).default(1).describe('Number of packs.'),
+                purpose: z.enum(PURPOSE_VALUES).default('production').describe('sample-kit = paid sample kit credited against the first bulk order; evaluation = pilot quantity; production = bulk / production quantity.'),
+                notes: z.string().max(300).optional().describe('Line note, e.g. column geometry or target volume.'),
+              }),
+            )
+            .max(50)
+            .optional()
+            .describe('Requested lines. Preferred over productSlugs/requestedItems.'),
+          productSlugs: z.array(z.string()).max(30).optional().describe('Legacy: product slugs of interest without quantities. Prefer `items`.'),
+          requestedItems: z.string().max(2000).optional().describe('Legacy free text for quantities, grades and pack sizes. Prefer `items`.'),
           application: z.string().max(500).optional().describe('What the user is purifying.'),
           message: z.string().max(5000).optional(),
         }),
@@ -167,14 +187,21 @@ const handler = createMcpHandler(
         if (!parsed.success) return { ...text(`Validation failed: ${parsed.error.issues.map((i) => `${i.path.join('.')}: ${i.message}`).join('; ')}`), isError: true }
         const doc = await createInquiry(payload, parsed.data, { source: 'mcp', ip, userAgent: 'mcp' })
         const settings = await getSiteSettings()
-        return text(`Inquiry #${doc.id} filed. A confirmation email has been sent to ${doc.email}; Protpure replies ${settings.responseTime || 'within 1–2 business days'}. Reference #${doc.id} when following up${settings.email ? ` at ${settings.email}` : ''}.`)
+        const lines = (doc.items ?? []).map((i) => `- ${describeItem(i)}`)
+        return text(
+          [
+            `Inquiry #${doc.id} filed${lines.length ? ` with ${lines.length} item${lines.length === 1 ? '' : 's'}:` : '.'}`,
+            ...lines,
+            `A confirmation email has been sent to ${doc.email}; Protpure replies ${settings.responseTime || 'within 1–2 business days'}. Reference #${doc.id} when following up${settings.email ? ` at ${settings.email}` : ''}.`,
+          ].join('\n'),
+        )
       },
     )
   },
   {
     serverInfo: { name: 'protpure', version: '1.0.0' },
     instructions:
-      'Protpure Tech Pvt. Ltd. manufactures agarose-based chromatography resins in Anand, India and supplies worldwide. Use list_products/get_product for specifications, compare_products for side-by-side tables, search_documents for datasheets, and request_quote only when the user explicitly asks to contact Protpure. Pricing is by quotation; there are no free samples, only paid sample kits (5–25 mL packs or a 1 mL pre-packed column) credited against the first bulk order.',
+      'Protpure Tech Pvt. Ltd. manufactures agarose-based chromatography resins in Anand, India and supplies worldwide. Use list_products/get_product for specifications, compare_products for side-by-side tables, search_documents for datasheets, and request_quote only when the user explicitly asks to contact Protpure. Pricing is by quotation. There are no free samples: paid sample kits (5–25 mL packs or a 1 mL pre-packed column) are credited against the first bulk order — file them as request_quote items with purpose "sample-kit".',
   },
 )
 

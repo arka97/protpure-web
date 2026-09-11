@@ -1295,7 +1295,7 @@ export interface Update {
   createdAt: string;
 }
 /**
- * Quote and contact requests from the website, email and AI assistants. Update the status as you work them.
+ * Quote and contact requests from the website (RFQ basket), the public API and AI assistants. Update the status as you work them.
  *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "inquiries".
@@ -1311,9 +1311,37 @@ export interface Inquiry {
   jobTitle?: string | null;
   phone?: string | null;
   country?: string | null;
+  /**
+   * Line items from the RFQ basket (or from an API / MCP caller). Sample kits are paid and credited against the first bulk order.
+   */
+  items?:
+    | {
+        product?: (number | null) | Product;
+        /**
+         * Name at the time of the request (kept even if the product is renamed or removed).
+         */
+        productName: string;
+        grade?: ('faster' | 'fast-flow' | 'precise' | 'hr') | null;
+        /**
+         * e.g. 1 L, 5 mL, Bulk (custom)
+         */
+        packSize?: string | null;
+        catalogNumber?: string | null;
+        quantity?: number | null;
+        purpose?: ('sample-kit' | 'evaluation' | 'production' | 'other') | null;
+        /**
+         * Line note from the requester, e.g. column geometry or target volume.
+         */
+        notes?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * All products referenced by this inquiry (filled automatically from the items; also used by legacy API callers).
+   */
   products?: (number | Product)[] | null;
   /**
-   * Free text as entered by the requester, e.g. "SP Agarose Precise, 2 × 1 L".
+   * Free text as entered by the requester or an AI assistant, e.g. "SP Agarose Precise, 2 × 1 L".
    */
   requestedItems?: string | null;
   /**
@@ -2205,6 +2233,19 @@ export interface InquiriesSelect<T extends boolean = true> {
   jobTitle?: T;
   phone?: T;
   country?: T;
+  items?:
+    | T
+    | {
+        product?: T;
+        productName?: T;
+        grade?: T;
+        packSize?: T;
+        catalogNumber?: T;
+        quantity?: T;
+        purpose?: T;
+        notes?: T;
+        id?: T;
+      };
   products?: T;
   requestedItems?: T;
   application?: T;

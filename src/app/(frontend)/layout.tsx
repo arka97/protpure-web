@@ -5,6 +5,8 @@ import * as React from 'react'
 import { MessageCircle } from 'lucide-react'
 import { Header, type NavItem } from '@/components/layout/Header'
 import { Footer } from '@/components/layout/Footer'
+import { BasketProvider } from '@/components/rfq/BasketProvider'
+import { BasketDrawer } from '@/components/rfq/BasketDrawer'
 import { getFooter, getHeader, getSiteSettings } from '@/lib/data'
 import { mediaUrl, resolveLink, SITE_URL, type LinkValue } from '@/lib/utils'
 import { organizationJsonLd, JsonLd } from '@/lib/jsonld'
@@ -61,46 +63,50 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   return (
     <html lang="en">
       <body className="flex min-h-screen flex-col">
-        {isDraft ? (
-          <div className="bg-amber-400 px-4 py-1.5 text-center text-xs font-semibold text-amber-950">
-            Preview mode — showing draft content.{' '}
-            <Link href="/next/exit-preview" className="underline" prefetch={false}>
-              Exit preview
-            </Link>
-          </div>
-        ) : null}
-        <Header
-          items={toNav(header.items)}
-          cta={cta ? { href: cta.href, label: cta.label } : { href: '/request-quote', label: 'Request a quote' }}
-          logo={logo}
-          siteName={settings.name || 'Protpure'}
-          announcement={settings.announcement?.enabled && settings.announcement.text ? { text: settings.announcement.text, href: announcementLink?.href } : null}
-        />
-        <main id="main" className="flex-1">
-          {children}
-        </main>
-        <Footer
-          siteName={settings.name || 'Protpure'}
-          legalName={settings.legalName}
-          tagline={footer.tagline}
-          logo={logo}
-          columns={(footer.columns ?? []).map((c) => ({ title: c.title, links: toNav((c.links ?? []).map((l) => ({ link: l.link }))) }))}
-          legalLinks={toNav((footer.legalLinks ?? []).map((l) => ({ link: l.link })))}
-          bottomText={footer.bottomText}
-          contact={{ email: settings.email, phone: settings.phone, address: settings.address, mapUrl: settings.mapUrl }}
-          linkedin={settings.social?.linkedin}
-        />
-        {settings.whatsapp ? (
-          <a
-            href={`https://wa.me/${settings.whatsapp.replace(/[^0-9]/g, '')}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label="Chat on WhatsApp"
-            className="fixed bottom-5 right-5 z-40 inline-flex h-12 w-12 items-center justify-center rounded-full bg-[#25D366] text-white shadow-card-hover transition hover:scale-105"
-          >
-            <MessageCircle className="h-6 w-6" />
-          </a>
-        ) : null}
+        {/* RFQ basket state (localStorage) is shared by the header button, product cards and the quote form. */}
+        <BasketProvider>
+          {isDraft ? (
+            <div className="bg-amber-400 px-4 py-1.5 text-center text-xs font-semibold text-amber-950">
+              Preview mode — showing draft content.{' '}
+              <Link href="/next/exit-preview" className="underline" prefetch={false}>
+                Exit preview
+              </Link>
+            </div>
+          ) : null}
+          <Header
+            items={toNav(header.items)}
+            cta={cta ? { href: cta.href, label: cta.label } : { href: '/request-quote', label: 'Request a quote' }}
+            logo={logo}
+            siteName={settings.name || 'Protpure'}
+            announcement={settings.announcement?.enabled && settings.announcement.text ? { text: settings.announcement.text, href: announcementLink?.href } : null}
+          />
+          <main id="main" className="flex-1">
+            {children}
+          </main>
+          <Footer
+            siteName={settings.name || 'Protpure'}
+            legalName={settings.legalName}
+            tagline={footer.tagline}
+            logo={logo}
+            columns={(footer.columns ?? []).map((c) => ({ title: c.title, links: toNav((c.links ?? []).map((l) => ({ link: l.link }))) }))}
+            legalLinks={toNav((footer.legalLinks ?? []).map((l) => ({ link: l.link })))}
+            bottomText={footer.bottomText}
+            contact={{ email: settings.email, phone: settings.phone, address: settings.address, mapUrl: settings.mapUrl }}
+            linkedin={settings.social?.linkedin}
+          />
+          <BasketDrawer />
+          {settings.whatsapp ? (
+            <a
+              href={`https://wa.me/${settings.whatsapp.replace(/[^0-9]/g, '')}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Chat on WhatsApp"
+              className="fixed bottom-5 right-5 z-40 inline-flex h-12 w-12 items-center justify-center rounded-full bg-[#25D366] text-white shadow-card-hover transition hover:scale-105"
+            >
+              <MessageCircle className="h-6 w-6" />
+            </a>
+          ) : null}
+        </BasketProvider>
         <JsonLd data={organizationJsonLd(settings)} />
       </body>
     </html>

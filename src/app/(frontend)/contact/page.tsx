@@ -5,8 +5,8 @@ import { ListingHero } from '@/components/PageHero'
 import { RenderBlocks } from '@/components/blocks/RenderBlocks'
 import { InquiryForm } from '@/components/forms/InquiryForm'
 import { getPage, getProducts, getSiteSettings } from '@/lib/data'
+import { toBasketProduct } from '@/lib/rfq'
 import { buildMetadata } from '@/lib/seo'
-import { categoryOf } from '@/lib/catalog'
 
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -16,7 +16,7 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function ContactPage() {
   const [page, products, settings] = await Promise.all([getPage('contact'), getProducts(), getSiteSettings()])
-  const options = products.map((p) => ({ id: p.id, name: p.name, category: categoryOf(p)?.name ?? 'Products' }))
+  const options = products.map(toBasketProduct)
   return (
     <>
       <ListingHero page={page} fallback={{ eyebrow: 'Contact', title: 'Talk to a scientist, not a call centre', text: 'Questions about a resin, an evaluation, documentation or distribution — write to us and a member of the technical team will reply.' }} breadcrumbs={[{ label: 'Home', href: '/' }, { label: 'Contact' }]} />

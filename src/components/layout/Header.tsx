@@ -5,6 +5,7 @@ import Image from 'next/image'
 import { usePathname } from 'next/navigation'
 import * as React from 'react'
 import { ChevronDown, Menu, X, ArrowRight } from 'lucide-react'
+import { BasketButton, QuoteCta } from '@/components/rfq/BasketButton'
 import { cn } from '@/lib/utils'
 
 export type NavItem = { href: string; label: string; newTab?: boolean; children?: { href: string; label: string; description?: string | null }[] }
@@ -103,13 +104,10 @@ export function Header({ items, cta, logo, siteName, announcement }: { items: Na
           })}
         </nav>
 
-        <div className="flex items-center gap-2">
-          {cta ? (
-            <Link href={cta.href} className="btn-primary btn-sm hidden sm:inline-flex">
-              {cta.label}
-            </Link>
-          ) : null}
-          <button type="button" className="btn-ghost btn-sm -mr-2 lg:hidden" aria-label={open ? 'Close menu' : 'Open menu'} aria-expanded={open} onClick={() => setOpen((o) => !o)}>
+        <div className="flex items-center gap-1 sm:gap-2">
+          {cta ? <QuoteCta href={cta.href} label={cta.label} className="btn-primary btn-sm hidden sm:inline-flex" /> : null}
+          <BasketButton />
+          <button type="button" className="btn-ghost -mr-2 h-11 w-11 p-0 lg:hidden" aria-label={open ? 'Close menu' : 'Open menu'} aria-expanded={open} onClick={() => setOpen((o) => !o)}>
             {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
           </button>
         </div>
@@ -134,11 +132,7 @@ export function Header({ items, cta, logo, siteName, announcement }: { items: Na
                 ) : null}
               </div>
             ))}
-            {cta ? (
-              <Link href={cta.href} className="btn-primary mt-6 w-full">
-                {cta.label}
-              </Link>
-            ) : null}
+            {cta ? <QuoteCta href={cta.href} label={cta.label} className="btn-primary mt-6 w-full" /> : null}
           </nav>
         </div>
       ) : null}

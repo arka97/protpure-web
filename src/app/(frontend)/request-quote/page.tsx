@@ -5,8 +5,8 @@ import { ListingHero } from '@/components/PageHero'
 import { RenderBlocks } from '@/components/blocks/RenderBlocks'
 import { InquiryForm } from '@/components/forms/InquiryForm'
 import { getPage, getProducts, getSiteSettings } from '@/lib/data'
+import { toBasketProduct } from '@/lib/rfq'
 import { buildMetadata } from '@/lib/seo'
-import { categoryOf } from '@/lib/catalog'
 
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -16,16 +16,16 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function RequestQuotePage() {
   const [page, products, settings] = await Promise.all([getPage('request-quote'), getProducts(), getSiteSettings()])
-  const options = products.map((p) => ({ id: p.id, name: p.name, category: categoryOf(p)?.name ?? 'Products' }))
+  const options = products.map(toBasketProduct)
   const steps = [
-    { icon: FileCheck, title: 'Tell us what you need', text: 'Products, grades, volumes and where you are — that’s enough to start.' },
+    { icon: FileCheck, title: 'Tell us what you need', text: 'Add products to your RFQ basket with grade, pack size and whether you need a sample kit or production volume — one request covers all of them.' },
     { icon: Clock, title: `We reply ${settings.responseTime || 'within 1–2 business days'}`, text: 'A scientist reviews every request. You get pricing, lead time and documentation, not a brochure.' },
     { icon: Globe2, title: 'Shipped worldwide', text: settings.globalStatement || 'Ex-works from Anand, India; we work with your forwarder or ours.' },
-    { icon: ShieldCheck, title: 'Documentation included', text: 'Datasheets and certificates of analysis for qualification; custom documentation on request.' },
+    { icon: ShieldCheck, title: 'Paid sample kits, credited later', text: 'No free samples: 5–25 mL packs or a 1 mL pre-packed column are invoiced and credited against your first bulk order.' },
   ]
   return (
     <>
-      <ListingHero page={page} fallback={{ eyebrow: 'Get a quotation', title: 'Request a quote', text: 'Pricing is by quotation so we can match grade, pack size and destination. Tell us what you are purifying and we will come back with a proposal.' }} breadcrumbs={[{ label: 'Home', href: '/' }, { label: 'Request a quote' }]} />
+      <ListingHero page={page} fallback={{ eyebrow: 'Get a quotation', title: 'Request a quote', text: 'Pricing is by quotation so we can match grade, pack size and destination. Review the items in your basket, tell us what you are purifying and we will come back with one proposal.' }} breadcrumbs={[{ label: 'Home', href: '/' }, { label: 'Request a quote' }]} />
       <section className="section">
         <div className="container-x grid gap-10 lg:grid-cols-12">
           <div className="order-2 lg:order-1 lg:col-span-4">
