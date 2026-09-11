@@ -2,10 +2,10 @@
  * Markdown renderings of site content for AI assistants and crawlers.
  * Served at /md/<path>, via `Accept: text/markdown`, in /llms-full.txt and through the MCP server.
  */
-import { GRADE_SHORT } from '@/components/product/cards'
 import { getApplications, getCategories, getDocuments, getFaqs, getPage, getPosts, getProducts, getServices, getSiteSettings, getUpdates } from './data'
 import { categoryOf } from './catalog'
 import { lexicalToMarkdown } from './lexical-md'
+import { GRADE_LABELS as GRADE_SHORT, SAMPLE_KIT_POLICY, type GradeValue } from './rfq'
 import { SITE_URL, absoluteUrl, formatDate } from './utils'
 import type { Application, Document, Page, Post, Product, Service } from '@/payload-types'
 
@@ -32,7 +32,7 @@ export function productToMarkdown(p: Product, opts?: { brief?: boolean }): strin
     out.push(
       table(
         ['Grade', 'Particle size range', 'd50V', 'Max linear flow velocity', 'Dynamic binding capacity', 'Pressure / flow'],
-        p.grades.map((g) => [g.label || `${p.name} ${GRADE_SHORT[g.grade] ?? g.grade}`, g.particleSizeRange ?? '', g.d50 ?? '', g.maxFlowVelocity ?? '', g.dynamicBindingCapacity ?? '', g.pressureFlow ?? '']),
+        p.grades.map((g) => [g.label || `${p.name} ${GRADE_SHORT[g.grade as GradeValue] ?? g.grade}`, g.particleSizeRange ?? '', g.d50 ?? '', g.maxFlowVelocity ?? '', g.dynamicBindingCapacity ?? '', g.pressureFlow ?? '']),
       ),
     )
   }
@@ -45,10 +45,11 @@ export function productToMarkdown(p: Product, opts?: { brief?: boolean }): strin
   const apps = (p.applications ?? []).filter((a): a is Application => typeof a === 'object')
   if (apps.length) out.push('', '## Applications', ...apps.map((a) => `- [${a.name}](${SITE_URL}/applications/${a.slug})`))
   out.push('', '## Ordering')
-  out.push(`- Pricing: by quotation — request at ${SITE_URL}/request-quote?product=${p.id}`)
+  out.push(`- Pricing: by quotation — add this product to the RFQ basket at ${SITE_URL}/request-quote?product=${p.id} (one request can cover several products, grades and pack sizes)`)
+  out.push(`- Samples: ${SAMPLE_KIT_POLICY} Mark the basket line "sample kit" (or send \`purpose: "sample-kit"\` via the API / MCP).`)
   out.push(`- Lead time: ${p.leadTime || '2–3 weeks ex-works'}`)
   if (p.bulkAvailable) out.push('- Bulk and custom volumes available')
-  if (p.packSizes?.length) out.push('', table(['Pack size', 'Grade', 'Catalog no.'], p.packSizes.map((ps) => [ps.size, ps.grade ? GRADE_SHORT[ps.grade] ?? ps.grade : '', ps.catalogNumber ?? 'on request'])))
+  if (p.packSizes?.length) out.push('', table(['Pack size', 'Grade', 'Catalog no.'], p.packSizes.map((ps) => [ps.size, ps.grade ? GRADE_SHORT[ps.grade as GradeValue] ?? ps.grade : '', ps.catalogNumber ?? 'on request'])))
   const docs = (p.documents ?? []).filter((d): d is Document => typeof d === 'object')
   if (docs.length) out.push('', '## Documents', ...docs.map((d) => `- [${d.title}](${absoluteUrl(d.url ?? "")}) (${d.type}${d.revision ? `, ${d.revision}` : ''})`))
   const related = (p.relatedProducts ?? []).filter((r): r is Product => typeof r === 'object')
@@ -136,7 +137,8 @@ export async function companyMarkdown(): Promise<string> {
   if (s.phone) out.push(`- Phone: ${s.phone}`)
   if (s.address) out.push(`- Address: ${s.address.replace(/\n/g, ', ')}`)
   if (s.social?.linkedin) out.push(`- LinkedIn: ${s.social.linkedin}`)
-  out.push(`- Request a quote: ${SITE_URL}/request-quote`)
+  out.push(`- Request a quote: ${SITE_URL}/request-quote (RFQ basket: several products, grades and pack sizes in one request)`)
+  out.push(`- Samples: ${SAMPLE_KIT_POLICY}`)
   if (s.responseTime) out.push(`- Response time: ${s.responseTime}`)
   if (s.leadTime) out.push(`- Typical lead time: ${s.leadTime}`)
   if (s.globalStatement || s.regions?.length) {
@@ -154,7 +156,7 @@ export async function llmsTxt(): Promise<string> {
   const out: string[] = []
   out.push(`# ${s.name || 'Protpure'}`, '')
   out.push(`> ${s.aiSummary || s.description || 'Indian manufacturer of agarose-based chromatography resins for biopharmaceutical purification, supplying worldwide.'}`, '')
-  out.push('Pricing is by quotation. There are no free samples; Protpure sells paid sample kits (5–25 mL packs or a 1 mL pre-packed column), credited against your first bulk order. Agents can file a quote request via the MCP server or the public API below; every request is confirmed by email and handled by a scientist.', '')
+  out.push(`Pricing is by quotation. ${SAMPLE_KIT_POLICY} Buyers use the RFQ basket on the website (add products with grade, pack size, quantity and purpose, then submit one request); agents can file the same request with \`items[]\` via the MCP \`request_quote\` tool or \`POST /api/public/inquiries\`. Every request is confirmed by email and handled by a scientist.`, '')
   out.push('## Machine-readable access', '')
   out.push(`- MCP server (Streamable HTTP): ${SITE_URL}/mcp — tools: list_products, get_product, compare_products, search_documents, list_applications, get_company_info, request_quote`)
   out.push(`- Public JSON API: ${SITE_URL}/api/public/products, ${SITE_URL}/api/public/products/{slug}, ${SITE_URL}/api/public/documents, ${SITE_URL}/api/public/company`)

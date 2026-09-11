@@ -8,6 +8,17 @@ import { sendNewsletterConfirm } from '@/emails/send'
 
 export type FormState = { ok: boolean; message?: string; errors?: Record<string, string>; id?: number | string } | null
 
+/** The RFQ basket posts its lines as one JSON field (`items`); anything unparsable is ignored and validated as "no items". */
+function parseItems(raw: FormDataEntryValue | null): unknown {
+  if (typeof raw !== 'string' || !raw.trim()) return undefined
+  try {
+    const v = JSON.parse(raw)
+    return Array.isArray(v) ? v : undefined
+  } catch {
+    return undefined
+  }
+}
+
 async function requestMeta() {
   const h = await headers()
   const ip = (h.get('x-forwarded-for') ?? h.get('x-real-ip') ?? '').split(',')[0].trim() || null
@@ -18,20 +29,23 @@ export async function submitInquiry(_prev: FormState, formData: FormData): Promi
   // Honeypot: bots fill every field.
   if (formData.get('website')) return { ok: true, message: 'Thanks — we have received your request.' }
 
+  // Fields a given form variant does not render come back as null; treat them as absent.
+  const field = (k: string) => formData.get(k) ?? undefined
   const raw = {
-    type: formData.get('type'),
-    name: formData.get('name'),
-    email: formData.get('email'),
-    organization: formData.get('organization'),
-    jobTitle: formData.get('jobTitle'),
-    phone: formData.get('phone'),
-    country: formData.get('country'),
+    type: field('type'),
+    name: field('name'),
+    email: field('email'),
+    organization: field('organization'),
+    jobTitle: field('jobTitle'),
+    phone: field('phone'),
+    country: field('country'),
+    items: parseItems(formData.get('items')),
     productIds: formData.getAll('productIds').filter(Boolean),
-    requestedItems: formData.get('requestedItems'),
-    application: formData.get('application'),
-    message: formData.get('message'),
+    requestedItems: field('requestedItems'),
+    application: field('application'),
+    message: field('message'),
     consent: formData.get('consent') === 'on',
-    pageUrl: formData.get('pageUrl'),
+    pageUrl: field('pageUrl'),
   }
   const parsed = inquirySchema.safeParse(raw)
   if (!parsed.success) {
@@ -47,7 +61,8 @@ export async function submitInquiry(_prev: FormState, formData: FormData): Promi
   try {
     const payload = await getPayloadClient()
     const doc = await createInquiry(payload, parsed.data, { source: 'website', ...meta })
-    return { ok: true, id: doc.id, message: `Thank you. Your reference is #${doc.id}. We have emailed a confirmation and will reply shortly.` }
+    const n = doc.items?.length ?? 0
+    return { ok: true, id: doc.id, message: `Thank you. Your reference is #${doc.id}${n ? ` (${n} item${n === 1 ? '' : 's'})` : ''}. We have emailed a confirmation and will reply shortly.` }
   } catch (err) {
     console.error('[inquiry] failed', err)
     return { ok: false, message: 'Something went wrong on our side. Please email us directly and we will help right away.' }
