@@ -2,13 +2,13 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { Mail, MapPin, Phone, ArrowUpRight } from 'lucide-react'
 import { NewsletterForm } from '@/components/forms/NewsletterForm'
-import type { NavItem } from './Header'
+import type { Logo, NavItem } from './Header'
 
 export function Footer({
   siteName,
   legalName,
   tagline,
-  logoUrl,
+  logo,
   columns,
   legalLinks,
   bottomText,
@@ -18,7 +18,7 @@ export function Footer({
   siteName: string
   legalName?: string | null
   tagline?: string | null
-  logoUrl?: string | null
+  logo?: Logo | null
   columns: { title: string; links: NavItem[] }[]
   legalLinks: NavItem[]
   bottomText?: string | null
@@ -30,7 +30,7 @@ export function Footer({
       <div className="container-x grid gap-12 py-16 lg:grid-cols-12">
         <div className="lg:col-span-4">
           <Link href="/" className="inline-flex items-center gap-2.5" aria-label={`${siteName} home`}>
-            {logoUrl ? <Image src={logoUrl} alt={siteName} width={140} height={36} className="h-9 w-auto brightness-0 invert" unoptimized /> : <span className="font-display text-xl font-bold">{siteName}</span>}
+            {logo ? <Image src={logo.url} alt={siteName} width={logo.width} height={logo.height} className="h-9 w-auto brightness-0 invert" unoptimized /> : <span className="font-display text-xl font-bold">{siteName}</span>}
           </Link>
           {tagline ? <p className="mt-4 max-w-sm text-sm leading-relaxed text-white/70">{tagline}</p> : null}
           <ul className="mt-6 space-y-2.5 text-sm text-white/75">
