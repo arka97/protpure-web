@@ -2,6 +2,7 @@ import type { CollectionConfig } from 'payload'
 import { editors, publishedOrEditor } from '@/access'
 import { slugField } from '@/fields/slug'
 import { revalidateAll, revalidateAllDelete } from '@/hooks/revalidate'
+import { EVALUATION_NOTE_DEFAULT } from '@/lib/rfq'
 
 export const PRODUCT_STATUS = [
   { label: 'Available', value: 'available' },
@@ -147,6 +148,13 @@ export const Products: CollectionConfig = {
             },
             { name: 'leadTime', type: 'text', defaultValue: '2–3 weeks ex-works', admin: { description: 'Shown on the product page next to the quote button.' } },
             { name: 'bulkAvailable', type: 'checkbox', defaultValue: true, label: 'Bulk / custom volumes available' },
+            {
+              name: 'evaluationNote',
+              type: 'textarea',
+              label: 'Evaluation packs note',
+              defaultValue: EVALUATION_NOTE_DEFAULT,
+              admin: { description: 'Copy for the "Paid evaluation packs — qualify before you scale" callout under the ordering table. State the pack sizes and how the cost is credited; evaluation packs are paid, never free samples.' },
+            },
             { name: 'documents', type: 'relationship', relationTo: 'documents', hasMany: true, admin: { description: 'Datasheets and other PDFs for this product.' } },
             { name: 'relatedProducts', type: 'relationship', relationTo: 'products', hasMany: true, filterOptions: ({ id }) => ({ id: { not_equals: id } }) },
           ],

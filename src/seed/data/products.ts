@@ -50,6 +50,8 @@ export type SeedProduct = {
   applications?: string[]
   packSizes?: { size: string; catalogNumber?: string; grade?: 'faster' | 'fast-flow' | 'precise' | 'hr' }[]
   leadTime?: string
+  /** Copy for the paid-evaluation callout under the ordering table; defaults to EVALUATION_NOTE_DEFAULT. */
+  evaluationNote?: string
   documents?: string[]
   related?: string[]
 }

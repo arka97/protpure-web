@@ -34,6 +34,9 @@ export const purposeLabel = (v: string | null | undefined, short = false) => {
 
 export const SAMPLE_KIT_POLICY = 'Sample kits are paid (5–25 mL packs or a 1 mL pre-packed column) and the cost is credited against your first bulk order. We do not ship free samples.'
 
+/** Default for `products.evaluationNote` (the "qualify before you scale" callout); editors override it per product. */
+export const EVALUATION_NOTE_DEFAULT = 'Paid evaluation packs of 5–25 mL, or a 1 mL pre-packed column, are quoted on request and come with scientist support, datasheet and certificate of analysis. The cost is credited against your first bulk order; we do not ship free samples.'
+
 /** The slice of a product the basket needs so lines can be edited offline. */
 export type BasketProduct = {
   id: number

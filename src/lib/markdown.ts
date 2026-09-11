@@ -48,6 +48,7 @@ export function productToMarkdown(p: Product, opts?: { brief?: boolean }): strin
   out.push('', '## Ordering')
   out.push(`- Pricing: by quotation — add this product to the RFQ basket at ${SITE_URL}/request-quote?product=${p.id} (one request can cover several products, grades and pack sizes)`)
   out.push(`- Samples: ${SAMPLE_KIT_POLICY} Mark the basket line "sample kit" (or send \`purpose: "sample-kit"\` via the API / MCP).`)
+  if (p.evaluationNote) out.push(`- Evaluation packs: ${p.evaluationNote}`)
   out.push(`- Lead time: ${p.leadTime || '2–3 weeks ex-works'}`)
   if (p.bulkAvailable) out.push('- Bulk and custom volumes available')
   if (p.packSizes?.length) out.push('', table(['Pack size', 'Grade', 'Catalog no.'], p.packSizes.map((ps) => [ps.size, ps.grade ? GRADE_SHORT[ps.grade as GradeValue] ?? ps.grade : '', ps.catalogNumber ?? 'on request'])))

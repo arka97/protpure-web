@@ -11,6 +11,7 @@ import type { Payload } from 'payload'
 import { products as seedProducts } from './data/products'
 import { applications, categories, certifications, faqs, footer, header, services, siteSettings, team, updates } from './data/content'
 import { documents, mediaAlts, pages, posts } from './data/pages'
+import { EVALUATION_NOTE_DEFAULT } from '@/lib/rfq'
 
 const SEED_DIR = process.env.SEED_DIR || path.resolve(process.cwd(), 'seed')
 const ctx = { context: { disableRevalidate: true, skipEmails: true }, overrideAccess: true as const }
@@ -109,6 +110,7 @@ export async function runSeed(payload: Payload, opts: { reset?: boolean } = {}) 
       packSizes: p.packSizes,
       leadTime: p.leadTime ?? '2–3 weeks ex-works',
       bulkAvailable: true,
+      evaluationNote: p.evaluationNote ?? EVALUATION_NOTE_DEFAULT,
       documents: (p.documents ?? []).map((f) => documentIds.get(f)!).filter(Boolean),
       _status: 'published',
     }
