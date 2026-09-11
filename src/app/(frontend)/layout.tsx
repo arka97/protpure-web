@@ -104,7 +104,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
               target="_blank"
               rel="noopener noreferrer"
               aria-label="Chat on WhatsApp"
-              className="fixed bottom-5 right-5 z-40 inline-flex h-12 w-12 items-center justify-center rounded-full bg-[#25D366] text-white shadow-[0_6px_20px_rgb(8_31_41_/_0.2)] transition hover:scale-105"
+              className="fixed right-6 z-40 inline-flex h-12 w-12 items-center justify-center rounded-full border border-rule-dark bg-field-raised text-teal-lum transition-colors hover:bg-field" style={{ bottom: 'calc(20px + env(safe-area-inset-bottom))' }}
             >
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" className="h-6 w-6" aria-hidden>
                 <path d="M21 12a9 9 0 0 1-13.2 7.9L3 21l1.2-4.6A9 9 0 1 1 21 12Z" />

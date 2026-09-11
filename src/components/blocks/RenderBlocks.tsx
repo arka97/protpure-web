@@ -13,6 +13,7 @@ import { NewsletterForm } from '@/components/forms/NewsletterForm'
 import { BeadField } from '@/components/visual/BeadField'
 import { Chapter, ChapterEyebrow, type ChapterTone } from '@/components/visual/Chapter'
 import { RangeBars } from '@/components/visual/RangeBars'
+import { Reveal } from '@/components/visual/Reveal'
 import { ArrowIcon, CheckIcon } from '@/components/visual/icons'
 import { CertificationsStrip, Gallery, ProofBar, Publications } from '@/components/blocks/trust'
 import { getApplications, getCategories, getCustomers, getDocuments, getFaqs, getPosts, getProducts, getServices, getSiteSettings, getTeam, getTestimonials, getUpdates } from '@/lib/data'
@@ -46,8 +47,16 @@ function opensChapter(b: Block): boolean {
   return CHAPTER_BLOCKS.has(b.blockType)
 }
 
+const isEvaluation = (b?: Block): b is Extract<Block, { blockType: 'cta' }> => b?.blockType === 'cta' && b.style === 'evaluation'
+
+/** The evaluation panel and the FAQ that follows it compose as one two-column chapter. */
+export function isPairedFaq(b: Block, prev?: Block): b is Extract<Block, { blockType: 'faqBlock' }> {
+  return b.blockType === 'faqBlock' && isEvaluation(prev)
+}
+
 function isAttached(b: Block, prev?: Block): boolean {
   if (!prev) return false
+  if (b.blockType === 'faqBlock' && isEvaluation(prev)) return true
   switch (b.blockType) {
     case 'comparisonTable':
       return !b.eyebrow && !b.intro
@@ -104,15 +113,30 @@ export function planBlocks(blocks: Block[]): Meta[] {
 export async function RenderBlocks({ blocks }: { blocks?: Page['layout'] | null }) {
   if (!blocks?.length) return null
   const metas = planBlocks(blocks)
-  return (
-    <>
-      {blocks.map((b, i) => (
-        <React.Fragment key={b.id ?? i}>
-          <RenderBlock block={b} meta={metas[i]} />
-        </React.Fragment>
-      ))}
-    </>
-  )
+  const out: React.ReactNode[] = []
+  for (let i = 0; i < blocks.length; i++) {
+    const b = blocks[i]
+    const next = blocks[i + 1]
+    if (isEvaluation(b) && next && isPairedFaq(next, b)) {
+      // Evaluation panel + FAQ side by side (one chapter, one number).
+      out.push(
+        <section key={b.id ?? i} className="bg-surface py-12 lg:py-20" id="evaluation">
+          <Reveal className="container-x grid gap-[39px] lg:grid-cols-2 lg:gap-[70px] lg:items-start">
+            <EvaluationPanel block={b} number={metas[i].number} />
+            <FaqColumn block={next} number={null} dark={false} stacked />
+          </Reveal>
+        </section>,
+      )
+      i++
+      continue
+    }
+    out.push(
+      <React.Fragment key={b.id ?? i}>
+        <RenderBlock block={b} meta={metas[i]} />
+      </React.Fragment>,
+    )
+  }
+  return <>{out}</>
 }
 
 /* ------------------------------------------------------------------------------------------------
@@ -122,11 +146,14 @@ export async function RenderBlocks({ blocks }: { blocks?: Page['layout'] | null 
 /** Headings may italicise a short proposition with *asterisks*: "Four bead sizes. *One chemistry.*" */
 function Heading({ text, dark }: { text?: string | null; dark?: boolean }) {
   if (!text) return null
-  const parts = text.split(/(\*[^*]+\*)/g).filter(Boolean)
+  // Typed line breaks are deliberate breaks (segments still wrap naturally when narrow).
+  const parts = text.trim().split(/(\*[^*]+\*|\n)/g).filter(Boolean)
   return (
     <>
       {parts.map((p, i) =>
-        p.startsWith('*') && p.endsWith('*') ? (
+        p === '\n' ? (
+          <br key={i} />
+        ) : p.startsWith('*') && p.endsWith('*') ? (
           <em key={i} className={cn('italic', dark ? 'text-teal-lum' : 'text-teal-deep')}>
             {p.slice(1, -1)}
           </em>
@@ -207,14 +234,14 @@ async function RenderBlock({ block, meta }: { block: Block; meta: Meta }) {
             {block.heading ? <h2 className="heading-3 pt-8">{block.heading}</h2> : null}
             <dl className={cn('grid border-b border-(--rule-current) py-2 lg:pb-9 lg:pt-[35px]', cols)}>
               {items.map((it, i) => (
-                <div key={it.id ?? i} className="grid grid-cols-[150px_minmax(0,1fr)] items-center gap-5 border-b border-(--rule-current) py-4 last:border-b-0 lg:flex lg:flex-col lg:items-start lg:justify-start lg:gap-0 lg:border-b-0 lg:border-r lg:px-9 lg:py-0 lg:first:pl-0 lg:last:border-r-0">
+                <div key={it.id ?? i} className="grid grid-cols-[160px_minmax(0,1fr)] items-center gap-4 border-b border-(--rule-current) py-4 last:border-b-0 lg:flex lg:flex-col lg:items-start lg:justify-start lg:gap-0 lg:border-b-0 lg:border-r lg:px-9 lg:py-0 lg:first:pl-0 lg:last:border-r-0">
                   <dt className="order-2 text-[11px] leading-[1.5] text-secondary lg:mt-1.5 lg:text-[13px]">
                     {it.label}
                     {it.note ? <span className="block text-[11px] opacity-80">{it.note}</span> : null}
                   </dt>
-                  <dd className="num order-1 whitespace-nowrap font-display text-[47px] leading-[1.1] tracking-[-0.035em] lg:text-[66px]">
+                  <dd className="mono order-1 whitespace-nowrap text-[47px] leading-[1.1] lg:text-[66px]">
                     {it.value}
-                    {it.unit ? <small className="ml-1.5 font-sans text-[12px] tracking-normal text-secondary lg:ml-2.5 lg:text-[17px]">{it.unit}</small> : null}
+                    {it.unit ? <small className="ml-1.5 font-sans text-[12px] text-secondary lg:ml-2.5 lg:text-[17px]">{it.unit}</small> : null}
                   </dd>
                 </div>
               ))}
@@ -349,7 +376,7 @@ async function RenderBlock({ block, meta }: { block: Block; meta: Meta }) {
                 </ChapterEyebrow>
               ) : null}
               {block.heading ? (
-                <h2 className="heading-2-sm max-w-[440px]">
+                <h2 className="heading-company max-w-[440px]">
                   <Heading text={block.heading} dark={dark} />
                 </h2>
               ) : null}
@@ -378,7 +405,7 @@ async function RenderBlock({ block, meta }: { block: Block; meta: Meta }) {
       const table = (
         <div>
           <div className="overflow-x-auto">
-            <table className="compare-table">
+            <table className="compare-table home-compare">
               {attached && block.heading ? <caption>{block.heading}</caption> : null}
               <thead>
                 <tr>
@@ -392,7 +419,7 @@ async function RenderBlock({ block, meta }: { block: Block; meta: Meta }) {
               <tbody>
                 {block.rows?.map((r, i) => (
                   <tr key={r.id ?? i}>
-                    <td>{r.parameter}</td>
+                    <th scope="row">{r.parameter}</th>
                     <td>{r.a}</td>
                     <td className="highlight">{r.b}</td>
                   </tr>
@@ -468,8 +495,8 @@ async function RenderBlock({ block, meta }: { block: Block; meta: Meta }) {
               <CategoryCard key={c.id} category={c} index={i} products={names.get(c.id)} count={names.get(c.id)?.length ?? 0} />
             ))}
           </div>
-          <div className="mt-5 flex flex-col gap-4 text-[11px] text-secondary sm:flex-row sm:items-center sm:justify-between lg:mt-6 lg:text-[13px]">
-            <span className="max-w-[420px]">{block.footnote}</span>
+          <div className="mt-5 flex items-start justify-between gap-5 text-[11px] text-secondary lg:mt-6 lg:items-center lg:text-[13px]">
+            <span className="max-w-[170px] sm:max-w-[420px]">{block.footnote}</span>
             <Link href="/products" className="text-link shrink-0 self-start text-[11px] text-ink lg:text-[14px]">
               {linkLabel} <ArrowIcon />
             </Link>
@@ -511,7 +538,7 @@ async function RenderBlock({ block, meta }: { block: Block; meta: Meta }) {
               <ul className="grid grid-cols-2 gap-x-6 gap-y-4 text-[11px] sm:grid-cols-3 lg:gap-x-6 lg:text-[13px]">
                 {apps.map((a) => (
                   <li key={a.id}>
-                    <Link href={`/applications/${a.slug}`} className="flex min-h-8 items-start justify-between gap-3 border-b border-(--rule-current) pb-2.5 hover:text-teal-deep">
+                    <Link href={`/applications/${a.slug}`} className="flex min-h-11 items-start justify-between gap-3 border-b border-(--rule-current) pb-2.5 hover:text-teal-deep lg:min-h-8">
                       {a.name}
                       <ArrowIcon className="mt-0.5 h-[15px] w-[15px] shrink-0" />
                     </Link>
@@ -553,7 +580,7 @@ async function RenderBlock({ block, meta }: { block: Block; meta: Meta }) {
               <ul className="grid flex-1 grid-cols-2 gap-5 text-[11px] lg:grid-cols-4 lg:gap-6 lg:text-[13px]">
                 {services.map((s) => (
                   <li key={s.id}>
-                    <Link href={`/services#${s.slug}`} className="flex min-h-8 items-center justify-between gap-3 hover:text-teal-deep">
+                    <Link href={`/services#${s.slug}`} className="flex min-h-11 items-center justify-between gap-3 hover:text-teal-deep lg:min-h-8">
                       {s.name}
                       <ArrowIcon className="h-4 w-4 shrink-0" />
                     </Link>
@@ -828,31 +855,12 @@ async function RenderBlock({ block, meta }: { block: Block; meta: Meta }) {
         </Chapter>
       )
 
-    case 'faqBlock': {
-      const ids = (block.faqs ?? []).map((f) => (typeof f === 'object' ? f.id : f))
-      const faqs = await getFaqs(ids.length ? { ids } : { category: block.category ?? 'all' })
-      if (!faqs.length) return null
+    case 'faqBlock':
       return (
         <Chapter tone={tone} attached={attached} tight={tight} id="faq">
-          <div className="grid gap-8 lg:grid-cols-12 lg:gap-12">
-            <div className="lg:col-span-4">
-              {block.eyebrow ? (
-                <ChapterEyebrow number={number} className="mb-5">
-                  {block.eyebrow}
-                </ChapterEyebrow>
-              ) : null}
-              <h2 className="heading-2-xs">
-                <Heading text={block.heading ?? 'Frequently asked questions'} dark={dark} />
-              </h2>
-              {block.intro ? <p className="text-body text-secondary mt-5 max-w-[360px]">{block.intro}</p> : null}
-            </div>
-            <div className="lg:col-span-8">
-              <FaqList faqs={faqs} invert={dark} />
-            </div>
-          </div>
+          <FaqColumn block={block} number={number} dark={dark} />
         </Chapter>
       )
-    }
 
     case 'mediaBlock':
       return (
@@ -904,28 +912,9 @@ async function RenderBlock({ block, meta }: { block: Block; meta: Meta }) {
       if (style === 'evaluation') {
         return (
           <section className={cn('bg-surface', attached ? 'pb-12 lg:pb-20' : 'py-12 lg:py-20')} id="evaluation">
-            <div className="container-x">
-              <div className="surface-raised relative overflow-hidden px-6 py-7 lg:p-[42px]">
-                <BeadField density="sparse" opacity={0.17} className="bottom-[-130px] left-[140px] w-[370px] lg:bottom-[-150px] lg:left-[46%] lg:w-[560px]" seed={3} />
-                <div className="relative max-w-[560px]">
-                  {block.eyebrow ? (
-                    <ChapterEyebrow number={number} className="mb-5">
-                      {block.eyebrow}
-                    </ChapterEyebrow>
-                  ) : null}
-                  <h2 className="heading-2-sm max-w-[420px]">
-                    <Heading text={block.heading} dark />
-                  </h2>
-                  <Paragraphs text={block.text} className="mt-5 max-w-[375px] text-[13px] leading-[1.6] text-text-2-dark lg:text-[15px]" />
-                  {block.note ? (
-                    <p className="mt-4 max-w-[375px] text-[13px] leading-[1.6] lg:text-[15px]">
-                      <strong className="font-semibold text-surface">{block.note}</strong>
-                    </p>
-                  ) : null}
-                  <CmsLinks links={block.links} onDark className="mt-6" />
-                </div>
-              </div>
-            </div>
+            <Reveal className="container-x">
+              <EvaluationPanel block={block} number={number} />
+            </Reveal>
           </section>
         )
       }
@@ -935,7 +924,7 @@ async function RenderBlock({ block, meta }: { block: Block; meta: Meta }) {
             <div className="container-x flex flex-col items-start gap-6 py-9 lg:flex-row lg:items-center lg:justify-between lg:gap-16 lg:py-[45px]">
               <div className="max-w-[740px]">
                 {block.eyebrow ? <ChapterEyebrow className="mb-4">{block.eyebrow}</ChapterEyebrow> : null}
-                <h2 className="heading-2-sm">
+                <h2 className="heading-closing">
                   <Heading text={block.heading} />
                 </h2>
                 <Paragraphs text={block.text} className="mt-3 text-[12px] leading-[1.6] text-[#24534e] lg:text-[14px]" />
@@ -980,6 +969,70 @@ async function RenderBlock({ block, meta }: { block: Block; meta: Meta }) {
     default:
       return null
   }
+}
+
+/** The dark "start with an evaluation" panel (bead field, chapter number, note, one CTA). */
+function EvaluationPanel({ block, number }: { block: Extract<Block, { blockType: 'cta' }>; number: number | null }) {
+  return (
+    <div className="surface-raised relative overflow-hidden px-6 py-7 lg:p-[42px]">
+      <BeadField density="sparse" opacity={0.17} className="bottom-[-130px] left-[140px] w-[370px] lg:bottom-[-150px] lg:left-[250px]" seed={3} />
+      <div className="relative max-w-[560px]">
+        {block.eyebrow ? (
+          <ChapterEyebrow number={number} className="mb-5">
+            {block.eyebrow}
+          </ChapterEyebrow>
+        ) : null}
+        <h2 className="heading-evaluation max-w-[390px]">
+          <Heading text={block.heading} dark />
+        </h2>
+        <Paragraphs text={block.text} className="mt-5 max-w-[375px] text-[13px] leading-[1.6] text-text-2-dark lg:text-[15px]" />
+        {block.note ? (
+          <p className="mt-4 max-w-[375px] text-[13px] leading-[1.6] lg:text-[15px]">
+            <strong className="font-semibold text-surface">{block.note}</strong>
+          </p>
+        ) : null}
+        <CmsLinks links={block.links} onDark className="mt-6" />
+      </div>
+    </div>
+  )
+}
+
+/** FAQ eyebrow + heading + accordion. `stacked` keeps everything in one column (paired layout). */
+async function FaqColumn({ block, number, dark, stacked }: { block: Extract<Block, { blockType: 'faqBlock' }>; number: number | null; dark: boolean; stacked?: boolean }) {
+  const ids = (block.faqs ?? []).map((f) => (typeof f === 'object' ? f.id : f))
+  const faqs = await getFaqs(ids.length ? { ids } : { category: block.category ?? 'all' })
+  if (!faqs.length) return null
+  const head = (
+    <>
+      {block.eyebrow ? (
+        <ChapterEyebrow number={number} className="mb-5">
+          {block.eyebrow}
+        </ChapterEyebrow>
+      ) : null}
+      <h2 className="heading-2-xs">
+        <Heading text={block.heading ?? 'Frequently asked questions'} dark={dark} />
+      </h2>
+      {block.intro ? <p className="text-body text-secondary mt-5 max-w-[360px]">{block.intro}</p> : null}
+    </>
+  )
+  if (stacked) {
+    return (
+      <div>
+        {head}
+        <div className="mt-[25px]">
+          <FaqList faqs={faqs} invert={dark} />
+        </div>
+      </div>
+    )
+  }
+  return (
+    <div className="grid gap-8 lg:grid-cols-12 lg:gap-12">
+      <div className="lg:col-span-4">{head}</div>
+      <div className="lg:col-span-8">
+        <FaqList faqs={faqs} invert={dark} />
+      </div>
+    </div>
+  )
 }
 
 export function slimProduct(p: Product) {

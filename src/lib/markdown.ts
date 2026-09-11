@@ -59,8 +59,11 @@ export function productToMarkdown(p: Product, opts?: { brief?: boolean }): strin
   return out.join('\n')
 }
 
+/** Headings may carry deliberate line breaks for the screen; Markdown wants them on one line. */
+const flat = (t?: string | null) => (t ?? '').replace(/\s*\n\s*/g, ' ').trim()
+
 export function pageToMarkdown(page: Page): string {
-  const out: string[] = [`# ${page.hero?.heading || page.title}`]
+  const out: string[] = [`# ${flat(page.hero?.heading) || page.title}`]
   if (page.hero?.text) out.push('', page.hero.text)
   for (const b of page.layout ?? []) {
     switch (b.blockType) {
@@ -71,32 +74,32 @@ export function pageToMarkdown(page: Page): string {
         if (b.source === 'custom' && b.items?.length) out.push('', b.items.map((i) => i.text).join(' · '))
         break
       case 'stats':
-        out.push('', b.heading ? `## ${b.heading}` : '', ...(b.items ?? []).map((i) => `- **${i.value}${i.unit ? ` ${i.unit}` : ''}** ${i.label}${i.note ? ` (${i.note})` : ''}`))
+        out.push('', b.heading ? `## ${flat(b.heading)}` : '', ...(b.items ?? []).map((i) => `- **${i.value}${i.unit ? ` ${i.unit}` : ''}** ${i.label}${i.note ? ` (${i.note})` : ''}`))
         break
       case 'featureGrid':
-        out.push('', b.heading ? `## ${b.heading}` : '', b.intro ?? '', ...(b.items ?? []).map((i) => `- **${i.title}** — ${i.text}`))
+        out.push('', b.heading ? `## ${flat(b.heading)}` : '', b.intro ?? '', ...(b.items ?? []).map((i) => `- **${i.title}** — ${i.text}`))
         break
       case 'twoColumn':
-        out.push('', b.heading ? `## ${b.heading}` : '', lexicalToMarkdown(b.content as never), b.quote ? `> ${b.quote}` : '', b.secondImageText ?? '', ...(b.facts ?? []).map((f) => `- ${f.label}: ${f.value}`))
+        out.push('', b.heading ? `## ${flat(b.heading)}` : '', lexicalToMarkdown(b.content as never), b.quote ? `> ${b.quote}` : '', b.secondImageText ?? '', ...(b.facts ?? []).map((f) => `- ${f.label}: ${f.value}`))
         break
       case 'comparisonTable':
-        out.push('', b.heading ? `## ${b.heading}` : '', b.intro ?? '', table(['Parameter', b.columnA, b.columnB], (b.rows ?? []).map((r) => [r.parameter, r.a, r.b])), b.note ?? '')
+        out.push('', b.heading ? `## ${flat(b.heading)}` : '', b.intro ?? '', table(['Parameter', b.columnA, b.columnB], (b.rows ?? []).map((r) => [r.parameter, r.a, r.b])), b.note ?? '')
         break
       case 'gradesPlatform':
-        out.push('', b.heading ? `## ${b.heading}` : '', b.intro ?? '', table(['Grade', 'Application', 'd50V', 'Size range', 'Max linear flow', 'Pressure', 'Notes'], (b.grades ?? []).map((g) => [g.name, g.badge ?? '', g.d50 ?? '', g.sizeRange ?? '', g.maxFlow ?? '', g.pressure ?? '', g.text ?? ''])), b.note ?? '')
+        out.push('', b.heading ? `## ${flat(b.heading)}` : '', b.intro ?? '', table(['Grade', 'Application', 'd50V', 'Size range', 'Max linear flow', 'Pressure', 'Notes'], (b.grades ?? []).map((g) => [g.name, g.badge ?? '', g.d50 ?? '', g.sizeRange ?? '', g.maxFlow ?? '', g.pressure ?? '', g.text ?? ''])), b.note ?? '')
         break
       case 'timeline':
-        out.push('', b.heading ? `## ${b.heading}` : '', ...(b.items ?? []).map((i) => `- **${i.date}** — ${i.title}${i.text ? `: ${i.text}` : ''}`))
+        out.push('', b.heading ? `## ${flat(b.heading)}` : '', ...(b.items ?? []).map((i) => `- **${i.date}** — ${i.title}${i.text ? `: ${i.text}` : ''}`))
         break
       case 'cta':
-        out.push('', `## ${b.heading}`, b.text ?? '', b.note ? `**${b.note}**` : '')
+        out.push('', `## ${flat(b.heading)}`, b.text ?? '', b.note ? `**${b.note}**` : '')
         break
       case 'gallery':
         // Photos only render once the editor adds them; captions are the useful text for an agent.
-        if (b.items?.length) out.push('', b.heading ? `## ${b.heading}` : '', ...b.items.map((i) => `- ${[i.label, i.caption].filter(Boolean).join(': ') || 'Photo'}`))
+        if (b.items?.length) out.push('', b.heading ? `## ${flat(b.heading)}` : '', ...b.items.map((i) => `- ${[i.label, i.caption].filter(Boolean).join(': ') || 'Photo'}`))
         break
       case 'logoWall':
-        if (b.heading || b.fallbackStatement) out.push('', b.heading ? `## ${b.heading}` : '', b.fallbackStatement ?? '')
+        if (b.heading || b.fallbackStatement) out.push('', b.heading ? `## ${flat(b.heading)}` : '', b.fallbackStatement ?? '')
         break
       case 'proofBar':
         break
@@ -114,7 +117,7 @@ export function pageToMarkdown(page: Page): string {
       case 'testimonials':
       case 'resinSelector':
       case 'formBlock':
-        if (b.heading) out.push('', `## ${b.heading}`, 'intro' in b ? (b.intro ?? '') : '')
+        if (b.heading) out.push('', `## ${flat(b.heading)}`, 'intro' in b ? (b.intro ?? '') : '')
         break
       default:
         break

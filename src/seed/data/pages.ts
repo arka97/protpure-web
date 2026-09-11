@@ -14,7 +14,7 @@ export const pages = [
     hero: {
       style: 'standard',
       eyebrow: 'Indian science. Worldwide supply.',
-      heading: 'Purification at scale. From the bead up.',
+      heading: 'Purification\nat scale.\nFrom the bead up.',
       highlight: 'From the bead up.',
       text: 'Agarose chromatography resins engineered in India. One cross-linked backbone, from high-throughput capture to high-resolution polishing.',
       image: 'bpg200-column-client-site.webp',
@@ -32,16 +32,16 @@ export const pages = [
         { value: '1000', unit: 'cm/h', label: 'Maximum linear flow, Faster grade' },
       ] },
       // 01 / The catalogue
-      { blockType: 'productCategories', eyebrow: 'The catalogue', heading: 'Every stage. The right chemistry.', intro: 'From capture to polishing, choose your chromatography mode. Evaluation packs to manufacturing volumes.', categories: ['ion-exchange', 'affinity', 'size-exclusion', 'hydrophobic-interaction', 'mixed-mode', 'activated'], footnote: 'Also available: pre-packed columns, magnetic beads & evaluation kits.' },
+      { blockType: 'productCategories', eyebrow: 'The catalogue', heading: 'Every stage.\nThe right chemistry.', intro: 'From capture to polishing, choose your chromatography mode. Evaluation packs to manufacturing volumes.', categories: ['ion-exchange', 'affinity', 'size-exclusion', 'hydrophobic-interaction', 'mixed-mode', 'activated'], footnote: 'Also available: pre-packed columns, magnetic beads & evaluation kits.' },
       // 02 / The particle platform
-      { blockType: 'gradesPlatform', eyebrow: 'The particle platform', heading: 'Four bead sizes. *One chemistry.*', intro: 'The same 6% cross-linked agarose backbone, tuned for different velocity and resolution profiles.', grades: [
+      { blockType: 'gradesPlatform', eyebrow: 'The particle platform', heading: 'Four bead sizes.\n*One chemistry.*', intro: 'The same 6% cross-linked agarose backbone, tuned for different velocity and resolution profiles.', grades: [
         { name: 'Faster', badge: 'Industrial capture', d50: '~163 µm', sizeRange: '100–240 µm', maxFlow: 'up to 1000 cm/h', pressure: '< 0.15 MPa', text: 'Rapid processing without compromising resolution. Developed for industrial capture of large proteins.' },
         { name: 'Fast Flow', badge: 'Capture & intermediate', d50: '~96 µm', sizeRange: '45–165 µm', maxFlow: 'up to 700 cm/h', pressure: '< 0.15 MPa', text: 'Balance of efficiency and separation clarity for most downstream processes.' },
         { name: 'Precise', badge: 'High-resolution separation', d50: '~60 µm', sizeRange: '25–110 µm', maxFlow: 'up to 380 cm/h', pressure: '< 0.12 MPa', text: 'Flow conditions that favour high-resolution separation of sensitive biomolecules and complex matrices.' },
         { name: 'HR', badge: 'Polishing & small proteins', d50: '~40 µm', sizeRange: '15–75 µm', maxFlow: 'up to 120 cm/h', pressure: '< 0.1 MPa', text: 'Gentle handling of fragile proteins and peptides with minimal shear — for polishing and small proteins.' },
       ], note: 'Bars show size range; dots show d50V.\nPlatform values. Product-specific specifications and conditions apply.', link: { label: 'See SP Agarose grade data', href: '/products/sp-agarose#grades' } },
       // 03 / A closer source — reasons, imported comparison and application links compose one chapter
-      { blockType: 'featureGrid', eyebrow: 'A closer source', heading: 'Qualify the resin. Know the maker.', intro: 'What changes when your chromatography media comes directly from the scientists who make it.', columns: '2', numbered: true, items: [
+      { blockType: 'featureGrid', eyebrow: 'A closer source', heading: 'Qualify the resin.\nKnow the maker.', intro: 'What changes when your chromatography media comes directly from the scientists who make it.', columns: '2', numbered: true, items: [
         { icon: 'reproducible', title: 'Reproducible batch quality', text: 'Controlled bead-size distribution and stable ligand attachment give lot-to-lot consistency with minimal re-optimisation; validated in GMP environments.' },
         { icon: 'flow', title: 'Optimised flow velocity', text: 'Up to 1000 cm/h on the Faster grade. Faster purification and higher throughput without sacrificing resolution.' },
         { icon: 'globe', title: 'Made in India, shipped worldwide', text: 'Developed, manufactured and supported in Anand, Gujarat. Direct export with full documentation and no cold chain.' },
@@ -56,14 +56,14 @@ export const pages = [
       ], note: 'Typical values; imported-supplier figures reflect customer-reported experience in India.' },
       { blockType: 'applicationsGrid', layout: 'list', eyebrow: 'Applications', heading: 'Purification workflows we support' },
       // 04 / The people behind the platform — lab photograph, facility slot, founder, team line, services row, logo slot
-      { blockType: 'twoColumn', background: 'recessed', eyebrow: 'The people behind the platform', heading: 'Built for scale. Grounded in science.', image: 'fplc-system.webp', imagePosition: 'left', imageCaption: 'Process evaluation in the Protpure lab', imageCaptionNote: 'Anand, Gujarat', secondImageText: 'In-house bead synthesis, ligand functionalisation and process evaluation.\n\nSemi-automated manufacturing + R&D.', content: rt(`Protpure started in May 2023 with a semi-automated manufacturing and R&D facility in Anand, Gujarat, and in-house capability across bead synthesis, ligand functionalisation, chromatography media development, process evaluation and customer deployment.`), quote: 'We are a humble start-up in the niche technology of protein purification. With proven academic research backed by our kilo-lab success, we are entering the market to provide a wide range of resins and nanoparticle-based purification solutions.', links: [{ label: 'About Protpure', slug: 'about', appearance: 'secondary' }] },
+      { blockType: 'twoColumn', background: 'recessed', eyebrow: 'The people behind the platform', heading: 'Built for scale.\nGrounded in science.', image: 'fplc-system.webp', imagePosition: 'left', imageCaption: 'Process evaluation in the Protpure lab', imageCaptionNote: 'Anand, Gujarat', secondImageText: 'In-house bead synthesis, ligand functionalisation and process evaluation.\n\nSemi-automated manufacturing + R&D.', content: rt(`Protpure started in May 2023 with a semi-automated manufacturing and R&D facility in Anand, Gujarat, and in-house capability across bead synthesis, ligand functionalisation, chromatography media development, process evaluation and customer deployment.`), quote: 'We are a humble start-up in the niche technology of protein purification. With proven academic research backed by our kilo-lab success, we are entering the market to provide a wide range of resins and nanoparticle-based purification solutions.', links: [{ label: 'About Protpure', slug: 'about', appearance: 'secondary' }] },
       { blockType: 'teamGrid', layout: 'spread' },
       { blockType: 'servicesGrid', layout: 'row', heading: 'We don’t just supply resin.' },
       { blockType: 'logoWall', source: 'all', fallbackStatement: 'Used in GMP facilities.\nRepeat orders from Indian biopharma.' },
       // 05 / Start with an evaluation — paid packs, then the FAQ teaser
-      { blockType: 'cta', style: 'evaluation', eyebrow: 'Start with an evaluation', heading: 'Your process. Our resin. Let the data decide.', text: 'Paid evaluation packs: 5–25 mL or a 1 mL pre-packed column, with scientist support and documentation.', note: 'The cost is credited against your first bulk order.', links: [{ label: 'Request an evaluation quote', href: '/request-quote?type=evaluation', appearance: 'primary' }] },
+      { blockType: 'cta', style: 'evaluation', eyebrow: 'Start with an evaluation', heading: 'Your process.\nOur resin.\nLet the data decide.', text: 'Paid evaluation packs: 5–25 mL or a 1 mL pre-packed column, with scientist support and documentation.', note: 'The cost is credited against your first bulk order.', links: [{ label: 'Request an evaluation quote', href: '/request-quote?type=evaluation', appearance: 'primary' }] },
       { blockType: 'faqBlock', eyebrow: 'Before you order', heading: 'Questions from the bench.', faqs: ['Do you offer sample kits?', 'What documentation do you provide?', 'What is the typical lead time?', 'Are Protpure resins drop-in replacements for imported agarose resins?'] },
-      { blockType: 'cta', style: 'accent', heading: 'Ready to qualify Protpure in your process?', text: 'Choose your products, grades and volumes. A scientist replies within 1–2 business days with pricing, lead time and evaluation options.', links: [{ label: 'Request a quote', href: '/request-quote', appearance: 'primary' }] },
+      { blockType: 'cta', style: 'accent', heading: 'Ready to qualify Protpure\nin your process?', text: 'Choose your products, grades and volumes. A scientist replies within 1–2 business days with pricing, lead time and evaluation options.', links: [{ label: 'Request a quote', href: '/request-quote', appearance: 'primary' }] },
     ],
   },
   {

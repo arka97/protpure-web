@@ -112,6 +112,9 @@ body {
 .heading-2,
 .heading-2-sm,
 .heading-2-xs,
+.heading-company,
+.heading-evaluation,
+.heading-closing,
 .serif-lg,
 .serif-md,
 .serif-sm {
@@ -339,6 +342,45 @@ input[type='radio'] {
     font-size: 48px;
     line-height: 1.02;
   }
+}
+@utility heading-company {
+  /* Company spread heading: 60/62 → 46/47 */
+  font-family: var(--font-display);
+  font-weight: 400;
+  letter-spacing: -0.035em;
+  font-size: 46px;
+  line-height: 47px;
+  @media (width >= 64rem) {
+    font-size: 60px;
+    line-height: 62px;
+  }
+}
+@utility heading-evaluation {
+  /* Evaluation panel heading: 60/62 → 44/45 */
+  font-family: var(--font-display);
+  font-weight: 400;
+  letter-spacing: -0.035em;
+  font-size: 44px;
+  line-height: 45px;
+  @media (width >= 64rem) {
+    font-size: 60px;
+    line-height: 62px;
+  }
+}
+@utility heading-closing {
+  /* Closing invitation: 58/60 → 43/44 */
+  font-family: var(--font-display);
+  font-weight: 400;
+  letter-spacing: -0.035em;
+  font-size: 43px;
+  line-height: 44px;
+  @media (width >= 64rem) {
+    font-size: 58px;
+    line-height: 60px;
+  }
+}
+@utility text-wrap-initial {
+  text-wrap: initial;
 }
 @utility heading-3 {
   /* UI section heading: DM Sans 500, 21/25 → 19/23 */
@@ -632,6 +674,21 @@ input[type='radio'] {
   }
 }
 
+/* ---------- Home hero photograph: engineered crop (taller than the arch, anchored top, nudged up) ---------- */
+.home-hero-photo {
+  position: absolute;
+  inset: 0;
+  width: 100% !important;
+  height: 122% !important;
+  max-width: none;
+  object-fit: cover;
+  object-position: center top;
+  transform: translateY(-4%);
+  @media (width >= 64rem) {
+    height: 121% !important;
+  }
+}
+
 /* ---------- Tables ---------- */
 .spec-table,
 .compare-table {
@@ -690,7 +747,7 @@ input[type='radio'] {
 .compare-table .mono {
   font-size: 13px;
 }
-/* Phones: tighter cells, and the parameter column never breaks a word like "Documentation". */
+/* Phones: tighter cells; the parameter column never breaks a word like "Documentation". */
 @media (max-width: 640px) {
   .spec-table,
   .compare-table {
@@ -708,6 +765,31 @@ input[type='radio'] {
   .compare-table td:first-child {
     min-width: 7.5em;
   }
+  /* Homepage comparison: three fixed columns, wrapping only between words. */
+  .home-compare {
+    table-layout: fixed;
+    font-size: 12px;
+    line-height: 1.55;
+  }
+  .home-compare th,
+  .home-compare td {
+    min-width: 0;
+    padding: 12px 9px;
+    overflow-wrap: break-word;
+    word-break: normal;
+  }
+  .home-compare th:first-child {
+    width: 25%;
+    font-size: 11px;
+  }
+  .home-compare thead th {
+    font-size: 11px;
+  }
+}
+.compare-table tbody th {
+  font-weight: 400;
+  font-size: inherit;
+  color: var(--color-ink);
 }
 .compare-table th.highlight,
 .compare-table td.highlight,
@@ -1023,6 +1105,42 @@ input[type='radio'] {
     left: 0;
   }
 }
+/* Axis under the plot: a rule, a tick per 50 µm, mono labels centred on their coordinate. */
+.range-axis {
+  position: relative;
+  height: 24px;
+  margin-top: 12px;
+  border-top: 1px solid var(--color-rule-dark);
+}
+.range-axis-tick {
+  position: absolute;
+  top: 0;
+  width: 1px;
+  height: 5px;
+  background: var(--color-rule-dark);
+}
+.range-axis-label {
+  position: absolute;
+  top: 8px;
+  transform: translateX(-50%);
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-size: 10px;
+  line-height: 1.4;
+  color: var(--color-text-2-dark);
+  white-space: nowrap;
+}
+.range-axis-label[data-edge='start'] {
+  transform: none;
+}
+.range-axis-label[data-edge='end'] {
+  transform: translateX(-100%);
+}
+@media (width < 64rem) {
+  .range-axis-label {
+    font-size: 9px;
+  }
+}
 .bead-mark {
   display: inline-block;
   width: var(--size);
@@ -1031,6 +1149,21 @@ input[type='radio'] {
   border: 1px solid var(--color-teal-lum);
   background: rgb(131 230 209 / 0.11);
   border-radius: 9999px;
+}
+
+/* ---------- Touch targets on phones (44 px) ---------- */
+@media (max-width: 640px) {
+  .faq-item summary {
+    min-height: 44px;
+  }
+  .faq-item {
+    padding: 9px 0;
+  }
+  .touch-row {
+    display: flex;
+    align-items: center;
+    min-height: 44px;
+  }
 }
 
 /* ---------- Chapter reveal (one restrained motion) ---------- */
