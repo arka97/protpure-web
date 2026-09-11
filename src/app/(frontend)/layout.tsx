@@ -51,7 +51,10 @@ function toNav(items: { link?: LinkValue | null; children?: { link?: LinkValue |
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const [settings, header, footer, { isEnabled: isDraft }] = await Promise.all([getSiteSettings(), getHeader(), getFooter(), draftMode()])
+  // Real intrinsic size of the logo file (the wordmark SVG is 508×179, 2.84:1) so next/image keeps its aspect.
   const logoUrl = mediaUrl(settings.logo)
+  const logoMedia = settings.logo && typeof settings.logo === 'object' ? settings.logo : null
+  const logo = logoUrl ? { url: logoUrl, width: logoMedia?.width || 128, height: logoMedia?.height || 45 } : null
   const cta = resolveLink(header.cta?.link)
   const announcementLink = resolveLink(settings.announcement?.link)
 
@@ -69,7 +72,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <Header
           items={toNav(header.items)}
           cta={cta ? { href: cta.href, label: cta.label } : { href: '/request-quote', label: 'Request a quote' }}
-          logoUrl={logoUrl}
+          logo={logo}
           siteName={settings.name || 'Protpure'}
           announcement={settings.announcement?.enabled && settings.announcement.text ? { text: settings.announcement.text, href: announcementLink?.href } : null}
         />
@@ -80,7 +83,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           siteName={settings.name || 'Protpure'}
           legalName={settings.legalName}
           tagline={footer.tagline}
-          logoUrl={logoUrl}
+          logo={logo}
           columns={(footer.columns ?? []).map((c) => ({ title: c.title, links: toNav((c.links ?? []).map((l) => ({ link: l.link }))) }))}
           legalLinks={toNav((footer.legalLinks ?? []).map((l) => ({ link: l.link })))}
           bottomText={footer.bottomText}

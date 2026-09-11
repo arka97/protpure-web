@@ -2,6 +2,7 @@ import { unstable_cache } from 'next/cache'
 import { draftMode } from 'next/headers'
 import { getPayload, type Payload, type Where } from 'payload'
 import config from '@payload-config'
+import { publishedWhere } from './catalog'
 import type { Application, Faq, Header, Footer, Page, Post, Product, ProductCategory, Service, SiteSetting, Team, Testimonial, Update, Document } from '@/payload-types'
 
 export const getPayloadClient = (): Promise<Payload> => getPayload({ config })
@@ -10,6 +11,10 @@ export const getPayloadClient = (): Promise<Payload> => getPayload({ config })
  * Cached read helpers. Every hook in `src/hooks/revalidate.ts` busts the `content` tag plus the
  * collection tag, so cached data never outlives an edit. Draft mode bypasses the cache so editors
  * see unpublished changes in live preview.
+ *
+ * The local API bypasses access control, so every read of a versioned collection (pages, posts,
+ * products) goes through `publishedWhere()` to keep unpublished drafts off the public site, the
+ * Markdown/JSON surfaces and the MCP server.
  */
 async function isDraft() {
   try {
@@ -40,7 +45,7 @@ export const getPage = cached(
   async (slug: string) => {
     const payload = await getPayloadClient()
     const draft = await isDraft()
-    const res = await payload.find({ collection: 'pages', where: { slug: { equals: slug } }, limit: 1, depth: 2, draft, overrideAccess: draft, pagination: false })
+    const res = await payload.find({ collection: 'pages', where: publishedWhere(draft, { slug: { equals: slug } }), limit: 1, depth: 2, draft, overrideAccess: draft, pagination: false })
     return (res.docs[0] as Page | undefined) ?? null
   },
   'page',
@@ -50,7 +55,7 @@ export const getPage = cached(
 export const getAllPageSlugs = cached(
   async () => {
     const payload = await getPayloadClient()
-    const res = await payload.find({ collection: 'pages', limit: 500, select: { slug: true, updatedAt: true }, pagination: false })
+    const res = await payload.find({ collection: 'pages', where: publishedWhere(false), limit: 500, select: { slug: true, updatedAt: true }, pagination: false })
     return res.docs.map((d) => ({ slug: d.slug as string, updatedAt: d.updatedAt }))
   },
   'page-slugs',
@@ -90,14 +95,15 @@ export const getProducts = cached(
       and.push({ or: [{ name: { like: s } }, { summary: { like: s } }, { subtitle: { like: s } }, { 'chemistry.ligand': { like: s } }] })
     }
     // List query: shallow depth and no heavy detail-only fields, so the cached payload stays small.
+    const draft = await isDraft()
     const res = await payload.find({
       collection: 'products',
-      where: and.length ? { and } : undefined,
+      where: publishedWhere(draft, ...and),
       sort: ['category', 'order', 'name'],
       limit: opts?.limit ?? 200,
       depth: 1,
       select: { description: false, gallery: false, relatedProducts: false, documents: false, meta: false },
-      draft: await isDraft(),
+      draft,
       pagination: false,
     })
     return res.docs as Product[]
@@ -110,7 +116,7 @@ export const getProduct = cached(
   async (slug: string) => {
     const payload = await getPayloadClient()
     const draft = await isDraft()
-    const res = await payload.find({ collection: 'products', where: { slug: { equals: slug } }, limit: 1, depth: 2, draft, overrideAccess: draft, pagination: false })
+    const res = await payload.find({ collection: 'products', where: publishedWhere(draft, { slug: { equals: slug } }), limit: 1, depth: 2, draft, overrideAccess: draft, pagination: false })
     return (res.docs[0] as Product | undefined) ?? null
   },
   'product',
@@ -166,8 +172,8 @@ export const getPosts = cached(
   async (opts?: { limit?: number; page?: number; tag?: string }) => {
     const payload = await getPayloadClient()
     const draft = await isDraft()
-    const where: Where = { and: [{ _status: { equals: 'published' } }, ...(opts?.tag ? [{ tags: { contains: opts.tag } }] : [])] }
-    const res = await payload.find({ collection: 'posts', where: draft ? undefined : where, sort: '-publishedAt', limit: opts?.limit ?? 12, page: opts?.page ?? 1, depth: 2, draft })
+    const where = publishedWhere(draft, opts?.tag ? { tags: { contains: opts.tag } } : undefined)
+    const res = await payload.find({ collection: 'posts', where, sort: '-publishedAt', limit: opts?.limit ?? 12, page: opts?.page ?? 1, depth: 2, draft })
     return res
   },
   'posts',
@@ -178,7 +184,7 @@ export const getPost = cached(
   async (slug: string) => {
     const payload = await getPayloadClient()
     const draft = await isDraft()
-    const res = await payload.find({ collection: 'posts', where: { slug: { equals: slug } }, limit: 1, depth: 2, draft, overrideAccess: draft, pagination: false })
+    const res = await payload.find({ collection: 'posts', where: publishedWhere(draft, { slug: { equals: slug } }), limit: 1, depth: 2, draft, overrideAccess: draft, pagination: false })
     return (res.docs[0] as Post | undefined) ?? null
   },
   'post',

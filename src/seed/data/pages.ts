@@ -24,11 +24,11 @@ export const pages = [
     layout: [
       { blockType: 'stats', style: 'light', items: [
         { value: '600 L', label: 'Monthly production capacity', note: 'Agarose-based resins, semi-automated plant' },
-        { value: '17', label: 'Products across six chromatography modes' },
+        { value: '16', label: 'Products across six chromatography modes' },
         { value: '2–3 wk', label: 'Standard lead time ex-works', note: 'vs 8–12 weeks typical for imports' },
         { value: '1000 cm/h', label: 'Max linear flow, Faster grade', note: 'Fast Flow 700 · Precise 380 · HR 120' },
       ] },
-      { blockType: 'productCategories', eyebrow: 'Catalog', heading: 'Resins for every purification stage', intro: 'Browse by chromatography mode. Each family ships in pack sizes from 5 mL evaluation packs to 25 L and bulk volumes.' },
+      { blockType: 'productCategories', eyebrow: 'Catalog', heading: 'Resins for every purification stage', intro: 'Browse by chromatography mode. Each family ships in pack sizes from 5 mL sample kits to 25 L and bulk volumes.' },
       { blockType: 'gradesPlatform', eyebrow: 'Particle platform', heading: 'Four bead sizes, one chemistry', intro: 'The same 6% cross-linked agarose backbone tuned for different velocity and resolution profiles. Pick the grade that matches your column geometry and workflow.', grades: [
         { name: 'Agarose Faster', badge: 'High throughput', d50: '~163 µm', sizeRange: '100–240 µm', maxFlow: 'up to 1000 cm/h', pressure: '< 0.15 MPa', text: 'Rapid processing without compromising resolution. Developed for industrial capture of large proteins.' },
         { name: 'Agarose Fast Flow', badge: 'Balanced', d50: '~96 µm', sizeRange: '45–165 µm', maxFlow: 'up to 700 cm/h', pressure: '< 0.15 MPa', text: 'Balance of efficiency and separation clarity for most downstream processes.' },
@@ -48,7 +48,7 @@ export const pages = [
       { blockType: 'comparisonTable', eyebrow: 'Comparison', heading: 'Imported resins vs Protpure', intro: 'What changes when you source chromatography media directly from the manufacturer.', columnA: 'Typical imported supplier', columnB: 'Protpure', rows: [
         { parameter: 'Lead time', a: '8–12 weeks (typical)', b: '2–3 weeks ex-works' },
         { parameter: 'Technical support', a: 'Via distributors, indirect', b: 'Direct scientist-to-scientist' },
-        { parameter: 'Evaluation', a: 'Rigid MOQs, formal sampling', b: 'Quoted evaluation packs, credited on first bulk order' },
+        { parameter: 'Evaluation', a: 'Rigid MOQs, formal sampling', b: 'Paid sample kits (5–25 mL packs or a 1 mL pre-packed column), credited against your first bulk order' },
         { parameter: 'Method development', a: 'Application notes only', b: 'Hands-on collaboration; paid services with reports' },
         { parameter: 'Custom pack sizes', a: 'Standard catalogue only', b: '5 mL to 25 L, bulk and custom volumes' },
         { parameter: 'Custom chemistry', a: 'Rarely', b: 'Bead size, ligand density and coupled ligands to order' },

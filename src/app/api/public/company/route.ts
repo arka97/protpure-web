@@ -16,7 +16,7 @@ export async function GET() {
     foundedYear: s.foundedYear,
     contact: { email: s.email, phone: s.phone, whatsapp: s.whatsapp, address: s.address, city: s.city, region: s.region, country: s.country, hours: s.hours },
     social: s.social,
-    pricing: 'By quotation. No free samples; evaluation packs are quoted on request.',
+    pricing: 'By quotation. No free samples; paid sample kits (5–25 mL packs or a 1 mL pre-packed column), credited against your first bulk order.',
     responseTime: s.responseTime,
     leadTime: s.leadTime,
     international: { statement: s.globalStatement, regions: (s.regions ?? []).map((r) => ({ name: r.name, status: r.status, note: r.note })), notes: (s.exportNotes ?? []).map((n) => n.text) },

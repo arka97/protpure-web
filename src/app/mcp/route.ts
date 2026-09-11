@@ -5,7 +5,7 @@ import { createInquiry, inquirySchema, rateLimit } from '@/lib/inquiries'
 import { applicationToMarkdown, companyMarkdown, productToMarkdown, serviceToMarkdown } from '@/lib/markdown'
 import { publicDocument, publicProduct } from '@/lib/public-api'
 import { SITE_URL } from '@/lib/utils'
-import type { ProductCategory } from '@/payload-types'
+import { categoryOf } from '@/lib/catalog'
 
 const text = (t: string) => ({ content: [{ type: 'text' as const, text: t }] })
 const readOnly = { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: false }
@@ -34,7 +34,7 @@ const handler = createMcpHandler(
       async ({ category, grade, query }) => {
         let products = await getProducts({ category, search: query })
         if (grade) products = products.filter((p) => p.grades?.some((g) => g.grade === grade))
-        const cats = Array.from(new Set(products.map((p) => (p.category as ProductCategory)?.slug))).filter(Boolean)
+        const cats = Array.from(new Set(products.map((p) => categoryOf(p)?.slug))).filter(Boolean)
         return { ...text(JSON.stringify({ count: products.length, categories: cats, products: products.map((p) => publicProduct(p)) }, null, 2)) }
       },
     )
@@ -70,7 +70,7 @@ const handler = createMcpHandler(
         const gradeStr = (p: (typeof products)[number], k: 'particleSizeRange' | 'maxFlowVelocity' | 'dynamicBindingCapacity') => (p.grades ?? []).map((g) => `${g.grade}: ${g[k] ?? '—'}`).join('; ')
         const lines = [
           header,
-          row('Category', (p) => (p.category as ProductCategory).name),
+          row('Category', (p) => categoryOf(p)?.name ?? ''),
           row('Type', (p) => p.chemistry?.functionalType ?? ''),
           row('Ligand', (p) => p.chemistry?.ligand ?? ''),
           row('Matrix', (p) => p.chemistry?.matrix ?? ''),
@@ -127,7 +127,7 @@ const handler = createMcpHandler(
       'get_company_info',
       {
         title: 'Company information',
-        description: 'Who Protpure is, where it manufactures, how to buy (quotation only — no free samples), lead times, regions served, export notes and contact details.',
+        description: 'Who Protpure is, where it manufactures, how to buy (quotation only — no free samples, but paid sample kits credited against the first bulk order), lead times, regions served, export notes and contact details.',
         inputSchema: z.object({}),
         annotations: readOnly,
       },
@@ -174,7 +174,7 @@ const handler = createMcpHandler(
   {
     serverInfo: { name: 'protpure', version: '1.0.0' },
     instructions:
-      'Protpure Tech Pvt. Ltd. manufactures agarose-based chromatography resins in Anand, India and supplies worldwide. Use list_products/get_product for specifications, compare_products for side-by-side tables, search_documents for datasheets, and request_quote only when the user explicitly asks to contact Protpure. Pricing is by quotation; there are no free samples.',
+      'Protpure Tech Pvt. Ltd. manufactures agarose-based chromatography resins in Anand, India and supplies worldwide. Use list_products/get_product for specifications, compare_products for side-by-side tables, search_documents for datasheets, and request_quote only when the user explicitly asks to contact Protpure. Pricing is by quotation; there are no free samples, only paid sample kits (5–25 mL packs or a 1 mL pre-packed column) credited against the first bulk order.',
   },
 )
 

@@ -9,7 +9,9 @@ import { cn } from '@/lib/utils'
 
 export type NavItem = { href: string; label: string; newTab?: boolean; children?: { href: string; label: string; description?: string | null }[] }
 
-export function Header({ items, cta, logoUrl, siteName, announcement }: { items: NavItem[]; cta?: { href: string; label: string } | null; logoUrl?: string | null; siteName: string; announcement?: { text: string; href?: string | null } | null }) {
+export type Logo = { url: string; width: number; height: number }
+
+export function Header({ items, cta, logo, siteName, announcement }: { items: NavItem[]; cta?: { href: string; label: string } | null; logo?: Logo | null; siteName: string; announcement?: { text: string; href?: string | null } | null }) {
   const [open, setOpen] = React.useState(false)
   const [openIdx, setOpenIdx] = React.useState<number | null>(null)
   const pathname = usePathname()
@@ -55,8 +57,8 @@ export function Header({ items, cta, logoUrl, siteName, announcement }: { items:
       ) : null}
       <div className="container-x flex h-16 items-center justify-between gap-6 lg:h-[72px]">
         <Link href="/" className="flex shrink-0 items-center gap-2.5" aria-label={`${siteName} home`}>
-          {logoUrl ? (
-            <Image src={logoUrl} alt={siteName} width={140} height={36} className="h-8 w-auto lg:h-9" priority unoptimized />
+          {logo ? (
+            <Image src={logo.url} alt={siteName} width={logo.width} height={logo.height} className="h-8 w-auto lg:h-9" priority unoptimized />
           ) : (
             <span className="font-display text-xl font-bold tracking-tight text-navy-900">{siteName}</span>
           )}

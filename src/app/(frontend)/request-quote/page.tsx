@@ -6,7 +6,7 @@ import { RenderBlocks } from '@/components/blocks/RenderBlocks'
 import { InquiryForm } from '@/components/forms/InquiryForm'
 import { getPage, getProducts, getSiteSettings } from '@/lib/data'
 import { buildMetadata } from '@/lib/seo'
-import type { ProductCategory } from '@/payload-types'
+import { categoryOf } from '@/lib/catalog'
 
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -16,7 +16,7 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function RequestQuotePage() {
   const [page, products, settings] = await Promise.all([getPage('request-quote'), getProducts(), getSiteSettings()])
-  const options = products.map((p) => ({ id: p.id, name: p.name, category: (p.category as ProductCategory)?.name ?? 'Products' }))
+  const options = products.map((p) => ({ id: p.id, name: p.name, category: categoryOf(p)?.name ?? 'Products' }))
   const steps = [
     { icon: FileCheck, title: 'Tell us what you need', text: 'Products, grades, volumes and where you are — that’s enough to start.' },
     { icon: Clock, title: `We reply ${settings.responseTime || 'within 1–2 business days'}`, text: 'A scientist reviews every request. You get pricing, lead time and documentation, not a brochure.' },

@@ -6,7 +6,7 @@ import { GRADE_SHORT } from '@/components/product/cards'
 import { ButtonLink, EmptyState } from '@/components/ui'
 import { getProducts } from '@/lib/data'
 import { buildMetadata } from '@/lib/seo'
-import type { ProductCategory } from '@/payload-types'
+import { categoryOf } from '@/lib/catalog'
 
 
 export const metadata: Metadata = buildMetadata({ title: 'Compare resins', description: 'Compare Protpure agarose resins side by side: ligand, grades, particle size, flow velocity, binding capacity and stability.', path: '/compare', noIndex: true })
@@ -20,7 +20,7 @@ export default async function ComparePage({ searchParams }: { searchParams: Prom
   const href = (list: string[]) => `/compare?${list.map((s) => `p=${s}`).join('&')}`
 
   const rows: { label: string; get: (p: (typeof all)[number]) => string }[] = [
-    { label: 'Category', get: (p) => (p.category as ProductCategory).name },
+    { label: 'Category', get: (p) => categoryOf(p)?.name ?? '—' },
     { label: 'Type', get: (p) => p.chemistry?.functionalType ?? '—' },
     { label: 'Ligand', get: (p) => p.chemistry?.ligand ?? '—' },
     { label: 'Matrix', get: (p) => p.chemistry?.matrix ?? '—' },
@@ -52,7 +52,7 @@ export default async function ComparePage({ searchParams }: { searchParams: Prom
                   {others.map((p) => (
                     <Link key={p.id} href={href([...slugs, p.slug!])} className="block rounded-lg px-3 py-2 text-sm hover:bg-navy-50">
                       <span className="font-medium text-navy-900">{p.name}</span>
-                      <span className="block text-xs text-muted">{(p.category as ProductCategory).name}</span>
+                      <span className="block text-xs text-muted">{categoryOf(p)?.name ?? ''}</span>
                     </Link>
                   ))}
                 </div>

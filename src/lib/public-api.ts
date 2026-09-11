@@ -1,10 +1,11 @@
 import { GRADE_SHORT } from '@/components/product/cards'
+import { categoryOf } from './catalog'
 import { SITE_URL, absoluteUrl } from './utils'
-import type { Application, Document, Product, ProductCategory } from '@/payload-types'
+import type { Application, Document, Product } from '@/payload-types'
 
 /** Stable, compact product shape for agents and integrations (independent of the CMS schema). */
 export function publicProduct(p: Product, opts?: { full?: boolean }) {
-  const cat = p.category as ProductCategory
+  const cat = categoryOf(p)
   const base = {
     id: p.id,
     slug: p.slug,
