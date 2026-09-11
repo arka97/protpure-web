@@ -10,6 +10,7 @@ import { PostCard } from '@/components/PostCard'
 import { ResinSelector } from '@/components/product/ResinSelector'
 import { InquiryForm } from '@/components/forms/InquiryForm'
 import { NewsletterForm } from '@/components/forms/NewsletterForm'
+import { CertificationsStrip, Gallery, LogoWall, ProofBar, Publications } from '@/components/blocks/trust'
 import { getApplications, getCategories, getDocuments, getFaqs, getPosts, getProducts, getServices, getSiteSettings, getTeam, getTestimonials, getUpdates } from '@/lib/data'
 import { toBasketProduct } from '@/lib/rfq'
 import { cn, resolveLink } from '@/lib/utils'
@@ -327,7 +328,7 @@ async function RenderBlock({ block }: { block: Block; index: number }) {
     }
 
     case 'linkedInFeed': {
-      const updates = await getUpdates(block.limit ?? 3)
+      const updates = await getUpdates(block.limit ?? 3, { kind: block.kind })
       const settings = await getSiteSettings()
       if (!updates.length) return null
       return (
@@ -505,6 +506,22 @@ async function RenderBlock({ block }: { block: Block; index: number }) {
         </section>
       )
     }
+
+    // ---------- Trust & proof (src/components/blocks/trust/*) ----------
+    case 'logoWall':
+      return <LogoWall block={block} />
+
+    case 'certificationsStrip':
+      return <CertificationsStrip block={block} />
+
+    case 'gallery':
+      return <Gallery block={block} />
+
+    case 'publications':
+      return <Publications block={block} />
+
+    case 'proofBar':
+      return <ProofBar block={block} />
 
     default:
       return null
