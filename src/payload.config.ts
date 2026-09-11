@@ -74,8 +74,10 @@ export default buildConfig({
   typescript: { outputFile: path.resolve(dirname, 'payload-types.ts') },
   db: postgresAdapter({
     pool: { connectionString: process.env.DATABASE_URL || '' },
-    // Dev: schema changes are pushed automatically. Prod: pending migrations in src/migrations run on startup.
-    push: process.env.NODE_ENV !== 'production',
+    // Dev: schema changes are pushed automatically (set PAYLOAD_DB_PUSH=false when several dev servers share
+    // one database, so a branch without the newest collections cannot drop their tables). Prod: pending
+    // migrations in src/migrations run on startup.
+    push: process.env.NODE_ENV !== 'production' && process.env.PAYLOAD_DB_PUSH !== 'false',
     prodMigrations: migrations,
   }),
   email: process.env.RESEND_API_KEY
