@@ -2,29 +2,28 @@
 
 import * as React from 'react'
 import Link from 'next/link'
-import { ShoppingBasket } from 'lucide-react'
 import { useBasket } from './BasketProvider'
+import { ArrowIcon, BasketIcon } from '@/components/visual/icons'
 import { cn } from '@/lib/utils'
 
-/** Header icon with a line-count badge; opens the basket drawer. */
-export function BasketButton({ className }: { className?: string }) {
+/** Header basket: icon plus a line-count mark; opens the drawer. */
+export function BasketButton({ className, label }: { className?: string; label?: string }) {
   const { count, ready, open, isOpen } = useBasket()
   const n = ready ? count : 0
   return (
     <button
       type="button"
       onClick={open}
-      className={cn('relative inline-flex h-11 w-11 items-center justify-center rounded-lg text-navy-900 transition hover:bg-navy-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-500 lg:h-10 lg:w-10', className)}
-      aria-label={n ? `Open RFQ basket, ${n} item${n === 1 ? '' : 's'}` : 'Open RFQ basket'}
+      className={cn('inline-flex min-h-11 items-center gap-2.5 px-1 text-[13px] text-ink hover:text-teal-deep', className)}
+      aria-label={n ? `Open RFQ basket, ${n} line${n === 1 ? '' : 's'}` : 'Open RFQ basket'}
       aria-haspopup="dialog"
       aria-expanded={isOpen}
     >
-      <ShoppingBasket className="h-5 w-5" aria-hidden />
-      {n ? (
-        <span className="absolute -right-0.5 -top-0.5 inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-teal-500 px-1 text-[11px] font-bold leading-none text-white" aria-hidden>
-          {n > 99 ? '99+' : n}
-        </span>
-      ) : null}
+      <BasketIcon />
+      {label ? <span className="hidden md:inline">{label}</span> : null}
+      <span className={cn('num inline-grid h-[22px] w-[22px] place-items-center rounded-full text-[11px] leading-none', n ? 'bg-ink text-white' : 'border border-rule text-text-2')} aria-hidden>
+        {n > 99 ? '99+' : n}
+      </span>
     </button>
   )
 }
@@ -33,20 +32,23 @@ export function BasketButton({ className }: { className?: string }) {
  * "Request a quote" call-to-action: when it points at the quote page and the basket has items it
  * opens the drawer (so the buyer reviews before submitting); otherwise it is a plain link.
  */
-export function QuoteCta({ href, label, className }: { href: string; label: string; className?: string }) {
+export function QuoteCta({ href, label, className, withArrow }: { href: string; label: string; className?: string; withArrow?: boolean }) {
   const { count, ready, open } = useBasket()
   const hasItems = ready && count > 0 && href.startsWith('/request-quote')
+  const arrow = withArrow ? <ArrowIcon className="h-4 w-4" /> : null
   if (hasItems) {
     return (
       <button type="button" onClick={open} className={className}>
         {label}
-        <span className="sr-only"> ({count} item{count === 1 ? '' : 's'} in basket)</span>
+        <span className="sr-only"> ({count} line{count === 1 ? '' : 's'} in basket)</span>
+        {arrow}
       </button>
     )
   }
   return (
     <Link href={href} className={className}>
       {label}
+      {arrow}
     </Link>
   )
 }

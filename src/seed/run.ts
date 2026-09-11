@@ -173,13 +173,20 @@ export async function runSeed(payload: Payload, opts: { reset?: boolean } = {}) 
     return base
   }
   const resolveLinks = (links?: Link[]) => (links ?? []).map((l) => ({ link: resolveLink(l) }))
+  const faqIdByQuestion = new Map((await payload.find({ collection: 'faqs', limit: 200, ...ctx })).docs.map((f) => [f.question, f.id] as const))
   for (const p of pages) {
-    const hero = { ...p.hero, image: media((p.hero as { image?: string }).image), links: resolveLinks((p.hero as { links?: Link[] }).links) }
+    // Explicit empty arrays: a group update keeps existing array values it is not told about.
+    const hero = { badges: [], ...p.hero, image: media((p.hero as { image?: string }).image), links: resolveLinks((p.hero as { links?: Link[] }).links) }
     const layout = p.layout.map((b) => {
       const blk = { ...b } as Record<string, unknown>
       if ('image' in blk && typeof blk.image === 'string') blk.image = media(blk.image)
+      if ('secondImage' in blk && typeof blk.secondImage === 'string') blk.secondImage = media(blk.secondImage)
       if ('links' in blk) blk.links = resolveLinks(blk.links as Link[])
+      if ('link' in blk && blk.link) blk.link = resolveLink(blk.link as Link)
       if (blk.blockType === 'featureGrid') blk.items = (blk.items as Record<string, unknown>[]).map((it) => ({ ...it, link: it.link ? resolveLink(it.link as Link) : undefined }))
+      // Category slugs → ids; FAQ questions → ids (seed data is written by slug / question, not id).
+      if (blk.blockType === 'productCategories' && Array.isArray(blk.categories)) blk.categories = (blk.categories as string[]).map((slug) => categoryIds.get(slug)!).filter(Boolean)
+      if (blk.blockType === 'faqBlock' && Array.isArray(blk.faqs)) blk.faqs = (blk.faqs as string[]).map((q) => faqIdByQuestion.get(q)!).filter(Boolean)
       return blk
     })
     await payload.update({ collection: 'pages', id: pageIds.get(p.slug)!, data: { hero: hero as never, layout: layout as never, _status: 'published' }, ...ctx })
@@ -190,6 +197,7 @@ export async function runSeed(payload: Payload, opts: { reset?: boolean } = {}) 
   await payload.updateGlobal({
     slug: 'header',
     data: {
+      tagline: header.tagline,
       items: header.items.map((it) => ({ link: resolveLink(it as Link), children: (it.children ?? []).map((c) => ({ link: resolveLink(c as Link), description: c.description })) })),
       cta: { link: resolveLink(header.cta) },
     } as never,
@@ -200,6 +208,7 @@ export async function runSeed(payload: Payload, opts: { reset?: boolean } = {}) 
     data: {
       tagline: footer.tagline,
       columns: footer.columns.map((c) => ({ title: c.title, links: c.links.map((l) => ({ link: resolveLink(l as Link) })) })),
+      newsletter: footer.newsletter,
       legalLinks: footer.legalLinks.map((l) => ({ link: resolveLink(l as Link) })),
       bottomText: footer.bottomText,
     } as never,

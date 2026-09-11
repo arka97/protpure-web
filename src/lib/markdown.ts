@@ -65,26 +65,32 @@ export function pageToMarkdown(page: Page): string {
       case 'richText':
         out.push('', lexicalToMarkdown(b.content as never))
         break
+      case 'trustStrip':
+        if (b.source === 'custom' && b.items?.length) out.push('', b.items.map((i) => i.text).join(' · '))
+        break
       case 'stats':
-        out.push('', b.heading ? `## ${b.heading}` : '', ...(b.items ?? []).map((i) => `- **${i.value}** ${i.label}${i.note ? ` (${i.note})` : ''}`))
+        out.push('', b.heading ? `## ${b.heading}` : '', ...(b.items ?? []).map((i) => `- **${i.value}${i.unit ? ` ${i.unit}` : ''}** ${i.label}${i.note ? ` (${i.note})` : ''}`))
         break
       case 'featureGrid':
         out.push('', b.heading ? `## ${b.heading}` : '', b.intro ?? '', ...(b.items ?? []).map((i) => `- **${i.title}** — ${i.text}`))
         break
       case 'twoColumn':
-        out.push('', b.heading ? `## ${b.heading}` : '', lexicalToMarkdown(b.content as never), ...(b.facts ?? []).map((f) => `- ${f.label}: ${f.value}`))
+        out.push('', b.heading ? `## ${b.heading}` : '', lexicalToMarkdown(b.content as never), b.quote ? `> ${b.quote}` : '', b.secondImageText ?? '', ...(b.facts ?? []).map((f) => `- ${f.label}: ${f.value}`))
         break
       case 'comparisonTable':
         out.push('', b.heading ? `## ${b.heading}` : '', b.intro ?? '', table(['Parameter', b.columnA, b.columnB], (b.rows ?? []).map((r) => [r.parameter, r.a, r.b])), b.note ?? '')
         break
       case 'gradesPlatform':
-        out.push('', b.heading ? `## ${b.heading}` : '', b.intro ?? '', table(['Grade', 'd50V', 'Size range', 'Max linear flow', 'Pressure', 'Use'], (b.grades ?? []).map((g) => [g.name, g.d50 ?? '', g.sizeRange ?? '', g.maxFlow ?? '', g.pressure ?? '', g.text ?? ''])))
+        out.push('', b.heading ? `## ${b.heading}` : '', b.intro ?? '', table(['Grade', 'Application', 'd50V', 'Size range', 'Max linear flow', 'Pressure', 'Notes'], (b.grades ?? []).map((g) => [g.name, g.badge ?? '', g.d50 ?? '', g.sizeRange ?? '', g.maxFlow ?? '', g.pressure ?? '', g.text ?? ''])), b.note ?? '')
         break
       case 'timeline':
         out.push('', b.heading ? `## ${b.heading}` : '', ...(b.items ?? []).map((i) => `- **${i.date}** — ${i.title}${i.text ? `: ${i.text}` : ''}`))
         break
       case 'cta':
-        out.push('', `## ${b.heading}`, b.text ?? '')
+        out.push('', `## ${b.heading}`, b.text ?? '', b.note ? `**${b.note}**` : '')
+        break
+      case 'logoWall':
+        if (b.logos?.length) out.push('', b.heading ?? '', ...b.logos.map((l) => `- ${l.name}`))
         break
       case 'productCategories':
       case 'featuredProducts':

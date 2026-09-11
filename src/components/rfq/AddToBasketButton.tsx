@@ -1,23 +1,24 @@
 'use client'
 
 import * as React from 'react'
-import { Check, Plus, ShoppingBasket, X } from 'lucide-react'
 import { useBasket } from './BasketProvider'
 import { Modal } from './Modal'
 import { controlClass } from './BasketLines'
+import { BasketIcon, CheckIcon, CloseIcon, PlusIcon } from '@/components/visual/icons'
 import { GRADE_LABELS, ITEM_PURPOSES, SAMPLE_KIT_POLICY, matchPackSize, type BasketProduct, type GradeValue, type PurposeValue } from '@/lib/rfq'
 import { cn } from '@/lib/utils'
 
 export type AddPreset = { grade?: GradeValue | null; packSize?: string | null; catalogNumber?: string | null; purpose?: PurposeValue; quantity?: number }
 
 /**
- * "Add to RFQ basket" button. With a `preset` (pack-size table rows) it adds immediately; otherwise
+ * "Add to RFQ" button. With a `preset` (pack-size table rows) it adds immediately; otherwise
  * it opens a small picker for grade, pack size, quantity and purpose when the product offers a choice.
+ * Appearance follows the button system: `teal` is the luminous fill used on white product cards.
  */
 export function AddToBasketButton({
   product,
   preset,
-  label = 'Add to RFQ basket',
+  label = 'Add to RFQ',
   addedLabel = 'Added',
   appearance = 'secondary',
   size = 'sm',
@@ -28,8 +29,8 @@ export function AddToBasketButton({
   preset?: AddPreset
   label?: string
   addedLabel?: string
-  appearance?: 'primary' | 'secondary' | 'ghost' | 'onDark'
-  size?: 'sm' | 'md'
+  appearance?: 'primary' | 'secondary' | 'ghost' | 'onDark' | 'teal'
+  size?: 'sm' | 'md' | 'xs'
   className?: string
   iconOnly?: boolean
 }) {
@@ -65,19 +66,19 @@ export function AddToBasketButton({
     flash()
   }
 
-  const appearanceClass = { primary: 'btn-primary', secondary: 'btn-secondary', ghost: 'btn-ghost', onDark: 'btn-on-dark' }[appearance]
+  const appearanceClass = { primary: 'btn-primary', secondary: 'btn-secondary', ghost: 'btn-ghost', onDark: 'btn-on-dark', teal: 'btn-teal' }[appearance]
 
   return (
     <>
       <button
         type="button"
         onClick={onClick}
-        className={cn(appearanceClass, size === 'sm' && 'btn-sm', 'min-h-11 sm:min-h-0', iconOnly && 'px-2.5', added && 'border-teal-500 text-teal-600', className)}
+        className={cn(appearanceClass, size === 'sm' && 'btn-sm', size === 'xs' && 'btn-xs', 'min-h-11 sm:min-h-0', iconOnly && 'px-2.5', added && 'border-teal-deep text-teal-deep', className)}
         aria-label={iconOnly ? `${label}: ${product.name}` : undefined}
         aria-live="polite"
       >
-        {added ? <Check className="h-4 w-4" aria-hidden /> : <Plus className="h-4 w-4" aria-hidden />}
         {iconOnly ? null : added ? `${addedLabel} · View basket` : label}
+        {added ? <CheckIcon className="h-4 w-4" /> : <PlusIcon className="h-4 w-4" />}
       </button>
       {needsChoice ? (
         <AddToBasketDialog
@@ -111,10 +112,11 @@ function AddToBasketForm({ product, titleId, onClose, onAdd }: { product: Basket
   const [purpose, setPurpose] = React.useState<PurposeValue>('production')
   const packOptions = product.packSizes.filter((ps) => !ps.grade || !grade || ps.grade === grade)
   const pack = matchPackSize(product, packSize, grade || null)
+  const labelClass = 'mb-1.5 block text-[12px] font-medium text-ink'
 
   return (
     <form
-      className="card w-full max-w-md rounded-b-none p-5 sm:rounded-b-2xl sm:p-6"
+      className="w-full max-w-md border border-rule bg-white p-5 text-ink shadow-panel sm:p-6"
       onSubmit={(e) => {
         e.preventDefault()
         onAdd({ grade: grade || null, packSize: packSize || null, catalogNumber: pack?.catalogNumber ?? null, quantity, purpose })
@@ -122,19 +124,19 @@ function AddToBasketForm({ product, titleId, onClose, onAdd }: { product: Basket
     >
       <div className="flex items-start justify-between gap-4">
         <div>
-          <p className="eyebrow">Add to RFQ basket</p>
-          <h2 id={titleId} className="heading-3 mt-1">
+          <p className="eyebrow mb-2">Add to RFQ basket</p>
+          <h2 id={titleId} className="font-display text-[28px] leading-[1.05] tracking-[-0.03em]">
             {product.name}
           </h2>
         </div>
-        <button type="button" onClick={onClose} className="btn-ghost -mr-2 -mt-2 h-11 w-11 p-0 sm:h-9 sm:w-9" aria-label="Close">
-          <X className="h-5 w-5" aria-hidden />
+        <button type="button" onClick={onClose} className="icon-button -mr-3 -mt-2 text-text-2 hover:text-ink" aria-label="Close">
+          <CloseIcon />
         </button>
       </div>
       <div className="mt-5 grid gap-4">
         {product.grades.length ? (
           <div>
-            <label htmlFor={`${titleId}-grade`} className="mb-1.5 block text-sm font-medium text-ink">
+            <label htmlFor={`${titleId}-grade`} className={labelClass}>
               Grade
             </label>
             <select id={`${titleId}-grade`} className={controlClass} value={grade} onChange={(e) => setGrade(e.target.value as GradeValue | '')}>
@@ -149,7 +151,7 @@ function AddToBasketForm({ product, titleId, onClose, onAdd }: { product: Basket
         ) : null}
         <div className="grid grid-cols-[1fr_5.5rem] gap-3">
           <div>
-            <label htmlFor={`${titleId}-pack`} className="mb-1.5 block text-sm font-medium text-ink">
+            <label htmlFor={`${titleId}-pack`} className={labelClass}>
               Pack size
             </label>
             {product.packSizes.length ? (
@@ -167,31 +169,31 @@ function AddToBasketForm({ product, titleId, onClose, onAdd }: { product: Basket
             )}
           </div>
           <div>
-            <label htmlFor={`${titleId}-qty`} className="mb-1.5 block text-sm font-medium text-ink">
+            <label htmlFor={`${titleId}-qty`} className={labelClass}>
               Qty
             </label>
-            <input id={`${titleId}-qty`} type="number" inputMode="numeric" min={1} max={10000} className={controlClass} value={quantity} onChange={(e) => setQuantity(Math.max(1, Math.floor(Number(e.target.value) || 1)))} />
+            <input id={`${titleId}-qty`} type="number" inputMode="numeric" min={1} max={10000} className={cn(controlClass, 'num')} value={quantity} onChange={(e) => setQuantity(Math.max(1, Math.floor(Number(e.target.value) || 1)))} />
           </div>
         </div>
         <fieldset>
-          <legend className="mb-1.5 text-sm font-medium text-ink">What is this for?</legend>
+          <legend className={labelClass}>What is this for?</legend>
           <div className="grid gap-1.5">
             {ITEM_PURPOSES.map((p) => (
-              <label key={p.value} className={cn('flex min-h-11 cursor-pointer items-center gap-3 rounded-lg border px-3 py-2 text-sm transition', purpose === p.value ? 'border-teal-500 bg-teal-50 text-teal-600' : 'border-line bg-white text-ink-soft hover:border-navy-900/30')}>
-                <input type="radio" name="purpose" value={p.value} checked={purpose === p.value} onChange={() => setPurpose(p.value)} className="accent-teal-500" />
+              <label key={p.value} className={cn('flex min-h-11 cursor-pointer items-center gap-3 border px-3 py-2 text-[13px] transition-colors', purpose === p.value ? 'border-teal-deep bg-tint text-tint-ink' : 'border-rule bg-white text-text-2 hover:border-rule-strong')}>
+                <input type="radio" name="purpose" value={p.value} checked={purpose === p.value} onChange={() => setPurpose(p.value)} />
                 {p.label}
               </label>
             ))}
           </div>
-          {purpose === 'sample-kit' ? <p className="mt-2 text-xs text-ink-soft">{SAMPLE_KIT_POLICY}</p> : null}
+          {purpose === 'sample-kit' ? <p className="mt-2 text-[12px] leading-[1.6] text-text-2">{SAMPLE_KIT_POLICY}</p> : null}
         </fieldset>
       </div>
       <div className="mt-6 flex flex-wrap items-center justify-end gap-2">
-        <button type="button" onClick={onClose} className="btn-secondary btn-sm min-h-11 sm:min-h-0">
+        <button type="button" onClick={onClose} className="btn-secondary btn-sm min-h-11">
           Cancel
         </button>
-        <button type="submit" className="btn-primary btn-sm min-h-11 sm:min-h-0">
-          <ShoppingBasket className="h-4 w-4" aria-hidden /> Add to basket
+        <button type="submit" className="btn-primary btn-sm min-h-11">
+          Add to RFQ <BasketIcon />
         </button>
       </div>
     </form>

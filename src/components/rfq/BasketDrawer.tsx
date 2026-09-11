@@ -3,13 +3,16 @@
 import * as React from 'react'
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
-import { ArrowRight, ShoppingBasket, X } from 'lucide-react'
 import { useBasket } from './BasketProvider'
 import { BasketLineList } from './BasketLines'
 import { Modal } from './Modal'
+import { ArrowIcon, CloseIcon } from '@/components/visual/icons'
 import { SAMPLE_KIT_POLICY } from '@/lib/rfq'
 
-/** Slide-over listing the basket lines with inline editing; leads to /request-quote. */
+/**
+ * The RFQ drawer: 445 px white slide-over on the right (full width on phones) with the lines and
+ * one path forward — the quote form. No subtotal, no price.
+ */
 export function BasketDrawer() {
   const { items, count, isOpen, close, clear } = useBasket()
   const router = useRouter()
@@ -31,47 +34,41 @@ export function BasketDrawer() {
   }
 
   return (
-    <Modal open={isOpen} onClose={close} labelledBy={titleId} panelClassName="ml-auto flex h-full w-full max-w-md flex-col bg-white shadow-card-hover">
-      <div className="flex items-center justify-between gap-4 border-b border-line px-5 py-4">
-        <div className="flex items-center gap-2">
-          <ShoppingBasket className="h-5 w-5 text-teal-600" aria-hidden />
-          <h2 id={titleId} className="font-display text-lg font-bold text-navy-900">
-            RFQ basket
-          </h2>
-          <span className="chip">{count} item{count === 1 ? '' : 's'}</span>
-        </div>
-        <button type="button" onClick={close} className="btn-ghost -mr-2 h-11 w-11 p-0 sm:h-9 sm:w-9" aria-label="Close basket">
-          <X className="h-5 w-5" aria-hidden />
+    <Modal open={isOpen} onClose={close} labelledBy={titleId} panelClassName="ml-auto flex h-full w-full max-w-[445px] flex-col bg-white text-ink shadow-drawer">
+      <div className="flex items-center justify-between gap-4 border-b border-rule px-6 py-5">
+        <h2 id={titleId} className="font-display text-[33px] leading-none tracking-[-0.03em]">
+          Your RFQ <span className="mono ml-1 align-middle text-[13px] text-text-2">{count}</span>
+        </h2>
+        <button type="button" onClick={close} className="icon-button -mr-3 text-text-2 hover:text-ink" aria-label="Close basket">
+          <CloseIcon />
         </button>
       </div>
 
-      <div className="flex-1 overflow-y-auto px-5">
+      <div className="flex-1 overflow-y-auto px-6">
         {items.length ? (
           <BasketLineList onNavigate={close} />
         ) : (
-          <div className="py-16 text-center">
-            <ShoppingBasket className="mx-auto h-10 w-10 text-navy-100" aria-hidden />
-            <p className="heading-3 mt-4">Your basket is empty</p>
-            <p className="mx-auto mt-2 max-w-xs text-sm text-ink-soft">Add resins, columns or sample kits from any product card or pack-size table, then request one quotation for all of them.</p>
-            <Link href="/products" onClick={close} className="btn-primary mt-6">
-              Browse products
+          <div className="py-8">
+            <p className="text-[13px] leading-[1.6] text-text-2">Add products, grades and pack sizes from any product card or ordering table. Send them together as one quote request.</p>
+            <Link href="/products" onClick={close} className="text-link mt-5">
+              Browse resins <ArrowIcon />
             </Link>
           </div>
         )}
       </div>
 
       {items.length ? (
-        <div className="border-t border-line bg-surface-2/60 px-5 py-4">
-          <p className="text-xs text-ink-soft">{SAMPLE_KIT_POLICY}</p>
-          <div className="mt-3 grid gap-2">
-            <button type="button" onClick={goToQuote} className="btn-primary w-full min-h-11">
-              Request quote for {count === 1 ? 'this item' : `these ${count} items`} <ArrowRight className="h-4 w-4" aria-hidden />
+        <div className="border-t border-rule bg-surface px-6 py-5">
+          <p className="text-[12px] leading-[1.6] text-text-2">{SAMPLE_KIT_POLICY}</p>
+          <div className="mt-4 grid gap-3">
+            <button type="button" onClick={goToQuote} className="btn-primary w-full">
+              Request one quote for {count === 1 ? 'this line' : `these ${count} lines`} <ArrowIcon />
             </button>
-            <div className="flex items-center justify-between text-sm">
-              <Link href="/products" onClick={close} className="font-medium text-navy-900 hover:text-teal-600">
+            <div className="flex items-center justify-between text-[12px]">
+              <Link href="/products" onClick={close} className="font-medium text-ink underline decoration-rule underline-offset-4 hover:text-teal-deep">
                 Add more products
               </Link>
-              <button type="button" onClick={clear} className="min-h-11 text-muted hover:text-red-600 sm:min-h-0">
+              <button type="button" onClick={clear} className="min-h-11 text-text-2 underline decoration-rule underline-offset-4 hover:text-error sm:min-h-0">
                 Clear basket
               </button>
             </div>

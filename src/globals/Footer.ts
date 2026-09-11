@@ -19,6 +19,15 @@ export const Footer: GlobalConfig = {
         { name: 'links', type: 'array', fields: [linkField()] },
       ],
     },
+    {
+      name: 'newsletter',
+      type: 'group',
+      fields: [
+        { name: 'heading', type: 'text', defaultValue: 'Notes from the bench' },
+        { name: 'text', type: 'text', defaultValue: 'Product updates, data and technical notes.', admin: { description: 'Label above the email field.' } },
+        { name: 'note', type: 'textarea', admin: { description: 'Consent line under the field.' } },
+      ],
+    },
     { name: 'legalLinks', type: 'array', fields: [linkField()] },
     { name: 'bottomText', type: 'text', admin: { description: 'e.g. Registered in India · CIN …' } },
   ],

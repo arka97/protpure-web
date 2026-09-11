@@ -585,6 +585,22 @@ export interface Page {
     highlight?: string | null;
     text?: string | null;
     image?: (number | null) | Media;
+    /**
+     * Medallion on the photo, e.g. "BPG 200".
+     */
+    imageMarker?: string | null;
+    /**
+     * Small line in the medallion, e.g. "Client deployment".
+     */
+    imageMarkerNote?: string | null;
+    /**
+     * Caption under the photo, e.g. "Ni-NTA Agarose in a process column".
+     */
+    imageCaption?: string | null;
+    /**
+     * Right-hand caption, e.g. "At a client site".
+     */
+    imageCaptionNote?: string | null;
     links?:
       | {
           link: {
@@ -652,13 +668,32 @@ export interface Page {
             blockType: 'richText';
           }
         | {
+            source?: ('settings' | 'custom') | null;
+            /**
+             * Short statements, e.g. "CoA with every lot". Claims only, no invented certifications.
+             */
+            items?:
+              | {
+                  text: string;
+                  id?: string | null;
+                }[]
+              | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'trustStrip';
+          }
+        | {
             heading?: string | null;
             items?:
               | {
                   /**
-                   * e.g. 600 L
+                   * The numeral, e.g. 600
                    */
                   value: string;
+                  /**
+                   * Shown small next to the numeral, e.g. L / month
+                   */
+                  unit?: string | null;
                   label: string;
                   note?: string | null;
                   id?: string | null;
@@ -794,7 +829,28 @@ export interface Page {
                 }[]
               | null;
             image?: (number | null) | Media;
+            /**
+             * Caption line under the image, e.g. "Process evaluation in the Protpure lab".
+             */
+            imageCaption?: string | null;
+            /**
+             * Right-hand side of the caption, e.g. "Anand, Gujarat".
+             */
+            imageCaptionNote?: string | null;
             imagePosition?: ('right' | 'left') | null;
+            /**
+             * Optional smaller image under the main one (e.g. facility exterior). Until it is uploaded, editors see a dashed slot in preview; visitors see only the text.
+             */
+            secondImage?: (number | null) | Media;
+            /**
+             * Text beside the second image.
+             */
+            secondImageText?: string | null;
+            /**
+             * Optional quotation shown after the text (attribution comes from a following Team grid in "spread" layout).
+             */
+            quote?: string | null;
+            background?: ('light' | 'recessed') | null;
             /**
              * Key/value list shown under the text, e.g. Location → Anand, Gujarat.
              */
@@ -845,7 +901,7 @@ export interface Page {
                    */
                   name: string;
                   /**
-                   * e.g. High resolution
+                   * Application label, e.g. Industrial capture
                    */
                   badge?: string | null;
                   /**
@@ -868,6 +924,37 @@ export interface Page {
                   id?: string | null;
                 }[]
               | null;
+            /**
+             * Footnote under the plot, e.g. "Bars show size range; dots show d50V. Platform values…"
+             */
+            note?: string | null;
+            link?: {
+              type?: ('internal' | 'custom') | null;
+              newTab?: boolean | null;
+              reference?:
+                | ({
+                    relationTo: 'pages';
+                    value: number | Page;
+                  } | null)
+                | ({
+                    relationTo: 'products';
+                    value: number | Product;
+                  } | null)
+                | ({
+                    relationTo: 'product-categories';
+                    value: number | ProductCategory;
+                  } | null)
+                | ({
+                    relationTo: 'applications';
+                    value: number | Application;
+                  } | null)
+                | ({
+                    relationTo: 'posts';
+                    value: number | Post;
+                  } | null);
+              url?: string | null;
+              label?: string | null;
+            };
             id?: string | null;
             blockName?: string | null;
             blockType: 'gradesPlatform';
@@ -890,6 +977,18 @@ export interface Page {
             eyebrow?: string | null;
             heading?: string | null;
             intro?: string | null;
+            /**
+             * Leave empty to show every category. Pick the main chromatography modes and mention the rest in the footnote.
+             */
+            categories?: (number | ProductCategory)[] | null;
+            /**
+             * Line under the grid, e.g. "Also available: pre-packed columns, magnetic beads & evaluation kits."
+             */
+            footnote?: string | null;
+            /**
+             * Catalogue link label. Defaults to "All N products".
+             */
+            linkLabel?: string | null;
             id?: string | null;
             blockName?: string | null;
             blockType: 'productCategories';
@@ -916,6 +1015,7 @@ export interface Page {
             eyebrow?: string | null;
             heading?: string | null;
             intro?: string | null;
+            layout?: ('cards' | 'list') | null;
             id?: string | null;
             blockName?: string | null;
             blockType: 'applicationsGrid';
@@ -927,11 +1027,36 @@ export interface Page {
             eyebrow?: string | null;
             heading?: string | null;
             intro?: string | null;
+            layout?: ('cards' | 'row') | null;
             id?: string | null;
             blockName?: string | null;
             blockType: 'servicesGrid';
           }
         | {
+            /**
+             * Short statement beside the logos, e.g. "Used in GMP facilities. Repeat orders from Indian biopharma."
+             */
+            heading?: string | null;
+            /**
+             * Add logos only with customer permission. While empty, visitors see nothing; editors see a dashed slot in preview.
+             */
+            logos?:
+              | {
+                  logo: number | Media;
+                  name: string;
+                  url?: string | null;
+                  id?: string | null;
+                }[]
+              | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'logoWall';
+          }
+        | {
+            /**
+             * Small label above the heading.
+             */
+            eyebrow?: string | null;
             heading?: string | null;
             intro?: string | null;
             /**
@@ -1004,6 +1129,7 @@ export interface Page {
              * Leave empty to show everyone.
              */
             members?: (number | Team)[] | null;
+            layout?: ('grid' | 'spread') | null;
             id?: string | null;
             blockName?: string | null;
             blockType: 'teamGrid';
@@ -1030,6 +1156,10 @@ export interface Page {
             blockType: 'timeline';
           }
         | {
+            /**
+             * Small label above the heading.
+             */
+            eyebrow?: string | null;
             heading?: string | null;
             intro?: string | null;
             category?: ('all' | 'products' | 'ordering' | 'shipping' | 'quality' | 'technical') | null;
@@ -1076,8 +1206,19 @@ export interface Page {
             blockType: 'formBlock';
           }
         | {
+            /**
+             * Small label above the heading.
+             */
+            eyebrow?: string | null;
             heading: string;
+            /**
+             * Blank lines start new paragraphs.
+             */
             text?: string | null;
+            /**
+             * Short emphasised line after the text, e.g. the paid-evaluation credit policy.
+             */
+            note?: string | null;
             links?:
               | {
                   link: {
@@ -1111,7 +1252,7 @@ export interface Page {
                   id?: string | null;
                 }[]
               | null;
-            style?: ('dark' | 'accent' | 'light') | null;
+            style?: ('dark' | 'accent' | 'light' | 'evaluation') | null;
             id?: string | null;
             blockName?: string | null;
             blockType: 'cta';
@@ -1191,6 +1332,10 @@ export interface Team {
   id: number;
   name: string;
   role: string;
+  /**
+   * One-line bio for compact layouts, e.g. "Materials scientist · bead synthesis and ligand chemistry".
+   */
+  tagline?: string | null;
   bio?: {
     root: {
       type: string;
@@ -1718,6 +1863,10 @@ export interface PagesSelect<T extends boolean = true> {
         highlight?: T;
         text?: T;
         image?: T;
+        imageMarker?: T;
+        imageMarkerNote?: T;
+        imageCaption?: T;
+        imageCaptionNote?: T;
         links?:
           | T
           | {
@@ -1751,6 +1900,19 @@ export interface PagesSelect<T extends boolean = true> {
               id?: T;
               blockName?: T;
             };
+        trustStrip?:
+          | T
+          | {
+              source?: T;
+              items?:
+                | T
+                | {
+                    text?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
         stats?:
           | T
           | {
@@ -1759,6 +1921,7 @@ export interface PagesSelect<T extends boolean = true> {
                 | T
                 | {
                     value?: T;
+                    unit?: T;
                     label?: T;
                     note?: T;
                     id?: T;
@@ -1817,7 +1980,13 @@ export interface PagesSelect<T extends boolean = true> {
                     id?: T;
                   };
               image?: T;
+              imageCaption?: T;
+              imageCaptionNote?: T;
               imagePosition?: T;
+              secondImage?: T;
+              secondImageText?: T;
+              quote?: T;
+              background?: T;
               facts?:
                 | T
                 | {
@@ -1866,6 +2035,16 @@ export interface PagesSelect<T extends boolean = true> {
                     text?: T;
                     id?: T;
                   };
+              note?: T;
+              link?:
+                | T
+                | {
+                    type?: T;
+                    newTab?: T;
+                    reference?: T;
+                    url?: T;
+                    label?: T;
+                  };
               id?: T;
               blockName?: T;
             };
@@ -1884,6 +2063,9 @@ export interface PagesSelect<T extends boolean = true> {
               eyebrow?: T;
               heading?: T;
               intro?: T;
+              categories?: T;
+              footnote?: T;
+              linkLabel?: T;
               id?: T;
               blockName?: T;
             };
@@ -1903,6 +2085,7 @@ export interface PagesSelect<T extends boolean = true> {
               eyebrow?: T;
               heading?: T;
               intro?: T;
+              layout?: T;
               id?: T;
               blockName?: T;
             };
@@ -1912,12 +2095,29 @@ export interface PagesSelect<T extends boolean = true> {
               eyebrow?: T;
               heading?: T;
               intro?: T;
+              layout?: T;
+              id?: T;
+              blockName?: T;
+            };
+        logoWall?:
+          | T
+          | {
+              heading?: T;
+              logos?:
+                | T
+                | {
+                    logo?: T;
+                    name?: T;
+                    url?: T;
+                    id?: T;
+                  };
               id?: T;
               blockName?: T;
             };
         documentList?:
           | T
           | {
+              eyebrow?: T;
               heading?: T;
               intro?: T;
               types?: T;
@@ -1960,6 +2160,7 @@ export interface PagesSelect<T extends boolean = true> {
               heading?: T;
               intro?: T;
               members?: T;
+              layout?: T;
               id?: T;
               blockName?: T;
             };
@@ -1982,6 +2183,7 @@ export interface PagesSelect<T extends boolean = true> {
         faqBlock?:
           | T
           | {
+              eyebrow?: T;
               heading?: T;
               intro?: T;
               category?: T;
@@ -2011,8 +2213,10 @@ export interface PagesSelect<T extends boolean = true> {
         cta?:
           | T
           | {
+              eyebrow?: T;
               heading?: T;
               text?: T;
+              note?: T;
               links?:
                 | T
                 | {
@@ -2195,6 +2399,7 @@ export interface FaqsSelect<T extends boolean = true> {
 export interface TeamSelect<T extends boolean = true> {
   name?: T;
   role?: T;
+  tagline?: T;
   bio?: T;
   photo?: T;
   linkedinUrl?: T;
@@ -2484,6 +2689,10 @@ export interface SiteSetting {
  */
 export interface Header {
   id: number;
+  /**
+   * Short descriptor beside the logo, e.g. "Chromatography resins · Made in Anand, India". Use " · " to break lines.
+   */
+  tagline?: string | null;
   items?:
     | {
         link: {
@@ -2629,6 +2838,17 @@ export interface Footer {
         id?: string | null;
       }[]
     | null;
+  newsletter?: {
+    heading?: string | null;
+    /**
+     * Label above the email field.
+     */
+    text?: string | null;
+    /**
+     * Consent line under the field.
+     */
+    note?: string | null;
+  };
   legalLinks?:
     | {
         link: {
@@ -2755,6 +2975,7 @@ export interface SiteSettingsSelect<T extends boolean = true> {
  * via the `definition` "header_select".
  */
 export interface HeaderSelect<T extends boolean = true> {
+  tagline?: T;
   items?:
     | T
     | {
@@ -2826,6 +3047,13 @@ export interface FooterSelect<T extends boolean = true> {
               id?: T;
             };
         id?: T;
+      };
+  newsletter?:
+    | T
+    | {
+        heading?: T;
+        text?: T;
+        note?: T;
       };
   legalLinks?:
     | T

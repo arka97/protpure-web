@@ -2,7 +2,6 @@ import type { Metadata } from 'next'
 import { draftMode } from 'next/headers'
 import Link from 'next/link'
 import * as React from 'react'
-import { MessageCircle } from 'lucide-react'
 import { Header, type NavItem } from '@/components/layout/Header'
 import { Footer } from '@/components/layout/Footer'
 import { BasketProvider } from '@/components/rfq/BasketProvider'
@@ -10,8 +9,11 @@ import { BasketDrawer } from '@/components/rfq/BasketDrawer'
 import { getFooter, getHeader, getSiteSettings } from '@/lib/data'
 import { mediaUrl, resolveLink, SITE_URL, type LinkValue } from '@/lib/utils'
 import { organizationJsonLd, JsonLd } from '@/lib/jsonld'
-import '@fontsource-variable/inter'
-import '@fontsource-variable/manrope'
+import '@fontsource/instrument-serif/400.css'
+import '@fontsource/instrument-serif/400-italic.css'
+import '@fontsource-variable/dm-sans'
+import '@fontsource/ibm-plex-mono/400.css'
+import '@fontsource/ibm-plex-mono/500.css'
 import './globals.css'
 
 // Pages render on demand against the cached data layer (src/lib/data.ts), so Docker builds never
@@ -66,7 +68,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         {/* RFQ basket state (localStorage) is shared by the header button, product cards and the quote form. */}
         <BasketProvider>
           {isDraft ? (
-            <div className="bg-amber-400 px-4 py-1.5 text-center text-xs font-semibold text-amber-950">
+            <div className="bg-[#f3d9a4] px-4 py-1.5 text-center text-[12px] font-medium text-[#4a3306]">
               Preview mode — showing draft content.{' '}
               <Link href="/next/exit-preview" className="underline" prefetch={false}>
                 Exit preview
@@ -78,6 +80,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
             cta={cta ? { href: cta.href, label: cta.label } : { href: '/request-quote', label: 'Request a quote' }}
             logo={logo}
             siteName={settings.name || 'Protpure'}
+            tagline={header.tagline}
             announcement={settings.announcement?.enabled && settings.announcement.text ? { text: settings.announcement.text, href: announcementLink?.href } : null}
           />
           <main id="main" className="flex-1">
@@ -87,11 +90,11 @@ export default async function RootLayout({ children }: { children: React.ReactNo
             siteName={settings.name || 'Protpure'}
             legalName={settings.legalName}
             tagline={footer.tagline}
-            logo={logo}
             columns={(footer.columns ?? []).map((c) => ({ title: c.title, links: toNav((c.links ?? []).map((l) => ({ link: l.link }))) }))}
             legalLinks={toNav((footer.legalLinks ?? []).map((l) => ({ link: l.link })))}
             bottomText={footer.bottomText}
-            contact={{ email: settings.email, phone: settings.phone, address: settings.address, mapUrl: settings.mapUrl }}
+            newsletter={footer.newsletter}
+            contact={{ email: settings.email, phone: settings.phone, address: settings.address, mapUrl: settings.mapUrl, city: settings.city, country: settings.country }}
             linkedin={settings.social?.linkedin}
           />
           <BasketDrawer />
@@ -101,9 +104,12 @@ export default async function RootLayout({ children }: { children: React.ReactNo
               target="_blank"
               rel="noopener noreferrer"
               aria-label="Chat on WhatsApp"
-              className="fixed bottom-5 right-5 z-40 inline-flex h-12 w-12 items-center justify-center rounded-full bg-[#25D366] text-white shadow-card-hover transition hover:scale-105"
+              className="fixed bottom-5 right-5 z-40 inline-flex h-12 w-12 items-center justify-center rounded-full bg-[#25D366] text-white shadow-[0_6px_20px_rgb(8_31_41_/_0.2)] transition hover:scale-105"
             >
-              <MessageCircle className="h-6 w-6" />
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" className="h-6 w-6" aria-hidden>
+                <path d="M21 12a9 9 0 0 1-13.2 7.9L3 21l1.2-4.6A9 9 0 1 1 21 12Z" />
+                <path d="M9 10.5c.3 1.6 1.7 3.1 3.4 3.6l1-1 2 .9c-.3 1.3-1.3 1.9-2.6 1.6a7.6 7.6 0 0 1-5.1-5.2c-.3-1.3.4-2.3 1.7-2.5l.8 2z" />
+              </svg>
             </a>
           ) : null}
         </BasketProvider>

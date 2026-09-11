@@ -50,7 +50,7 @@ export const faqs = [
 ]
 
 export const team = [
-  { name: 'Dr. Rucha P. Desai', role: 'Founding Director', order: 1, linkedinUrl: 'https://www.linkedin.com/in/rucha-desai-b326003/', bio: rt(`Scientist and founder of Protpure Tech. After academic research in materials science, nanoparticle synthesis and magnetic fluids, Dr. Desai established Protpure in 2023 to build an indigenous agarose chromatography resin platform for India’s biopharma industry — from bead synthesis and cross-linking to ligand chemistry, process evaluation and customer deployment.`) },
+  { name: 'Dr. Rucha P. Desai', role: 'Founding Director', tagline: 'Materials scientist · bead synthesis, cross-linking and ligand chemistry', order: 1, linkedinUrl: 'https://www.linkedin.com/in/rucha-desai-b326003/', bio: rt(`Scientist and founder of Protpure Tech. After academic research in materials science, nanoparticle synthesis and magnetic fluids, Dr. Desai established Protpure in 2023 to build an indigenous agarose chromatography resin platform for India’s biopharma industry — from bead synthesis and cross-linking to ligand chemistry, process evaluation and customer deployment.`) },
 ]
 
 export const siteSettings = {
@@ -90,6 +90,7 @@ export const siteSettings = {
 }
 
 export const header = {
+  tagline: 'Chromatography resins · Made in Anand, India',
   items: [
     { label: 'Products', href: '/products', children: [
       { label: 'All products', href: '/products', description: 'Full catalog with filters' },
@@ -119,12 +120,12 @@ export const header = {
 }
 
 export const footer = {
-  tagline: 'Agarose chromatography resins developed, manufactured and supported in India — supplied to biopharma, vaccine, diagnostic and research labs worldwide.',
+  tagline: 'Agarose chromatography resins. Developed, manufactured and supported in Anand, Gujarat, India.',
   columns: [
-    { title: 'Products', links: [{ label: 'Ion Exchange', href: '/products/category/ion-exchange' }, { label: 'Affinity (IMAC)', href: '/products/category/affinity' }, { label: 'Size Exclusion', href: '/products/category/size-exclusion' }, { label: 'HIC', href: '/products/category/hydrophobic-interaction' }, { label: 'Mixed-Mode', href: '/products/category/mixed-mode' }, { label: 'Pre-packed Columns', href: '/products/category/columns' }] },
-    { title: 'Company', links: [{ label: 'About', slug: 'about' }, { label: 'Technology', slug: 'technology' }, { label: 'Services', href: '/services' }, { label: 'Global supply', slug: 'global-supply' }, { label: 'Contact', href: '/contact' }, { label: 'Request a quote', href: '/request-quote' }] },
-    { title: 'Resources', links: [{ label: 'Technical library', href: '/resources' }, { label: 'Blog', href: '/blog' }, { label: 'LinkedIn updates', href: '/updates' }, { label: 'FAQ', href: '/faq' }, { label: 'Compare resins', href: '/compare' }, { label: 'API & MCP for AI agents', href: '/llms.txt' }] },
+    { title: 'Explore', links: [{ label: 'Product catalogue', href: '/products' }, { label: 'Particle platform', slug: 'technology' }, { label: 'Applications', href: '/applications' }, { label: 'Services', href: '/services' }, { label: 'Compare resins', href: '/compare' }] },
+    { title: 'Connect', links: [{ label: 'Our company', slug: 'about' }, { label: 'Technical documents', href: '/resources' }, { label: 'Blog', href: '/blog' }, { label: 'Become a distributor', slug: 'global-supply' }, { label: 'Request a quote', href: '/request-quote' }, { label: 'FAQ', href: '/faq' }] },
   ],
+  newsletter: { heading: 'Notes from the bench', text: 'Product updates, data and technical notes.', note: 'By subscribing, you agree to receive Protpure updates. You can unsubscribe at any time.' },
   legalLinks: [{ label: 'Privacy policy', slug: 'privacy' }, { label: 'Terms of sale', slug: 'terms' }],
   bottomText: 'All rights reserved. Hy-Ionic™ is a trademark of Protpure Tech Pvt. Ltd.',
 }
