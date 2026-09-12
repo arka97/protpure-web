@@ -1,15 +1,15 @@
 import type { Metadata } from 'next'
+import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { PageHero } from '@/components/PageHero'
 import { RichText } from '@/components/RichText'
-import { ProductCard } from '@/components/product/cards'
-import { ButtonLink, Icon } from '@/components/ui'
-import { getCategory, getProducts } from '@/lib/data'
+import { Catalogue } from '@/components/product/Catalogue'
+import { ArrowIcon, ModeEmblem } from '@/components/visual/icons'
+import { getCategories, getCategory, getProducts, getSiteSettings } from '@/lib/data'
+import { parseCatalogueQuery } from '@/lib/catalog'
 import { buildMetadata } from '@/lib/seo'
 import { breadcrumbJsonLd, JsonLd } from '@/lib/jsonld'
 import { lexicalToText } from '@/lib/lexical-md'
-
-
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params
@@ -18,48 +18,49 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   return buildMetadata({ meta: cat.meta, title: `${cat.name} resins`, description: cat.tagline || lexicalToText(cat.description as never), path: `/products/category/${slug}`, image: cat.image })
 }
 
-export default async function CategoryPage({ params }: { params: Promise<{ slug: string }> }) {
-  const { slug } = await params
+/** One chromatography mode: the same filters and grid as the catalogue, scoped to the category, with its CMS intro. */
+export default async function CategoryPage({ params, searchParams }: { params: Promise<{ slug: string }>; searchParams: Promise<Record<string, string | string[] | undefined>> }) {
+  const [{ slug }, sp] = await Promise.all([params, searchParams])
   const cat = await getCategory(slug)
   if (!cat) notFound()
-  const products = await getProducts({ category: slug })
+  const query = parseCatalogueQuery({ ...sp, category: undefined })
+  const [products, categories, settings] = await Promise.all([getProducts({ category: slug }), getCategories(), getSiteSettings()])
   const crumbs = [{ label: 'Home', href: '/' }, { label: 'Products', href: '/products' }, { label: cat.name }]
+  const action = `/products/category/${slug}`
 
   return (
     <>
-      <PageHero hero={{ style: 'standard', eyebrow: 'Product category', heading: cat.name, text: cat.tagline, image: cat.image ?? null }} title={cat.name} breadcrumbs={crumbs}>
-        <div className="mt-8 flex flex-wrap gap-3">
-          <ButtonLink href={`/request-quote?${products.map((p) => `product=${p.id}`).join('&')}`}>Request a quote</ButtonLink>
-          <ButtonLink href="/products" appearance="onDark">
-            All categories
-          </ButtonLink>
-        </div>
+      <PageHero
+        tone="dark"
+        hero={{ style: 'compact', eyebrow: cat.shortName && cat.shortName !== cat.name ? `Chromatography mode · ${cat.shortName}` : 'Chromatography mode', heading: cat.name, text: cat.tagline }}
+        title={cat.name}
+        breadcrumbs={crumbs}
+        aside={<ModeEmblem icon={cat.icon} className="hidden h-[120px] w-[120px] text-teal-lum lg:block" />}
+      >
+        <p className="mt-6 text-[12px] text-text-2-dark">
+          <span className="mono">{products.length}</span> product{products.length === 1 ? '' : 's'} ·{' '}
+          <Link href="/products" className="underline decoration-rule-dark underline-offset-4 hover:text-surface">
+            All modes
+          </Link>
+        </p>
       </PageHero>
 
-      <section className="section">
-        <div className="container-x grid gap-12 lg:grid-cols-12">
-          <aside className="lg:col-span-4">
-            <div className="card sticky top-24 p-6">
-              <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-teal-50 text-teal-600">
-                <Icon name={cat.icon} className="h-6 w-6" />
-              </div>
-              <h2 className="heading-3 mt-4">About {cat.shortName || cat.name}</h2>
-              <RichText data={cat.description} className="mt-3 text-[0.95rem]" />
-            </div>
-          </aside>
-          <div className="lg:col-span-8">
-            <h2 className="heading-3">
-              {products.length} product{products.length === 1 ? '' : 's'}
-            </h2>
-            <div className="mt-6 grid gap-5 sm:grid-cols-2">
-              {products.map((p) => (
-                <ProductCard key={p.id} product={p} />
-              ))}
+      {cat.description ? (
+        <section className="border-b border-rule bg-surface">
+          <div className="container-x grid gap-6 py-8 lg:grid-cols-[220px_minmax(0,1fr)] lg:gap-10 lg:py-10">
+            <p className="eyebrow">About {cat.shortName || cat.name}</p>
+            <div className="max-w-[720px]">
+              <RichText data={cat.description} className="text-[15px]" />
+              <Link href="/technology" className="text-link mt-5 text-[13px]">
+                How the particle platform works <ArrowIcon />
+              </Link>
             </div>
           </div>
-        </div>
-      </section>
-      <JsonLd data={breadcrumbJsonLd(crumbs.map((c) => ({ name: c.label, href: c.href ?? `/products/category/${slug}` })))} />
+        </section>
+      ) : null}
+
+      <Catalogue products={products} categories={categories} query={query} action={action} scoped={cat} settings={settings} selector={false} />
+      <JsonLd data={breadcrumbJsonLd(crumbs.map((c) => ({ name: c.label, href: c.href ?? action })))} />
     </>
   )
 }

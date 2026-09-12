@@ -2,8 +2,11 @@ import type { Block, Field } from 'payload'
 import { linkField } from '@/fields/link'
 import { DOCUMENT_TYPES } from '@/collections/Documents'
 import { FAQ_CATEGORIES } from '@/collections/Faqs'
+import { CERTIFICATION_KINDS } from '@/collections/Certifications'
+import { UPDATE_KINDS } from '@/collections/Updates'
 
-const heading = (required = false): Field => ({ name: 'heading', type: 'text', required })
+// Textarea (still a varchar column): a line break in the heading is kept as a deliberate break on screen.
+const heading = (required = false): Field => ({ name: 'heading', type: 'textarea', required, admin: { rows: 2, description: 'Line breaks are kept. *asterisks* italicise the proposition.' } })
 const eyebrow: Field = { name: 'eyebrow', type: 'text', admin: { description: 'Small label above the heading.' } }
 const intro: Field = { name: 'intro', type: 'textarea' }
 const links = (max = 2): Field => ({ name: 'links', type: 'array', maxRows: max, fields: [linkField({ appearance: true })] })
@@ -18,6 +21,7 @@ export const RichTextBlock: Block = {
   fields: [
     { name: 'content', type: 'richText', required: true },
     { name: 'width', type: 'select', defaultValue: 'narrow', options: [{ label: 'Narrow (reading width)', value: 'narrow' }, { label: 'Wide', value: 'wide' }] },
+    { name: 'numbered', type: 'checkbox', defaultValue: false, admin: { description: 'Number the H2 headings 01, 02, 03… like the site’s chapters (legal pages, long policies).' } },
   ],
 }
 
@@ -33,8 +37,9 @@ export const StatsBlock: Block = {
       maxRows: 6,
       fields: [
         { type: 'row', fields: [
-          { name: 'value', type: 'text', required: true, admin: { width: '33%', description: 'e.g. 600 L' } },
-          { name: 'label', type: 'text', required: true, admin: { width: '67%' } },
+          { name: 'value', type: 'text', required: true, admin: { width: '25%', description: 'The numeral, e.g. 600' } },
+          { name: 'unit', type: 'text', admin: { width: '25%', description: 'Shown small next to the numeral, e.g. L / month' } },
+          { name: 'label', type: 'text', required: true, admin: { width: '50%' } },
         ] },
         { name: 'note', type: 'text' },
       ],
@@ -99,17 +104,36 @@ export const CtaBlock: Block = {
   slug: 'cta',
   labels: { singular: 'Call to action', plural: 'Calls to action' },
   fields: [
+    eyebrow,
     heading(true),
-    { name: 'text', type: 'textarea' },
+    { name: 'text', type: 'textarea', admin: { description: 'Blank lines start new paragraphs.' } },
+    { name: 'note', type: 'text', admin: { description: 'Short emphasised line after the text, e.g. the paid-evaluation credit policy.' } },
     links(2),
-    { name: 'style', type: 'select', defaultValue: 'dark', options: [{ label: 'Dark', value: 'dark' }, { label: 'Accent', value: 'accent' }, { label: 'Light', value: 'light' }] },
+    {
+      name: 'style',
+      type: 'select',
+      defaultValue: 'dark',
+      options: [
+        { label: 'Dark field', value: 'dark' },
+        { label: 'Accent band (luminous teal)', value: 'accent' },
+        { label: 'Light', value: 'light' },
+        { label: 'Evaluation panel (dark, with bead field)', value: 'evaluation' },
+      ],
+    },
   ],
 }
 
 export const ProductCategoriesBlock: Block = {
   slug: 'productCategories',
   labels: { singular: 'Product categories', plural: 'Product categories' },
-  fields: [eyebrow, heading(), intro],
+  fields: [
+    eyebrow,
+    heading(),
+    intro,
+    { name: 'categories', type: 'relationship', relationTo: 'product-categories', hasMany: true, admin: { description: 'Leave empty to show every category. Pick the main chromatography modes and mention the rest in the footnote.' } },
+    { name: 'footnote', type: 'text', admin: { description: 'Line under the grid, e.g. "Also available: pre-packed columns, magnetic beads & evaluation kits."' } },
+    { name: 'linkLabel', type: 'text', admin: { description: 'Catalogue link label. Defaults to "All N products".' } },
+  ],
 }
 
 export const FeaturedProductsBlock: Block = {
@@ -142,7 +166,15 @@ export const TwoColumnBlock: Block = {
     { name: 'content', type: 'richText' },
     links(2),
     { name: 'image', type: 'upload', relationTo: 'media' },
+    { type: 'row', fields: [
+      { name: 'imageCaption', type: 'text', admin: { width: '60%', description: 'Caption line under the image, e.g. "Process evaluation in the Protpure lab".' } },
+      { name: 'imageCaptionNote', type: 'text', admin: { width: '40%', description: 'Right-hand side of the caption, e.g. "Anand, Gujarat".' } },
+    ] },
     { name: 'imagePosition', type: 'select', defaultValue: 'right', options: [{ label: 'Right', value: 'right' }, { label: 'Left', value: 'left' }] },
+    { name: 'secondImage', type: 'upload', relationTo: 'media', admin: { description: 'Optional smaller image under the main one (e.g. facility exterior). Until it is uploaded, editors see a dashed slot in preview; visitors see only the text.' } },
+    { name: 'secondImageText', type: 'textarea', admin: { description: 'Text beside the second image.' } },
+    { name: 'quote', type: 'textarea', admin: { description: 'Optional quotation shown after the text (attribution comes from a following Team grid in "spread" layout).' } },
+    { name: 'background', type: 'select', defaultValue: 'light', options: [{ label: 'Light', value: 'light' }, { label: 'Recessed (tinted)', value: 'recessed' }] },
     {
       name: 'facts',
       type: 'array',
@@ -160,6 +192,7 @@ export const FaqBlock: Block = {
   slug: 'faqBlock',
   labels: { singular: 'FAQ list', plural: 'FAQ lists' },
   fields: [
+    eyebrow,
     heading(),
     intro,
     { name: 'category', type: 'select', options: [{ label: 'All categories', value: 'all' }, ...FAQ_CATEGORIES], defaultValue: 'all' },
@@ -170,7 +203,13 @@ export const FaqBlock: Block = {
 export const TeamGridBlock: Block = {
   slug: 'teamGrid',
   labels: { singular: 'Team grid', plural: 'Team grids' },
-  fields: [eyebrow, heading(), intro, { name: 'members', type: 'relationship', relationTo: 'team', hasMany: true, admin: { description: 'Leave empty to show everyone.' } }],
+  fields: [
+    eyebrow,
+    heading(),
+    intro,
+    { name: 'members', type: 'relationship', relationTo: 'team', hasMany: true, admin: { description: 'Leave empty to show everyone.' } },
+    { name: 'layout', type: 'select', defaultValue: 'grid', options: [{ label: 'Grid of cards', value: 'grid' }, { label: 'Spread (compact line under the previous section)', value: 'spread' }] },
+  ],
 }
 
 export const TimelineBlock: Block = {
@@ -199,6 +238,7 @@ export const DocumentListBlock: Block = {
   slug: 'documentList',
   labels: { singular: 'Document list', plural: 'Document lists' },
   fields: [
+    eyebrow,
     heading(),
     intro,
     { name: 'types', type: 'select', hasMany: true, options: [...DOCUMENT_TYPES], admin: { description: 'Leave empty for all types.' } },
@@ -206,8 +246,36 @@ export const DocumentListBlock: Block = {
   ],
 }
 
-export const ApplicationsGridBlock: Block = { slug: 'applicationsGrid', labels: { singular: 'Applications grid', plural: 'Applications grids' }, fields: [eyebrow, heading(), intro] }
-export const ServicesGridBlock: Block = { slug: 'servicesGrid', labels: { singular: 'Services grid', plural: 'Services grids' }, fields: [eyebrow, heading(), intro] }
+export const ApplicationsGridBlock: Block = {
+  slug: 'applicationsGrid',
+  labels: { singular: 'Applications grid', plural: 'Applications grids' },
+  fields: [eyebrow, heading(), intro, { name: 'layout', type: 'select', defaultValue: 'cards', options: [{ label: 'Cards', value: 'cards' }, { label: 'Compact link list', value: 'list' }] }],
+}
+export const ServicesGridBlock: Block = {
+  slug: 'servicesGrid',
+  labels: { singular: 'Services grid', plural: 'Services grids' },
+  fields: [eyebrow, heading(), intro, { name: 'layout', type: 'select', defaultValue: 'cards', options: [{ label: 'Cards', value: 'cards' }, { label: 'Inline row (heading + links)', value: 'row' }] }],
+}
+
+export const TrustStripBlock: Block = {
+  slug: 'trustStrip',
+  labels: { singular: 'Trust strip', plural: 'Trust strips' },
+  fields: [
+    {
+      name: 'source',
+      type: 'select',
+      defaultValue: 'settings',
+      options: [{ label: 'Site settings → certifications & claims', value: 'settings' }, { label: 'Custom items', value: 'custom' }],
+    },
+    {
+      name: 'items',
+      type: 'array',
+      maxRows: 6,
+      fields: [{ name: 'text', type: 'text', required: true }],
+      admin: { condition: (_, s) => s?.source === 'custom', description: 'Short statements, e.g. "CoA with every lot". Claims only, no invented certifications.' },
+    },
+  ],
+}
 
 export const LatestPostsBlock: Block = {
   slug: 'latestPosts',
@@ -218,7 +286,13 @@ export const LatestPostsBlock: Block = {
 export const LinkedInFeedBlock: Block = {
   slug: 'linkedInFeed',
   labels: { singular: 'LinkedIn feed', plural: 'LinkedIn feeds' },
-  fields: [eyebrow, heading(), intro, { name: 'limit', type: 'number', defaultValue: 3 }],
+  fields: [
+    eyebrow,
+    heading(),
+    intro,
+    { name: 'limit', type: 'number', defaultValue: 3 },
+    { name: 'kind', type: 'select', options: [...UPDATE_KINDS], admin: { description: 'Optional: show only updates of this kind (set on each LinkedIn update).' } },
+  ],
 }
 
 export const FormBlock: Block = {
@@ -255,7 +329,7 @@ export const GradesPlatformBlock: Block = {
       fields: [
         { type: 'row', fields: [
           { name: 'name', type: 'text', required: true, admin: { width: '40%', description: 'e.g. Agarose Precise' } },
-          { name: 'badge', type: 'text', admin: { width: '30%', description: 'e.g. High resolution' } },
+          { name: 'badge', type: 'text', admin: { width: '30%', description: 'Application label, e.g. Industrial capture' } },
           { name: 'd50', type: 'text', admin: { width: '30%', description: 'e.g. ~60 µm' } },
         ] },
         { type: 'row', fields: [
@@ -266,6 +340,8 @@ export const GradesPlatformBlock: Block = {
         { name: 'text', type: 'textarea' },
       ],
     },
+    { name: 'note', type: 'textarea', admin: { description: 'Footnote under the plot, e.g. "Bars show size range; dots show d50V. Platform values…"' } },
+    linkField({ labelRequired: false }),
   ],
 }
 
@@ -275,8 +351,92 @@ export const ResinSelectorBlock: Block = {
   fields: [eyebrow, heading(), intro],
 }
 
+/* ---------- Trust & proof blocks (rendered from src/components/blocks/trust/*) ---------- */
+
+export const LogoWallBlock: Block = {
+  slug: 'logoWall',
+  labels: { singular: 'Customer logo wall', plural: 'Customer logo walls' },
+  fields: [
+    eyebrow,
+    heading(),
+    {
+      name: 'source',
+      type: 'select',
+      defaultValue: 'all',
+      options: [
+        { label: 'All customers with "Show logo" ticked', value: 'all' },
+        { label: 'Picked customers', value: 'picked' },
+      ],
+    },
+    { name: 'customers', type: 'relationship', relationTo: 'customers', hasMany: true, admin: { condition: (_, s) => s?.source === 'picked', description: 'Only customers with a logo and "Show logo" ticked are rendered.' } },
+    { name: 'fallbackStatement', type: 'text', admin: { description: 'Shown instead of logos while none can be published. Defaults to Site settings → Proof points → Customers statement.' } },
+  ],
+}
+
+export const CertificationsStripBlock: Block = {
+  slug: 'certificationsStrip',
+  labels: { singular: 'Certifications strip', plural: 'Certifications strips' },
+  fields: [
+    heading(),
+    { name: 'kinds', type: 'select', hasMany: true, options: [...CERTIFICATION_KINDS], admin: { description: 'Leave empty for all kinds.' } },
+    { name: 'limit', type: 'number', defaultValue: 8 },
+  ],
+}
+
+export const GalleryBlock: Block = {
+  slug: 'gallery',
+  labels: { singular: 'Photo gallery', plural: 'Photo galleries' },
+  fields: [
+    eyebrow,
+    heading(),
+    {
+      name: 'items',
+      type: 'array',
+      labels: { singular: 'Photo', plural: 'Photos' },
+      admin: { description: 'Facility, lab and team photos. The block is hidden until at least one photo is added.' },
+      fields: [
+        { name: 'image', type: 'upload', relationTo: 'media', required: true },
+        { type: 'row', fields: [
+          { name: 'label', type: 'text', admin: { width: '35%', description: 'Small tag, e.g. "Production" or "QC lab".' } },
+          { name: 'caption', type: 'text', admin: { width: '65%' } },
+        ] },
+      ],
+    },
+    {
+      name: 'layout',
+      type: 'select',
+      defaultValue: 'grid',
+      options: [
+        { label: 'Grid', value: 'grid' },
+        { label: 'Horizontal strip', value: 'strip' },
+        { label: 'Spread (one large + small)', value: 'spread' },
+      ],
+    },
+  ],
+}
+
+export const PublicationsBlock: Block = {
+  slug: 'publications',
+  labels: { singular: 'Publications', plural: 'Publications' },
+  fields: [
+    eyebrow,
+    heading(),
+    { name: 'member', type: 'relationship', relationTo: 'team', admin: { description: 'Leave empty to list publications of every team member marked "featured".' } },
+  ],
+}
+
+export const ProofBarBlock: Block = {
+  slug: 'proofBar',
+  labels: { singular: 'Proof bar', plural: 'Proof bars' },
+  fields: [
+    { name: 'showStatement', type: 'checkbox', defaultValue: true, admin: { description: 'Include the customers statement from Site settings → Proof points.' } },
+    { name: 'style', type: 'select', defaultValue: 'light', options: [{ label: 'Light', value: 'light' }, { label: 'Dark', value: 'dark' }] },
+  ],
+}
+
 export const pageBlocks: Block[] = [
   RichTextBlock,
+  TrustStripBlock,
   StatsBlock,
   FeatureGridBlock,
   TwoColumnBlock,
@@ -297,4 +457,9 @@ export const pageBlocks: Block[] = [
   MediaBlock,
   FormBlock,
   CtaBlock,
+  LogoWallBlock,
+  CertificationsStripBlock,
+  GalleryBlock,
+  PublicationsBlock,
+  ProofBarBlock,
 ]

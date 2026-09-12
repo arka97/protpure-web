@@ -10,7 +10,7 @@ const config = [
       '@typescript-eslint/no-unused-vars': ['warn', { argsIgnorePattern: '^_', varsIgnorePattern: '^_', caughtErrorsIgnorePattern: '^(_|ignore)' }],
     },
   },
-  { ignores: ['.next/', 'src/payload-types.ts', 'src/migrations/', 'src/app/(payload)/'] },
+  { ignores: ['.next/', '.claude/', 'design/', 'src/payload-types.ts', 'src/migrations/', 'src/app/(payload)/'] },
 ]
 
 export default config

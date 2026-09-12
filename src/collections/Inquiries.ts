@@ -1,6 +1,8 @@
 import type { CollectionConfig } from 'payload'
 import { editors } from '@/access'
+import { GRADE_OPTIONS } from '@/collections/Products'
 import { sendInquiryEmails } from '@/emails/send'
+import { ITEM_PURPOSES } from '@/lib/rfq'
 
 export const INQUIRY_TYPES = [
   { label: 'Quote request', value: 'quote' },
@@ -24,8 +26,8 @@ export const Inquiries: CollectionConfig = {
   admin: {
     useAsTitle: 'subjectLine',
     group: 'Sales',
-    defaultColumns: ['subjectLine', 'type', 'status', 'country', 'createdAt'],
-    description: 'Quote and contact requests from the website, email and AI assistants. Update the status as you work them.',
+    defaultColumns: ['subjectLine', 'type', 'items', 'status', 'country', 'createdAt'],
+    description: 'Quote and contact requests from the website (RFQ basket), the public API and AI assistants. Update the status as you work them.',
     listSearchableFields: ['name', 'email', 'organization', 'message'],
   },
   access: {
@@ -40,7 +42,8 @@ export const Inquiries: CollectionConfig = {
       ({ data }) => {
         const who = [data?.name, data?.organization].filter(Boolean).join(' · ')
         const typeLabel = INQUIRY_TYPES.find((t) => t.value === data?.type)?.label ?? 'Inquiry'
-        data.subjectLine = `${typeLabel} — ${who || data?.email || 'unknown'}`
+        const n = Array.isArray(data?.items) ? data.items.length : 0
+        data.subjectLine = `${typeLabel}${n ? ` (${n} item${n === 1 ? '' : 's'})` : ''} — ${who || data?.email || 'unknown'}`
         return data
       },
     ],
@@ -80,8 +83,40 @@ export const Inquiries: CollectionConfig = {
       ],
     },
     { name: 'country', type: 'text' },
-    { name: 'products', type: 'relationship', relationTo: 'products', hasMany: true },
-    { name: 'requestedItems', type: 'textarea', label: 'Requested items / quantities', admin: { description: 'Free text as entered by the requester, e.g. "SP Agarose Precise, 2 × 1 L".' } },
+    {
+      name: 'items',
+      type: 'array',
+      label: 'Requested items',
+      labels: { singular: 'item', plural: 'items' },
+      admin: { description: 'Line items from the RFQ basket (or from an API / MCP caller). Sample kits are paid and credited against the first bulk order.' },
+      fields: [
+        {
+          type: 'row',
+          fields: [
+            { name: 'product', type: 'relationship', relationTo: 'products', admin: { width: '50%' } },
+            { name: 'productName', type: 'text', required: true, admin: { width: '50%', description: 'Name at the time of the request (kept even if the product is renamed or removed).' } },
+          ],
+        },
+        {
+          type: 'row',
+          fields: [
+            { name: 'grade', type: 'select', options: [...GRADE_OPTIONS], admin: { width: '25%' } },
+            { name: 'packSize', type: 'text', admin: { width: '25%', description: 'e.g. 1 L, 5 mL, Bulk (custom)' } },
+            { name: 'catalogNumber', type: 'text', admin: { width: '25%' } },
+            { name: 'quantity', type: 'number', defaultValue: 1, min: 1, admin: { width: '25%' } },
+          ],
+        },
+        {
+          type: 'row',
+          fields: [
+            { name: 'purpose', type: 'select', options: ITEM_PURPOSES.map((p) => ({ label: p.label, value: p.value })), defaultValue: 'production', admin: { width: '34%' } },
+            { name: 'notes', type: 'text', admin: { width: '66%', description: 'Line note from the requester, e.g. column geometry or target volume.' } },
+          ],
+        },
+      ],
+    },
+    { name: 'products', type: 'relationship', relationTo: 'products', hasMany: true, label: 'Products of interest', admin: { description: 'All products referenced by this inquiry (filled automatically from the items; also used by legacy API callers).' } },
+    { name: 'requestedItems', type: 'textarea', label: 'Requested items (free text)', admin: { description: 'Free text as entered by the requester or an AI assistant, e.g. "SP Agarose Precise, 2 × 1 L".' } },
     { name: 'application', type: 'text', admin: { description: 'What they are purifying / their process.' } },
     { name: 'message', type: 'textarea' },
     {

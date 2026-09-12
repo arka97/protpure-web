@@ -6,7 +6,12 @@ export const OPTIONS = options
 
 /**
  * POST /api/public/inquiries — file a quote/contact request from an integration or agent.
- * Body: JSON matching `inquirySchema` (type, name, email, organization, country, productIds[], requestedItems, application, message).
+ * Body: JSON matching `inquirySchema`:
+ *   { type, name, email, organization?, jobTitle?, phone?, country?, application?, message?,
+ *     items?: [{ productId? | productSlug? | productName?, grade?, packSize?, catalogNumber?, quantity?, purpose?, notes? }],
+ *     productIds?: number[] (legacy), requestedItems?: string (legacy free text) }
+ * `purpose` is one of sample-kit | evaluation | production | other. Sample kits are paid and credited
+ * against the first bulk order — Protpure does not ship free samples.
  */
 export async function POST(req: Request) {
   const ip = (req.headers.get('x-forwarded-for') ?? '').split(',')[0].trim() || null
@@ -21,5 +26,5 @@ export async function POST(req: Request) {
   if (!parsed.success) return json({ error: 'Validation failed', issues: parsed.error.issues.map((i) => ({ path: i.path.join('.'), message: i.message })) }, 422)
   const payload = await getPayloadClient()
   const doc = await createInquiry(payload, parsed.data, { source: 'api', ip, userAgent: req.headers.get('user-agent') })
-  return json({ ok: true, id: doc.id, message: `Inquiry #${doc.id} received. A confirmation has been emailed to ${doc.email}.` }, 201)
+  return json({ ok: true, id: doc.id, itemCount: doc.items?.length ?? 0, message: `Inquiry #${doc.id} received. A confirmation has been emailed to ${doc.email}.` }, 201)
 }

@@ -1,14 +1,40 @@
 import * as React from 'react'
-import type { Application, Post, Product, ProductCategory, SiteSetting, Faq } from '@/payload-types'
+import { categoryOf } from './catalog'
+import type { Application, Certification, Post, Product, SiteSetting, Faq, Team } from '@/payload-types'
 import { absoluteUrl, mediaUrl, SITE_URL } from './utils'
 import { lexicalToText } from './lexical-md'
+import { CREDENTIAL_KINDS, founderOf, parseFoundedDate, parseTeamSize } from './trust'
 
 export function JsonLd({ data }: { data: Record<string, unknown> | Record<string, unknown>[] }) {
   return React.createElement('script', { type: 'application/ld+json', dangerouslySetInnerHTML: { __html: JSON.stringify(data).replace(/</g, '\\u003c') } })
 }
 
-export function organizationJsonLd(s: SiteSetting) {
+/** schema.org Person for a team member: credentials as EducationalOccupationalCredential, LinkedIn as sameAs. Nothing unknown is emitted. */
+export function personJsonLd(m: Team) {
+  const photo = mediaUrl(m.photo, 'thumbnail')
+  return {
+    '@type': 'Person',
+    name: m.name,
+    jobTitle: m.role || undefined,
+    image: photo ? absoluteUrl(photo) : undefined,
+    sameAs: m.linkedinUrl ? [m.linkedinUrl] : undefined,
+    hasCredential: m.credentials?.length ? m.credentials.map((c) => ({ '@type': 'EducationalOccupationalCredential', name: c.text })) : undefined,
+    knowsAbout: m.expertise?.length ? m.expertise.map((e) => e.text) : undefined,
+    worksFor: { '@id': `${SITE_URL}/#organization` },
+  }
+}
+
+/**
+ * Organization + WebSite. `extras.team` supplies the founder (first member whose role mentions
+ * founding); `extras.certifications` supplies `hasCredential` for third-party certifications
+ * (quality system, regulatory, membership, award — product claims are not credentials). Founding
+ * date and head-count come from Site settings → Proof points, falling back to the founded year.
+ */
+export function organizationJsonLd(s: SiteSetting, extras?: { team?: Team[] | null; certifications?: Certification[] | null }) {
   const logo = mediaUrl(s.logo)
+  const founder = founderOf(extras?.team)
+  const employees = parseTeamSize(s.proof?.teamSize)
+  const credentials = (extras?.certifications ?? []).filter((c) => CREDENTIAL_KINDS.has(c.kind))
   return [
     {
       '@context': 'https://schema.org',
@@ -19,13 +45,28 @@ export function organizationJsonLd(s: SiteSetting) {
       url: SITE_URL,
       logo: logo ? absoluteUrl(logo) : undefined,
       description: s.description || undefined,
-      foundingDate: s.foundedYear ? String(s.foundedYear) : undefined,
+      foundingDate: parseFoundedDate(s.proof?.foundedText, s.foundedYear),
+      founder: founder ? personJsonLd(founder) : undefined,
+      numberOfEmployees: employees ? { '@type': 'QuantitativeValue', ...employees } : undefined,
       email: s.email || undefined,
       telephone: s.phone || undefined,
       address: s.address
         ? { '@type': 'PostalAddress', streetAddress: s.address.replace(/\n/g, ', '), addressLocality: s.city || undefined, addressRegion: s.region || undefined, addressCountry: s.country || 'IN' }
         : undefined,
       sameAs: [s.social?.linkedin, s.social?.youtube, s.social?.x].filter(Boolean),
+      hasCredential: credentials.length
+        ? credentials.map((c) => {
+            const doc = c.document && typeof c.document === 'object' ? c.document : null
+            return {
+              '@type': 'EducationalOccupationalCredential',
+              name: c.name,
+              credentialCategory: c.kind,
+              description: c.statement || undefined,
+              recognizedBy: c.issuer ? { '@type': 'Organization', name: c.issuer } : undefined,
+              url: doc?.url ? absoluteUrl(doc.url) : undefined,
+            }
+          })
+        : undefined,
       knowsAbout: ['Agarose chromatography resins', 'Ion exchange chromatography', 'Immobilized metal affinity chromatography', 'Size exclusion chromatography', 'Downstream bioprocessing'],
     },
     {
@@ -49,7 +90,7 @@ export function breadcrumbJsonLd(items: { name: string; href: string }[]) {
 }
 
 export function productJsonLd(p: Product) {
-  const cat = p.category as ProductCategory
+  const cat = categoryOf(p)
   const img = mediaUrl(p.image, 'large')
   const props = [
     ...(p.chemistry?.ligand ? [{ '@type': 'PropertyValue', name: 'Ligand', value: p.chemistry.ligand }] : []),

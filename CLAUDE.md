@@ -10,3 +10,4 @@ Next.js 16 + Payload CMS 3 + Postgres. See README.md for architecture, scripts a
 - Media URLs must go through `mediaUrl()` (Payload emits absolute URLs; `next/image` needs same-origin paths).
 - Any new content surface should be reflected in `src/lib/markdown.ts` (AI/markdown views), `src/lib/public-api.ts` and the MCP tools in `src/app/mcp/route.ts`.
 - Checks before committing: `pnpm typecheck && pnpm lint && pnpm test && pnpm build`.
+- Parallel branches sharing the local Postgres: run dev with `PAYLOAD_DB_PUSH=false` unless your branch changes the schema (schema push drops tables your branch does not know about).

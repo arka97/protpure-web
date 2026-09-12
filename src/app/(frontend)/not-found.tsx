@@ -1,19 +1,5 @@
-import { ButtonLink } from '@/components/ui'
+import { StatusPage } from '@/components/StatusPage'
 
 export default function NotFound() {
-  return (
-    <section className="section">
-      <div className="container-x max-w-xl text-center">
-        <p className="eyebrow">404</p>
-        <h1 className="heading-2 mt-3">Page not found</h1>
-        <p className="mt-3 text-ink-soft">The page may have moved. Try the catalog or ask us directly.</p>
-        <div className="mt-8 flex justify-center gap-3">
-          <ButtonLink href="/products">Browse products</ButtonLink>
-          <ButtonLink href="/contact" appearance="secondary">
-            Contact us
-          </ButtonLink>
-        </div>
-      </div>
-    </section>
-  )
+  return <StatusPage tone="plain" eyebrow="404" heading="Nothing *here.*" text="The page may have moved, or the address has a typo. The catalogue and the technical team are one click away." links={[{ href: '/products', label: 'Browse the catalogue', appearance: 'primary' }, { href: '/contact', label: 'Contact us', appearance: 'secondary' }]} />
 }

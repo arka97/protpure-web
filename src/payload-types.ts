@@ -79,8 +79,10 @@ export interface Config {
     faqs: Faq;
     team: Team;
     testimonials: Testimonial;
+    certifications: Certification;
     inquiries: Inquiry;
     subscribers: Subscriber;
+    customers: Customer;
     users: User;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
@@ -101,8 +103,10 @@ export interface Config {
     faqs: FaqsSelect<false> | FaqsSelect<true>;
     team: TeamSelect<false> | TeamSelect<true>;
     testimonials: TestimonialsSelect<false> | TestimonialsSelect<true>;
+    certifications: CertificationsSelect<false> | CertificationsSelect<true>;
     inquiries: InquiriesSelect<false> | InquiriesSelect<true>;
     subscribers: SubscribersSelect<false> | SubscribersSelect<true>;
+    customers: CustomersSelect<false> | CustomersSelect<true>;
     users: UsersSelect<false> | UsersSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
@@ -274,6 +278,10 @@ export interface Product {
    */
   leadTime?: string | null;
   bulkAvailable?: boolean | null;
+  /**
+   * Copy for the "Paid evaluation packs — qualify before you scale" callout under the ordering table. State the pack sizes and how the cost is credited; evaluation packs are paid, never free samples.
+   */
+  evaluationNote?: string | null;
   /**
    * Datasheets and other PDFs for this product.
    */
@@ -573,10 +581,10 @@ export interface Page {
   id: number;
   title: string;
   hero?: {
-    style?: ('standard' | 'compact' | 'none') | null;
+    style?: ('standard' | 'schematic' | 'compact' | 'none') | null;
     eyebrow?: string | null;
     /**
-     * Defaults to the page title.
+     * Defaults to the page title. Line breaks are kept.
      */
     heading?: string | null;
     /**
@@ -585,6 +593,22 @@ export interface Page {
     highlight?: string | null;
     text?: string | null;
     image?: (number | null) | Media;
+    /**
+     * Standard: medallion on the photo, e.g. "BPG 200". Schematic: label above the drawing, e.g. "Particle architecture".
+     */
+    imageMarker?: string | null;
+    /**
+     * Standard: small line in the medallion, e.g. "Client deployment". Schematic: right-hand label, e.g. "Fig. 01 / Schematic".
+     */
+    imageMarkerNote?: string | null;
+    /**
+     * Caption under the photo or drawing, e.g. "Ni-NTA Agarose in a process column".
+     */
+    imageCaption?: string | null;
+    /**
+     * Right-hand caption, e.g. "At a client site".
+     */
+    imageCaptionNote?: string | null;
     links?:
       | {
           link: {
@@ -647,18 +671,44 @@ export interface Page {
               [k: string]: unknown;
             };
             width?: ('narrow' | 'wide') | null;
+            /**
+             * Number the H2 headings 01, 02, 03… like the site’s chapters (legal pages, long policies).
+             */
+            numbered?: boolean | null;
             id?: string | null;
             blockName?: string | null;
             blockType: 'richText';
           }
         | {
+            source?: ('settings' | 'custom') | null;
+            /**
+             * Short statements, e.g. "CoA with every lot". Claims only, no invented certifications.
+             */
+            items?:
+              | {
+                  text: string;
+                  id?: string | null;
+                }[]
+              | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'trustStrip';
+          }
+        | {
+            /**
+             * Line breaks are kept. *asterisks* italicise the proposition.
+             */
             heading?: string | null;
             items?:
               | {
                   /**
-                   * e.g. 600 L
+                   * The numeral, e.g. 600
                    */
                   value: string;
+                  /**
+                   * Shown small next to the numeral, e.g. L / month
+                   */
+                  unit?: string | null;
                   label: string;
                   note?: string | null;
                   id?: string | null;
@@ -674,6 +724,9 @@ export interface Page {
              * Small label above the heading.
              */
             eyebrow?: string | null;
+            /**
+             * Line breaks are kept. *asterisks* italicise the proposition.
+             */
             heading?: string | null;
             intro?: string | null;
             columns?: ('2' | '3' | '4') | null;
@@ -744,6 +797,9 @@ export interface Page {
              * Small label above the heading.
              */
             eyebrow?: string | null;
+            /**
+             * Line breaks are kept. *asterisks* italicise the proposition.
+             */
             heading?: string | null;
             content?: {
               root: {
@@ -794,7 +850,28 @@ export interface Page {
                 }[]
               | null;
             image?: (number | null) | Media;
+            /**
+             * Caption line under the image, e.g. "Process evaluation in the Protpure lab".
+             */
+            imageCaption?: string | null;
+            /**
+             * Right-hand side of the caption, e.g. "Anand, Gujarat".
+             */
+            imageCaptionNote?: string | null;
             imagePosition?: ('right' | 'left') | null;
+            /**
+             * Optional smaller image under the main one (e.g. facility exterior). Until it is uploaded, editors see a dashed slot in preview; visitors see only the text.
+             */
+            secondImage?: (number | null) | Media;
+            /**
+             * Text beside the second image.
+             */
+            secondImageText?: string | null;
+            /**
+             * Optional quotation shown after the text (attribution comes from a following Team grid in "spread" layout).
+             */
+            quote?: string | null;
+            background?: ('light' | 'recessed') | null;
             /**
              * Key/value list shown under the text, e.g. Location → Anand, Gujarat.
              */
@@ -814,6 +891,9 @@ export interface Page {
              * Small label above the heading.
              */
             eyebrow?: string | null;
+            /**
+             * Line breaks are kept. *asterisks* italicise the proposition.
+             */
             heading?: string | null;
             intro?: string | null;
             columnA: string;
@@ -836,6 +916,9 @@ export interface Page {
              * Small label above the heading.
              */
             eyebrow?: string | null;
+            /**
+             * Line breaks are kept. *asterisks* italicise the proposition.
+             */
             heading?: string | null;
             intro?: string | null;
             grades?:
@@ -845,7 +928,7 @@ export interface Page {
                    */
                   name: string;
                   /**
-                   * e.g. High resolution
+                   * Application label, e.g. Industrial capture
                    */
                   badge?: string | null;
                   /**
@@ -868,6 +951,37 @@ export interface Page {
                   id?: string | null;
                 }[]
               | null;
+            /**
+             * Footnote under the plot, e.g. "Bars show size range; dots show d50V. Platform values…"
+             */
+            note?: string | null;
+            link?: {
+              type?: ('internal' | 'custom') | null;
+              newTab?: boolean | null;
+              reference?:
+                | ({
+                    relationTo: 'pages';
+                    value: number | Page;
+                  } | null)
+                | ({
+                    relationTo: 'products';
+                    value: number | Product;
+                  } | null)
+                | ({
+                    relationTo: 'product-categories';
+                    value: number | ProductCategory;
+                  } | null)
+                | ({
+                    relationTo: 'applications';
+                    value: number | Application;
+                  } | null)
+                | ({
+                    relationTo: 'posts';
+                    value: number | Post;
+                  } | null);
+              url?: string | null;
+              label?: string | null;
+            };
             id?: string | null;
             blockName?: string | null;
             blockType: 'gradesPlatform';
@@ -877,6 +991,9 @@ export interface Page {
              * Small label above the heading.
              */
             eyebrow?: string | null;
+            /**
+             * Line breaks are kept. *asterisks* italicise the proposition.
+             */
             heading?: string | null;
             intro?: string | null;
             id?: string | null;
@@ -888,8 +1005,23 @@ export interface Page {
              * Small label above the heading.
              */
             eyebrow?: string | null;
+            /**
+             * Line breaks are kept. *asterisks* italicise the proposition.
+             */
             heading?: string | null;
             intro?: string | null;
+            /**
+             * Leave empty to show every category. Pick the main chromatography modes and mention the rest in the footnote.
+             */
+            categories?: (number | ProductCategory)[] | null;
+            /**
+             * Line under the grid, e.g. "Also available: pre-packed columns, magnetic beads & evaluation kits."
+             */
+            footnote?: string | null;
+            /**
+             * Catalogue link label. Defaults to "All N products".
+             */
+            linkLabel?: string | null;
             id?: string | null;
             blockName?: string | null;
             blockType: 'productCategories';
@@ -899,6 +1031,9 @@ export interface Page {
              * Small label above the heading.
              */
             eyebrow?: string | null;
+            /**
+             * Line breaks are kept. *asterisks* italicise the proposition.
+             */
             heading?: string | null;
             intro?: string | null;
             /**
@@ -914,8 +1049,12 @@ export interface Page {
              * Small label above the heading.
              */
             eyebrow?: string | null;
+            /**
+             * Line breaks are kept. *asterisks* italicise the proposition.
+             */
             heading?: string | null;
             intro?: string | null;
+            layout?: ('cards' | 'list') | null;
             id?: string | null;
             blockName?: string | null;
             blockType: 'applicationsGrid';
@@ -925,13 +1064,24 @@ export interface Page {
              * Small label above the heading.
              */
             eyebrow?: string | null;
+            /**
+             * Line breaks are kept. *asterisks* italicise the proposition.
+             */
             heading?: string | null;
             intro?: string | null;
+            layout?: ('cards' | 'row') | null;
             id?: string | null;
             blockName?: string | null;
             blockType: 'servicesGrid';
           }
         | {
+            /**
+             * Small label above the heading.
+             */
+            eyebrow?: string | null;
+            /**
+             * Line breaks are kept. *asterisks* italicise the proposition.
+             */
             heading?: string | null;
             intro?: string | null;
             /**
@@ -961,6 +1111,9 @@ export interface Page {
              * Small label above the heading.
              */
             eyebrow?: string | null;
+            /**
+             * Line breaks are kept. *asterisks* italicise the proposition.
+             */
             heading?: string | null;
             limit?: number | null;
             id?: string | null;
@@ -972,9 +1125,16 @@ export interface Page {
              * Small label above the heading.
              */
             eyebrow?: string | null;
+            /**
+             * Line breaks are kept. *asterisks* italicise the proposition.
+             */
             heading?: string | null;
             intro?: string | null;
             limit?: number | null;
+            /**
+             * Optional: show only updates of this kind (set on each LinkedIn update).
+             */
+            kind?: ('product-launch' | 'data' | 'milestone' | 'services' | 'perspective') | null;
             id?: string | null;
             blockName?: string | null;
             blockType: 'linkedInFeed';
@@ -984,6 +1144,9 @@ export interface Page {
              * Small label above the heading.
              */
             eyebrow?: string | null;
+            /**
+             * Line breaks are kept. *asterisks* italicise the proposition.
+             */
             heading?: string | null;
             /**
              * Leave empty to show all.
@@ -998,12 +1161,16 @@ export interface Page {
              * Small label above the heading.
              */
             eyebrow?: string | null;
+            /**
+             * Line breaks are kept. *asterisks* italicise the proposition.
+             */
             heading?: string | null;
             intro?: string | null;
             /**
              * Leave empty to show everyone.
              */
             members?: (number | Team)[] | null;
+            layout?: ('grid' | 'spread') | null;
             id?: string | null;
             blockName?: string | null;
             blockType: 'teamGrid';
@@ -1013,6 +1180,9 @@ export interface Page {
              * Small label above the heading.
              */
             eyebrow?: string | null;
+            /**
+             * Line breaks are kept. *asterisks* italicise the proposition.
+             */
             heading?: string | null;
             items?:
               | {
@@ -1030,6 +1200,13 @@ export interface Page {
             blockType: 'timeline';
           }
         | {
+            /**
+             * Small label above the heading.
+             */
+            eyebrow?: string | null;
+            /**
+             * Line breaks are kept. *asterisks* italicise the proposition.
+             */
             heading?: string | null;
             intro?: string | null;
             category?: ('all' | 'products' | 'ordering' | 'shipping' | 'quality' | 'technical') | null;
@@ -1051,6 +1228,9 @@ export interface Page {
           }
         | {
             form: 'quote' | 'contact' | 'partnership' | 'newsletter';
+            /**
+             * Line breaks are kept. *asterisks* italicise the proposition.
+             */
             heading?: string | null;
             intro?: string | null;
             /**
@@ -1076,8 +1256,22 @@ export interface Page {
             blockType: 'formBlock';
           }
         | {
+            /**
+             * Small label above the heading.
+             */
+            eyebrow?: string | null;
+            /**
+             * Line breaks are kept. *asterisks* italicise the proposition.
+             */
             heading: string;
+            /**
+             * Blank lines start new paragraphs.
+             */
             text?: string | null;
+            /**
+             * Short emphasised line after the text, e.g. the paid-evaluation credit policy.
+             */
+            note?: string | null;
             links?:
               | {
                   link: {
@@ -1111,10 +1305,101 @@ export interface Page {
                   id?: string | null;
                 }[]
               | null;
-            style?: ('dark' | 'accent' | 'light') | null;
+            style?: ('dark' | 'accent' | 'light' | 'evaluation') | null;
             id?: string | null;
             blockName?: string | null;
             blockType: 'cta';
+          }
+        | {
+            /**
+             * Small label above the heading.
+             */
+            eyebrow?: string | null;
+            /**
+             * Line breaks are kept. *asterisks* italicise the proposition.
+             */
+            heading?: string | null;
+            source?: ('all' | 'picked') | null;
+            /**
+             * Only customers with a logo and "Show logo" ticked are rendered.
+             */
+            customers?: (number | Customer)[] | null;
+            /**
+             * Shown instead of logos while none can be published. Defaults to Site settings → Proof points → Customers statement.
+             */
+            fallbackStatement?: string | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'logoWall';
+          }
+        | {
+            /**
+             * Line breaks are kept. *asterisks* italicise the proposition.
+             */
+            heading?: string | null;
+            /**
+             * Leave empty for all kinds.
+             */
+            kinds?: ('quality-system' | 'product-claim' | 'regulatory' | 'membership' | 'award')[] | null;
+            limit?: number | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'certificationsStrip';
+          }
+        | {
+            /**
+             * Small label above the heading.
+             */
+            eyebrow?: string | null;
+            /**
+             * Line breaks are kept. *asterisks* italicise the proposition.
+             */
+            heading?: string | null;
+            /**
+             * Facility, lab and team photos. The block is hidden until at least one photo is added.
+             */
+            items?:
+              | {
+                  image: number | Media;
+                  /**
+                   * Small tag, e.g. "Production" or "QC lab".
+                   */
+                  label?: string | null;
+                  caption?: string | null;
+                  id?: string | null;
+                }[]
+              | null;
+            layout?: ('grid' | 'strip' | 'spread') | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'gallery';
+          }
+        | {
+            /**
+             * Small label above the heading.
+             */
+            eyebrow?: string | null;
+            /**
+             * Line breaks are kept. *asterisks* italicise the proposition.
+             */
+            heading?: string | null;
+            /**
+             * Leave empty to list publications of every team member marked "featured".
+             */
+            member?: (number | null) | Team;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'publications';
+          }
+        | {
+            /**
+             * Include the customers statement from Site settings → Proof points.
+             */
+            showStatement?: boolean | null;
+            style?: ('light' | 'dark') | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'proofBar';
           }
       )[]
     | null;
@@ -1191,6 +1476,10 @@ export interface Team {
   id: number;
   name: string;
   role: string;
+  /**
+   * One-line bio for compact layouts, e.g. "Materials scientist · bead synthesis and ligand chemistry".
+   */
+  tagline?: string | null;
   bio?: {
     root: {
       type: string;
@@ -1206,15 +1495,55 @@ export interface Team {
     };
     [k: string]: unknown;
   } | null;
+  /**
+   * Square portrait. Until one is uploaded the site shows the member’s initials.
+   */
   photo?: (number | null) | Media;
+  /**
+   * Degrees and titles, e.g. "Ph.D. (Physics)". Shown under the name and given to AI assistants.
+   */
+  credentials?:
+    | {
+        text: string;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Short phrases, e.g. "ligand coupling".
+   */
+  expertise?:
+    | {
+        text: string;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Peer-reviewed papers, patents or theses. Verify before publishing: title, journal, year and link must match the published record.
+   */
+  publications?:
+    | {
+        title: string;
+        /**
+         * Journal or publisher, with volume/pages if known.
+         */
+        journal?: string | null;
+        year?: number | null;
+        url?: string | null;
+        id?: string | null;
+      }[]
+    | null;
   linkedinUrl?: string | null;
   email?: string | null;
+  /**
+   * Featured members supply the publications block and the founder entry in structured data.
+   */
+  featured?: boolean | null;
   order?: number | null;
   updatedAt: string;
   createdAt: string;
 }
 /**
- * Customer quotes and logos. Only publish with written permission from the customer.
+ * Customer quotes and logos. Only publish with written permission from the customer — tick "Consent on file" once you have it.
  *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "testimonials".
@@ -1226,8 +1555,17 @@ export interface Testimonial {
   role?: string | null;
   organization: string;
   country?: string | null;
+  /**
+   * How the customer uses Protpure resins. Shown as a small label on the quote.
+   */
+  context?: ('evaluation' | 'production' | 'research' | 'distributor') | null;
   logo?: (number | null) | Media;
   products?: (number | Product)[] | null;
+  /**
+   * Only publish with written permission. Internal note — not shown on the site.
+   */
+  consentOnFile?: boolean | null;
+  featured?: boolean | null;
   order?: number | null;
   updatedAt: string;
   createdAt: string;
@@ -1264,7 +1602,35 @@ export interface Faq {
   createdAt: string;
 }
 /**
- * Paste the URL of a public LinkedIn post. The site embeds it automatically and shows your summary as a fallback for readers without LinkedIn.
+ * Customer references for the logo wall. Only tick "Show logo" with the customer’s permission.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "customers".
+ */
+export interface Customer {
+  id: number;
+  name: string;
+  /**
+   * Transparent PNG or SVG, ideally wider than tall.
+   */
+  logo?: (number | null) | Media;
+  website?: string | null;
+  sector?: ('biopharma' | 'vaccines' | 'diagnostics' | 'cdmo' | 'research' | 'distributor') | null;
+  country?: string | null;
+  /**
+   * How to refer to this customer without naming them, e.g. "Indian vaccine manufacturer". Used when the logo cannot be shown.
+   */
+  anonymisedLabel?: string | null;
+  /**
+   * Requires the customer’s permission and an uploaded logo.
+   */
+  showLogo?: boolean | null;
+  order?: number | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * Paste the URL of a public LinkedIn post. The site embeds it automatically and shows your summary as a fallback for readers without LinkedIn. Drafts are hidden from the site until you publish.
  *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "updates".
@@ -1275,6 +1641,9 @@ export interface Update {
    * Short headline for the update.
    */
   title: string;
+  /**
+   * Required to publish. Drafts can be saved without it.
+   */
   url: string;
   /**
    * Auto-filled from the URL. Only edit if the embed does not load.
@@ -1289,13 +1658,58 @@ export interface Update {
    */
   image?: (number | null) | Media;
   relatedProducts?: (number | Product)[] | null;
+  /**
+   * Lets page blocks show only one type of update, e.g. product launches.
+   */
+  kind?: ('product-launch' | 'data' | 'milestone' | 'services' | 'perspective') | null;
   publishedAt: string;
+  /**
+   * Pinned updates are listed first.
+   */
   pinned?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
+}
+/**
+ * Certifications, registrations and quality claims shown in the certifications strip and given to AI assistants. Upload the certificate PDF under Content → Documents and link it here.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "certifications".
+ */
+export interface Certification {
+  id: number;
+  /**
+   * e.g. "ISO 9001:2015" or "Certificate of analysis with every lot".
+   */
+  name: string;
+  kind: 'quality-system' | 'product-claim' | 'regulatory' | 'membership' | 'award';
+  /**
+   * Certifying body or authority. Leave empty for Protpure’s own claims.
+   */
+  issuer?: string | null;
+  /**
+   * One sentence explaining what this means for a buyer.
+   */
+  statement?: string | null;
+  /**
+   * Expiry date of the certificate, if any.
+   */
+  validUntil?: string | null;
+  /**
+   * The certificate PDF (Content → Documents).
+   */
+  document?: (number | null) | Document;
+  /**
+   * Badge or issuer logo (optional).
+   */
+  logo?: (number | null) | Media;
+  order?: number | null;
   updatedAt: string;
   createdAt: string;
 }
 /**
- * Quote and contact requests from the website, email and AI assistants. Update the status as you work them.
+ * Quote and contact requests from the website (RFQ basket), the public API and AI assistants. Update the status as you work them.
  *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "inquiries".
@@ -1311,9 +1725,37 @@ export interface Inquiry {
   jobTitle?: string | null;
   phone?: string | null;
   country?: string | null;
+  /**
+   * Line items from the RFQ basket (or from an API / MCP caller). Sample kits are paid and credited against the first bulk order.
+   */
+  items?:
+    | {
+        product?: (number | null) | Product;
+        /**
+         * Name at the time of the request (kept even if the product is renamed or removed).
+         */
+        productName: string;
+        grade?: ('faster' | 'fast-flow' | 'precise' | 'hr') | null;
+        /**
+         * e.g. 1 L, 5 mL, Bulk (custom)
+         */
+        packSize?: string | null;
+        catalogNumber?: string | null;
+        quantity?: number | null;
+        purpose?: ('sample-kit' | 'evaluation' | 'production' | 'other') | null;
+        /**
+         * Line note from the requester, e.g. column geometry or target volume.
+         */
+        notes?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * All products referenced by this inquiry (filled automatically from the items; also used by legacy API callers).
+   */
   products?: (number | Product)[] | null;
   /**
-   * Free text as entered by the requester, e.g. "SP Agarose Precise, 2 × 1 L".
+   * Free text as entered by the requester or an AI assistant, e.g. "SP Agarose Precise, 2 × 1 L".
    */
   requestedItems?: string | null;
   /**
@@ -1460,12 +1902,20 @@ export interface PayloadLockedDocument {
         value: number | Testimonial;
       } | null)
     | ({
+        relationTo: 'certifications';
+        value: number | Certification;
+      } | null)
+    | ({
         relationTo: 'inquiries';
         value: number | Inquiry;
       } | null)
     | ({
         relationTo: 'subscribers';
         value: number | Subscriber;
+      } | null)
+    | ({
+        relationTo: 'customers';
+        value: number | Customer;
       } | null)
     | ({
         relationTo: 'users';
@@ -1576,6 +2026,7 @@ export interface ProductsSelect<T extends boolean = true> {
       };
   leadTime?: T;
   bulkAvailable?: T;
+  evaluationNote?: T;
   documents?: T;
   relatedProducts?: T;
   meta?:
@@ -1690,6 +2141,10 @@ export interface PagesSelect<T extends boolean = true> {
         highlight?: T;
         text?: T;
         image?: T;
+        imageMarker?: T;
+        imageMarkerNote?: T;
+        imageCaption?: T;
+        imageCaptionNote?: T;
         links?:
           | T
           | {
@@ -1720,6 +2175,20 @@ export interface PagesSelect<T extends boolean = true> {
           | {
               content?: T;
               width?: T;
+              numbered?: T;
+              id?: T;
+              blockName?: T;
+            };
+        trustStrip?:
+          | T
+          | {
+              source?: T;
+              items?:
+                | T
+                | {
+                    text?: T;
+                    id?: T;
+                  };
               id?: T;
               blockName?: T;
             };
@@ -1731,6 +2200,7 @@ export interface PagesSelect<T extends boolean = true> {
                 | T
                 | {
                     value?: T;
+                    unit?: T;
                     label?: T;
                     note?: T;
                     id?: T;
@@ -1789,7 +2259,13 @@ export interface PagesSelect<T extends boolean = true> {
                     id?: T;
                   };
               image?: T;
+              imageCaption?: T;
+              imageCaptionNote?: T;
               imagePosition?: T;
+              secondImage?: T;
+              secondImageText?: T;
+              quote?: T;
+              background?: T;
               facts?:
                 | T
                 | {
@@ -1838,6 +2314,16 @@ export interface PagesSelect<T extends boolean = true> {
                     text?: T;
                     id?: T;
                   };
+              note?: T;
+              link?:
+                | T
+                | {
+                    type?: T;
+                    newTab?: T;
+                    reference?: T;
+                    url?: T;
+                    label?: T;
+                  };
               id?: T;
               blockName?: T;
             };
@@ -1856,6 +2342,9 @@ export interface PagesSelect<T extends boolean = true> {
               eyebrow?: T;
               heading?: T;
               intro?: T;
+              categories?: T;
+              footnote?: T;
+              linkLabel?: T;
               id?: T;
               blockName?: T;
             };
@@ -1875,6 +2364,7 @@ export interface PagesSelect<T extends boolean = true> {
               eyebrow?: T;
               heading?: T;
               intro?: T;
+              layout?: T;
               id?: T;
               blockName?: T;
             };
@@ -1884,12 +2374,14 @@ export interface PagesSelect<T extends boolean = true> {
               eyebrow?: T;
               heading?: T;
               intro?: T;
+              layout?: T;
               id?: T;
               blockName?: T;
             };
         documentList?:
           | T
           | {
+              eyebrow?: T;
               heading?: T;
               intro?: T;
               types?: T;
@@ -1913,6 +2405,7 @@ export interface PagesSelect<T extends boolean = true> {
               heading?: T;
               intro?: T;
               limit?: T;
+              kind?: T;
               id?: T;
               blockName?: T;
             };
@@ -1932,6 +2425,7 @@ export interface PagesSelect<T extends boolean = true> {
               heading?: T;
               intro?: T;
               members?: T;
+              layout?: T;
               id?: T;
               blockName?: T;
             };
@@ -1954,6 +2448,7 @@ export interface PagesSelect<T extends boolean = true> {
         faqBlock?:
           | T
           | {
+              eyebrow?: T;
               heading?: T;
               intro?: T;
               category?: T;
@@ -1983,8 +2478,10 @@ export interface PagesSelect<T extends boolean = true> {
         cta?:
           | T
           | {
+              eyebrow?: T;
               heading?: T;
               text?: T;
+              note?: T;
               links?:
                 | T
                 | {
@@ -2000,6 +2497,60 @@ export interface PagesSelect<T extends boolean = true> {
                         };
                     id?: T;
                   };
+              style?: T;
+              id?: T;
+              blockName?: T;
+            };
+        logoWall?:
+          | T
+          | {
+              eyebrow?: T;
+              heading?: T;
+              source?: T;
+              customers?: T;
+              fallbackStatement?: T;
+              id?: T;
+              blockName?: T;
+            };
+        certificationsStrip?:
+          | T
+          | {
+              heading?: T;
+              kinds?: T;
+              limit?: T;
+              id?: T;
+              blockName?: T;
+            };
+        gallery?:
+          | T
+          | {
+              eyebrow?: T;
+              heading?: T;
+              items?:
+                | T
+                | {
+                    image?: T;
+                    label?: T;
+                    caption?: T;
+                    id?: T;
+                  };
+              layout?: T;
+              id?: T;
+              blockName?: T;
+            };
+        publications?:
+          | T
+          | {
+              eyebrow?: T;
+              heading?: T;
+              member?: T;
+              id?: T;
+              blockName?: T;
+            };
+        proofBar?:
+          | T
+          | {
+              showStatement?: T;
               style?: T;
               id?: T;
               blockName?: T;
@@ -2055,10 +2606,12 @@ export interface UpdatesSelect<T extends boolean = true> {
   summary?: T;
   image?: T;
   relatedProducts?: T;
+  kind?: T;
   publishedAt?: T;
   pinned?: T;
   updatedAt?: T;
   createdAt?: T;
+  _status?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -2167,10 +2720,33 @@ export interface FaqsSelect<T extends boolean = true> {
 export interface TeamSelect<T extends boolean = true> {
   name?: T;
   role?: T;
+  tagline?: T;
   bio?: T;
   photo?: T;
+  credentials?:
+    | T
+    | {
+        text?: T;
+        id?: T;
+      };
+  expertise?:
+    | T
+    | {
+        text?: T;
+        id?: T;
+      };
+  publications?:
+    | T
+    | {
+        title?: T;
+        journal?: T;
+        year?: T;
+        url?: T;
+        id?: T;
+      };
   linkedinUrl?: T;
   email?: T;
+  featured?: T;
   order?: T;
   updatedAt?: T;
   createdAt?: T;
@@ -2185,8 +2761,27 @@ export interface TestimonialsSelect<T extends boolean = true> {
   role?: T;
   organization?: T;
   country?: T;
+  context?: T;
   logo?: T;
   products?: T;
+  consentOnFile?: T;
+  featured?: T;
+  order?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "certifications_select".
+ */
+export interface CertificationsSelect<T extends boolean = true> {
+  name?: T;
+  kind?: T;
+  issuer?: T;
+  statement?: T;
+  validUntil?: T;
+  document?: T;
+  logo?: T;
   order?: T;
   updatedAt?: T;
   createdAt?: T;
@@ -2205,6 +2800,19 @@ export interface InquiriesSelect<T extends boolean = true> {
   jobTitle?: T;
   phone?: T;
   country?: T;
+  items?:
+    | T
+    | {
+        product?: T;
+        productName?: T;
+        grade?: T;
+        packSize?: T;
+        catalogNumber?: T;
+        quantity?: T;
+        purpose?: T;
+        notes?: T;
+        id?: T;
+      };
   products?: T;
   requestedItems?: T;
   application?: T;
@@ -2235,6 +2843,22 @@ export interface SubscribersSelect<T extends boolean = true> {
   token?: T;
   confirmedAt?: T;
   source?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "customers_select".
+ */
+export interface CustomersSelect<T extends boolean = true> {
+  name?: T;
+  logo?: T;
+  website?: T;
+  sector?: T;
+  country?: T;
+  anonymisedLabel?: T;
+  showLogo?: T;
+  order?: T;
   updatedAt?: T;
   createdAt?: T;
 }
@@ -2321,12 +2945,40 @@ export interface SiteSetting {
    * Variant for dark backgrounds (optional).
    */
   logoDark?: (number | null) | Media;
+  /**
+   * Short claims for the trust strip under the hero. Detailed certifications with issuer and certificate PDF live under Company → Certifications & claims.
+   */
   certifications?:
     | {
         text: string;
         id?: string | null;
       }[]
     | null;
+  /**
+   * Facts about the company shown in the proof bar and given to AI assistants and search engines. Leave a field empty to hide it.
+   */
+  proof?: {
+    /**
+     * e.g. Founded May 2023
+     */
+    foundedText?: string | null;
+    /**
+     * e.g. 8–10 person team
+     */
+    teamSize?: string | null;
+    /**
+     * e.g. 600 L / month
+     */
+    capacity?: string | null;
+    /**
+     * One or two sentences about who uses Protpure resins. Shown where customer logos would go until logos can be published.
+     */
+    customersStatement?: string | null;
+    /**
+     * Optional. Update occasionally; shown next to the LinkedIn link.
+     */
+    linkedinFollowers?: number | null;
+  };
   /**
    * Public contact email.
    */
@@ -2443,6 +3095,10 @@ export interface SiteSetting {
  */
 export interface Header {
   id: number;
+  /**
+   * Short descriptor beside the logo, e.g. "Chromatography resins · Made in Anand, India". Use " · " to break lines.
+   */
+  tagline?: string | null;
   items?:
     | {
         link: {
@@ -2588,6 +3244,17 @@ export interface Footer {
         id?: string | null;
       }[]
     | null;
+  newsletter?: {
+    heading?: string | null;
+    /**
+     * Label above the email field.
+     */
+    text?: string | null;
+    /**
+     * Consent line under the field.
+     */
+    note?: string | null;
+  };
   legalLinks?:
     | {
         link: {
@@ -2644,6 +3311,15 @@ export interface SiteSettingsSelect<T extends boolean = true> {
     | {
         text?: T;
         id?: T;
+      };
+  proof?:
+    | T
+    | {
+        foundedText?: T;
+        teamSize?: T;
+        capacity?: T;
+        customersStatement?: T;
+        linkedinFollowers?: T;
       };
   email?: T;
   phone?: T;
@@ -2714,6 +3390,7 @@ export interface SiteSettingsSelect<T extends boolean = true> {
  * via the `definition` "header_select".
  */
 export interface HeaderSelect<T extends boolean = true> {
+  tagline?: T;
   items?:
     | T
     | {
@@ -2785,6 +3462,13 @@ export interface FooterSelect<T extends boolean = true> {
               id?: T;
             };
         id?: T;
+      };
+  newsletter?:
+    | T
+    | {
+        heading?: T;
+        text?: T;
+        note?: T;
       };
   legalLinks?:
     | T

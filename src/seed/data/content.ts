@@ -33,7 +33,7 @@ export const services = [
 ]
 
 export const faqs = [
-  { category: 'ordering', order: 1, question: 'Do you offer free samples?', answer: rt(`No. We quote evaluation packs (typically 5–25 mL, or a 1 mL pre-packed column) at a nominal price so that every evaluation gets scientist support and documentation. The cost is credited against your first bulk order. Use the quote form and choose “Evaluation”.`) },
+  { category: 'ordering', order: 1, question: 'Do you offer sample kits?', answer: rt(`Yes — paid sample kits (5–25 mL packs or a 1 mL pre-packed column), credited against your first bulk order. There are no free samples: the nominal price means every evaluation gets scientist support and documentation. Use the quote form and choose “Evaluation”.`) },
   { category: 'ordering', order: 2, question: 'How is pricing determined?', answer: rt(`Pricing is by quotation and depends on product, grade, pack size, quantity and destination. Bulk volumes (5 L and above) and custom pack sizes are priced individually. We reply within 1–2 business days with pricing, lead time and shipping options.`) },
   { category: 'ordering', order: 3, question: 'What is the typical lead time?', answer: rt(`Standard products ship in 2–3 weeks ex-works from Anand, Gujarat, compared with 8–12 weeks typical for imported resins. Made-to-order products (e.g. Protein A Agarose) and custom chemistries are quoted case by case.`) },
   { category: 'ordering', order: 4, question: 'What pack sizes are available?', answer: rt(`Resins: 5 mL to 25 L standard packs and bulk in custom volumes. Pre-packed columns: 1 mL (packs of 5), 5 mL, 10 mL and 20 mL. See each product’s Ordering section for the current list and catalog numbers.`) },
@@ -50,7 +50,80 @@ export const faqs = [
 ]
 
 export const team = [
-  { name: 'Dr. Rucha P. Desai', role: 'Founding Director', order: 1, linkedinUrl: 'https://www.linkedin.com/in/rucha-desai-b326003/', bio: rt(`Scientist and founder of Protpure Tech. After academic research in materials science, nanoparticle synthesis and magnetic fluids, Dr. Desai established Protpure in 2023 to build an indigenous agarose chromatography resin platform for India’s biopharma industry — from bead synthesis and cross-linking to ligand chemistry, process evaluation and customer deployment.`) },
+  {
+    name: 'Dr. Rucha P. Desai',
+    role: 'Founding Director',
+    tagline: 'Materials scientist · bead synthesis, cross-linking and ligand chemistry',
+    order: 1,
+    featured: true,
+    linkedinUrl: 'https://www.linkedin.com/in/rucha-desai-b326003/',
+    bio: rt(`Scientist and founder of Protpure Tech. After academic research in materials science, nanoparticle synthesis and magnetic fluids, Dr. Desai established Protpure in 2023 to build an indigenous agarose chromatography resin platform for India’s biopharma industry — from bead synthesis and cross-linking to ligand chemistry, process evaluation and customer deployment.`),
+    credentials: ['M.Sc., Ph.D. (Physics)'],
+    expertise: ['Bead polymerisation', 'Ligand coupling', 'Magnetic fluids and nanoparticle synthesis', 'Downstream process development'],
+    // From public ResearchGate / Springer / IOP listings. The admin field is marked "verify before publishing".
+    publications: [
+      { title: 'Structural and magnetic properties of size-controlled Mn0.5Zn0.5Fe2O4 nanoparticles and magnetic fluids', journal: 'Pramana – J. Phys. 73, 765–780', year: 2009, url: 'https://link.springer.com/article/10.1007/s12043-009-0144-2' },
+      { title: 'Tunable birefringence in silica mediated magnetic fluid', journal: 'Materials Research Express', year: 2019, url: 'https://iopscience.iop.org/article/10.1088/2053-1591/ab4eb2' },
+    ],
+  },
+]
+
+/**
+ * Certifications & claims (Company → Certifications & claims). Only the three claims Protpure already
+ * makes on the site are seeded, as "product claim" entries. Third-party certifications (ISO, licences)
+ * are added by the editor with issuer, expiry and the certificate PDF once they exist.
+ */
+export const certifications = [
+  { name: 'BioProcess-grade resins used in GMP facilities', kind: 'product-claim', order: 1, statement: 'SP, Q, DEAE, Phenyl and Ni-NTA Agarose are specified as BioProcess resins (1 M NaOH, 8 M urea, 6 M GuHCl, 70% ethanol; CIP pH 2–14) and are in use at GMP facilities of Indian biopharma companies.' },
+  { name: 'Certificate of analysis with every lot', kind: 'product-claim', order: 2, statement: 'Every shipment carries a lot-specific certificate of analysis; datasheet values can be referenced in qualification and regulatory documentation.' },
+  { name: 'Made in India — developed, manufactured and supported in Anand, Gujarat', kind: 'product-claim', order: 3, statement: 'Bead synthesis, cross-linking, ligand chemistry, QC and customer support all happen at one site — 2–3 weeks ex-works instead of 8–12 weeks for imported resins.' },
+]
+
+/**
+ * LinkedIn updates seeded as DRAFTS (no URL): summaries written from Protpure's public posts so the
+ * editor only has to paste the post URL and publish. Drafts never reach the site or the AI surfaces.
+ */
+export const updates = [
+  {
+    title: 'Hy-Ionic™ DP: DEAE–phenyl mixed-mode resin launched',
+    kind: 'product-launch',
+    publishedAt: '2026-08-20',
+    image: 'poster-consistency.webp',
+    relatedProducts: ['hy-ionic-dp'],
+    summary: 'Hy-Ionic™ DP puts DEAE anion-exchange and phenyl hydrophobic-interaction ligands on one cross-linked agarose matrix, so a single packed column can run in either mode. Dynamic binding capacity: 30 mg BSA/mL in HIC mode and 100 mg BSA/mL in IEX mode.',
+  },
+  {
+    title: 'MR Agarose: transition-metal removal resin and evaluation kit',
+    kind: 'product-launch',
+    publishedAt: '2026-07-15',
+    image: 'poster-mr-agarose.webp',
+    relatedProducts: ['mr-agarose-kit'],
+    summary: 'MR Agarose binds 15–18 µmol of transition metal ions per mL of resin — Fe²⁺/Fe³⁺, Ni²⁺, Co²⁺, Cu²⁺ and Zn²⁺ — for removing leached or process-derived metals from protein streams. The evaluation kit ships as a 1 mL gravity column with buffers.',
+  },
+  {
+    title: 'Downstream bioprocessing services: packing, screening, method development',
+    kind: 'services',
+    publishedAt: '2026-06-10',
+    image: 'poster-downstream-services.webp',
+    relatedProducts: [],
+    summary: 'Protpure now offers downstream services alongside its resins: precision column packing with performance reports (asymmetry, HETP, plates), resin screening on 1 mL pre-packed columns, method development and a full protein purification service on FPLC systems up to 1 L columns.',
+  },
+  {
+    title: 'Independence Day: scientific self-reliance in bioprocessing',
+    kind: 'perspective',
+    publishedAt: '2026-08-15',
+    image: 'poster-upstream-downstream.webp',
+    relatedProducts: [],
+    summary: 'More than 90% of the chromatography media used in India is imported. On Independence Day, a note on why indigenous resin manufacturing — bead synthesis, cross-linking and ligand chemistry done at home — matters for the resilience of India’s biopharma supply chain.',
+  },
+  {
+    title: 'His-tag accessibility: when Ni-NTA binding is weaker than expected',
+    kind: 'data',
+    publishedAt: '2026-05-05',
+    image: undefined,
+    relatedProducts: ['ni-nta-agarose', 'ni-nta-prepacked-columns'],
+    summary: 'Troubleshooting notes from the bench: a His-tag buried by folding, a short linker or a crowded terminus can leave a protein flowing through an IMAC column. What to check — tag position and linker length, denaturing vs native binding, imidazole in the load — before blaming the resin.',
+  },
 ]
 
 export const siteSettings = {
@@ -60,6 +133,12 @@ export const siteSettings = {
   description: 'Protpure Tech manufactures agarose-based chromatography resins — ion exchange, IMAC, size exclusion, hydrophobic interaction and mixed-mode — in Anand, Gujarat, India and supplies biopharma, vaccine, diagnostic and research customers worldwide.',
   foundedYear: 2023,
   certifications: [{ text: 'BioProcess-grade resins used in GMP facilities' }, { text: 'Certificate of analysis with every lot' }, { text: 'Made in India — developed, manufactured and supported in Anand, Gujarat' }],
+  proof: {
+    foundedText: 'Founded May 2023',
+    teamSize: '8–10 person team',
+    capacity: '600 L / month',
+    customersStatement: 'Used in GMP facilities. Repeat orders from Indian biopharma.',
+  },
   email: 'info@protpure.com',
   phone: '+91 94265 96644',
   whatsapp: '+919426596644',
@@ -86,10 +165,11 @@ export const siteSettings = {
   ],
   exportNotes: [{ text: 'HS code and MSDS supplied with every export shipment' }, { text: 'Incoterms EXW by default; FOB/CIF on request' }, { text: 'Non-hazardous for transport (20% ethanol slurry)' }],
   titleSuffix: 'Protpure — Agarose Chromatography Resins, Made in India for the World',
-  aiSummary: 'Protpure Tech Pvt. Ltd. (Anand, Gujarat, India; founded May 2023) manufactures agarose-based chromatography resins for biopharmaceutical purification: SP/CM/Q/DEAE ion exchangers, Ni/Co/Cu/Zn-NTA IMAC resins, cross-linked agarose SEC resin, Phenyl Agarose (HIC), Hy-Ionic DP mixed-mode resin, CNBr-activated agarose, pre-packed columns, magnetic beads and the MR Agarose metal-removal kit, plus downstream services (column packing, resin screening, method development, purification). Resins come in Faster, Fast Flow, Precise and HR particle-size grades on one 6% cross-linked backbone. Pricing is by quotation; there are no free samples. Lead time 2–3 weeks ex-works; worldwide shipping. Contact info@protpure.com or file a quote through the website form, the public API or the MCP server.',
+  aiSummary: 'Protpure Tech Pvt. Ltd. (Anand, Gujarat, India; founded May 2023) manufactures agarose-based chromatography resins for biopharmaceutical purification: SP/CM/Q/DEAE ion exchangers, Ni/Co/Cu/Zn-NTA IMAC resins, cross-linked agarose SEC resin, Phenyl Agarose (HIC), Hy-Ionic DP mixed-mode resin, CNBr-activated agarose, pre-packed columns, magnetic beads and the MR Agarose metal-removal kit, plus downstream services (column packing, resin screening, method development, purification). Resins come in Faster, Fast Flow, Precise and HR particle-size grades on one 6% cross-linked backbone. Pricing is by quotation; there are no free samples, but paid sample kits (5–25 mL packs or a 1 mL pre-packed column), credited against your first bulk order. Lead time 2–3 weeks ex-works; worldwide shipping. Contact info@protpure.com or file a quote through the website form, the public API or the MCP server.',
 }
 
 export const header = {
+  tagline: 'Chromatography resins · Made in Anand, India',
   items: [
     { label: 'Products', href: '/products', children: [
       { label: 'All products', href: '/products', description: 'Full catalog with filters' },
@@ -119,12 +199,12 @@ export const header = {
 }
 
 export const footer = {
-  tagline: 'Agarose chromatography resins developed, manufactured and supported in India — supplied to biopharma, vaccine, diagnostic and research labs worldwide.',
+  tagline: 'Agarose chromatography resins. Developed, manufactured and supported in Anand, Gujarat, India.',
   columns: [
-    { title: 'Products', links: [{ label: 'Ion Exchange', href: '/products/category/ion-exchange' }, { label: 'Affinity (IMAC)', href: '/products/category/affinity' }, { label: 'Size Exclusion', href: '/products/category/size-exclusion' }, { label: 'HIC', href: '/products/category/hydrophobic-interaction' }, { label: 'Mixed-Mode', href: '/products/category/mixed-mode' }, { label: 'Pre-packed Columns', href: '/products/category/columns' }] },
-    { title: 'Company', links: [{ label: 'About', slug: 'about' }, { label: 'Technology', slug: 'technology' }, { label: 'Services', href: '/services' }, { label: 'Global supply', slug: 'global-supply' }, { label: 'Contact', href: '/contact' }, { label: 'Request a quote', href: '/request-quote' }] },
-    { title: 'Resources', links: [{ label: 'Technical library', href: '/resources' }, { label: 'Blog', href: '/blog' }, { label: 'LinkedIn updates', href: '/updates' }, { label: 'FAQ', href: '/faq' }, { label: 'Compare resins', href: '/compare' }, { label: 'API & MCP for AI agents', href: '/llms.txt' }] },
+    { title: 'Explore', links: [{ label: 'Product catalogue', href: '/products' }, { label: 'Particle platform', slug: 'technology' }, { label: 'Applications', href: '/applications' }, { label: 'Services', href: '/services' }, { label: 'Compare resins', href: '/compare' }] },
+    { title: 'Connect', links: [{ label: 'Our company', slug: 'about' }, { label: 'Technical documents', href: '/resources' }, { label: 'Blog', href: '/blog' }, { label: 'Become a distributor', slug: 'global-supply' }, { label: 'Request a quote', href: '/request-quote' }, { label: 'FAQ', href: '/faq' }] },
   ],
+  newsletter: { heading: 'Notes from the bench', text: 'Product updates, data and technical notes.', note: 'By subscribing, you agree to receive Protpure updates. You can unsubscribe at any time.' },
   legalLinks: [{ label: 'Privacy policy', slug: 'privacy' }, { label: 'Terms of sale', slug: 'terms' }],
   bottomText: 'All rights reserved. Hy-Ionic™ is a trademark of Protpure Tech Pvt. Ltd.',
 }

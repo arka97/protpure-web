@@ -1,19 +1,69 @@
+import Image from 'next/image'
 import * as React from 'react'
-import { Badge, Breadcrumbs, CmsImage, CmsLinks } from '@/components/ui'
-import { cn } from '@/lib/utils'
-import type { Page } from '@/payload-types'
+import { Badge, Breadcrumbs, CmsLinks } from '@/components/ui'
+import { BeadField } from '@/components/visual/BeadField'
+import { BeadSchematic } from '@/components/visual/BeadSchematic'
+import { cn, mediaAlt, mediaUrl } from '@/lib/utils'
+import type { Media, Page } from '@/payload-types'
 
 type Hero = NonNullable<Page['hero']>
 
-/** Highlights `highlight` words in the heading in the accent colour. */
-function Highlighted({ text, highlight }: { text: string; highlight?: string | null }) {
-  if (!highlight || !text.includes(highlight)) return <>{text}</>
-  const [before, after] = text.split(highlight)
+/** CMS text with `\n` rendered as deliberate line breaks (segments still wrap naturally when narrow). */
+export function Lines({ text }: { text: string }) {
+  const parts = text.split('\n')
   return (
     <>
-      {before}
-      <span className="text-teal-300">{highlight}</span>
-      {after}
+      {parts.map((p, i) => (
+        <React.Fragment key={i}>
+          {i > 0 ? <br /> : null}
+          {p}
+        </React.Fragment>
+      ))}
+    </>
+  )
+}
+
+/**
+ * Serif headline with the `highlight` words set in italic luminous teal. When the highlight closes
+ * the heading it takes its own line — the short scientific proposition ("From the bead up.").
+ * Line breaks typed into the CMS heading are kept, inside or outside the highlight.
+ */
+export function Highlighted({ text, highlight, className }: { text: string; highlight?: string | null; className?: string }) {
+  const src = text.trim()
+  // Block headings italicise with *asterisks*; a hero heading typed the same way gets the same result.
+  if (/\*[^*\n]+\*/.test(src)) {
+    const parts = src.split(/(\*[^*\n]+\*)/g).filter(Boolean)
+    return (
+      <>
+        {parts.map((p, i) =>
+          p.startsWith('*') && p.endsWith('*') ? (
+            <em key={i} className={cn('italic text-teal-lum', className)}>
+              <Lines text={p.slice(1, -1)} />
+            </em>
+          ) : (
+            <Lines key={i} text={p} />
+          ),
+        )}
+      </>
+    )
+  }
+  const hl = highlight?.trim()
+  // The highlight may span a typed line break: match its words across any whitespace.
+  const re = hl ? new RegExp(hl.split(/\s+/).map((w) => w.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('\\s+')) : null
+  const m = re ? src.match(re) : null
+  if (!m || m.index === undefined) return <Lines text={src} />
+  const before = src.slice(0, m.index).replace(/[ \t]+$/, '')
+  const inner = m[0]
+  const after = src.slice(m.index + inner.length)
+  const ownLine = after.trim() === '' && before.trim() !== '' && !before.endsWith('\n')
+  return (
+    <>
+      {before ? <Lines text={before.replace(/\n$/, '')} /> : null}
+      {before ? (before.endsWith('\n') || ownLine ? <br /> : ' ') : null}
+      <em className={cn('italic text-teal-lum', className)}>
+        <Lines text={inner} />
+      </em>
+      {after ? <Lines text={after} /> : null}
     </>
   )
 }
@@ -23,77 +73,215 @@ export function PageHero({
   title,
   breadcrumbs,
   children,
+  tone = 'light',
+  aside,
 }: {
   hero?: Hero | null
   title: string
   breadcrumbs?: { label: string; href?: string }[]
   children?: React.ReactNode
+  /** Compact heroes are light by default; the catalogue and category pages use the dark field with a bead field at the edge. */
+  tone?: 'light' | 'dark'
+  /** Right-hand column of a compact hero (e.g. the category emblem). */
+  aside?: React.ReactNode
 }) {
   const style = hero?.style ?? 'compact'
   if (style === 'none') return null
   const heading = hero?.heading || title
 
   if (style === 'standard') {
-    const hasImage = hero?.image && typeof hero.image === 'object'
+    const image = hero?.image && typeof hero.image === 'object' ? (hero.image as Media) : null
+    const imageUrl = image ? mediaUrl(image, 'large') ?? mediaUrl(image) : null
+    const hasImage = Boolean(imageUrl)
+    if (!hasImage) {
+      // Dark page hero without a photograph (catalogue board `.page-hero`): 80 px serif title, 44 px
+      // padding, the bead field at the bottom right. Listing routes and CMS pages without an image.
+      return (
+        <section className="surface-dark relative overflow-hidden">
+          <BeadField density="normal" opacity={0.16} className="bottom-[-130px] right-[-60px] w-[360px] lg:bottom-[-155px] lg:right-[35px] lg:w-[630px]" seed={2} />
+          <div className="container-x relative pb-9 pt-7 lg:pb-11 lg:pt-11">
+            {breadcrumbs ? (
+              <div className="mb-7 lg:mb-9">
+                <Breadcrumbs items={breadcrumbs} onDark />
+              </div>
+            ) : null}
+            <div className="relative z-[2] max-w-[900px]">
+              {hero?.eyebrow ? (
+                <p className="eyebrow mb-4 flex items-center gap-3">
+                  <span className="dot" aria-hidden />
+                  {hero.eyebrow}
+                </p>
+              ) : null}
+              <h1 className="heading-1 text-wrap-initial">
+                <Highlighted text={heading} highlight={hero?.highlight} />
+              </h1>
+              {hero?.text ? (
+                <p className="lede mt-4 max-w-[650px] lg:mt-[18px]">
+                  <Lines text={hero.text} />
+                </p>
+              ) : null}
+              <CmsLinks links={hero?.links} onDark className="mt-6 lg:mt-7" />
+              {hero?.badges?.length ? (
+                <ul className="mt-7 flex flex-wrap gap-2">
+                  {hero.badges.map((b) => (
+                    <li key={b.id}>
+                      <Badge tone="onDark">{b.text}</Badge>
+                    </li>
+                  ))}
+                </ul>
+              ) : null}
+              {children}
+            </div>
+          </div>
+        </section>
+      )
+    }
     return (
-      <section className="hex-bg relative overflow-hidden text-white">
-        <div className={cn('container-x relative grid items-center gap-12 py-20 lg:py-28', hasImage && 'lg:grid-cols-12')}>
-          <div className={cn(hasImage ? 'lg:col-span-7' : 'max-w-3xl')}>
-            {breadcrumbs ? <div className="mb-6"><Breadcrumbs items={breadcrumbs} onDark /></div> : null}
+      <section className="surface-dark relative overflow-hidden">
+        <BeadField density="normal" opacity={0.16} className="bottom-[250px] left-[145px] w-[350px] lg:bottom-[-45px] lg:left-[235px] lg:w-[650px]" />
+        <div className="container-x relative grid gap-7 pb-8 pt-8 lg:min-h-[725px] lg:grid-cols-[1.08fr_1fr] lg:gap-6 lg:pb-12 lg:pt-[58px]">
+          <div className="relative z-[2] lg:pt-[18px]">
+            {breadcrumbs ? (
+              <div className="mb-8">
+                <Breadcrumbs items={breadcrumbs} onDark />
+              </div>
+            ) : null}
             {hero?.eyebrow ? (
-              <p className="mb-5 inline-flex items-center gap-2 rounded-full border border-teal-400/30 bg-teal-400/10 px-3 py-1 text-xs font-semibold text-teal-300">
-                <span className="h-1.5 w-1.5 rounded-full bg-teal-300" />
+              <p className="eyebrow mb-5 flex items-center gap-3">
+                <span className="dot" aria-hidden />
                 {hero.eyebrow}
               </p>
             ) : null}
-            <h1 className="heading-1 text-white">
+            <h1 className="heading-display text-wrap-initial">
               <Highlighted text={heading} highlight={hero?.highlight} />
             </h1>
-            {hero?.text ? <p className="mt-6 max-w-2xl text-lg leading-relaxed text-white/80 sm:text-xl">{hero.text}</p> : null}
-            <CmsLinks links={hero?.links} onDark className="mt-8" />
+            {hero?.text ? <p className="lede mt-6 max-w-[470px] lg:mt-[30px]">{hero.text}</p> : null}
+            <CmsLinks links={hero?.links} onDark className="mt-6 lg:mt-[30px]" />
             {hero?.badges?.length ? (
-              <div className="mt-8 flex flex-wrap gap-2">
+              <ul className="mt-8 flex flex-wrap gap-2">
                 {hero.badges.map((b) => (
-                  <Badge key={b.id} tone="onDark">
-                    {b.text}
-                  </Badge>
+                  <li key={b.id}>
+                    <Badge tone="onDark">{b.text}</Badge>
+                  </li>
                 ))}
-              </div>
+              </ul>
             ) : null}
             {children}
           </div>
-          {hasImage ? (
-            <div className="relative lg:col-span-5">
-              <div className="absolute -inset-6 rounded-[2rem] bg-teal-400/10 blur-2xl" aria-hidden />
-              <div className="relative overflow-hidden rounded-2xl border border-white/10 shadow-2xl">
-                <CmsImage media={hero!.image} size="large" className="h-auto w-full object-cover" sizes="(min-width: 1024px) 40vw, 100vw" priority />
-              </div>
+
+          <figure className="relative self-start lg:ml-2.5">
+            <div className="arch relative h-[338px] bg-field-raised lg:h-[550px]">
+              <Image
+                src={imageUrl!}
+                alt={mediaAlt(image!, heading)}
+                fill
+                priority
+                sizes="(min-width: 1024px) 45vw, 100vw"
+                className="home-hero-photo"
+              />
             </div>
-          ) : null}
+            {hero?.imageMarker ? (
+              <div className="absolute bottom-[49px] left-[-8px] flex h-[97px] w-[97px] flex-col items-center justify-center rounded-full bg-teal-lum text-center text-field shadow-[0_0_0_6px_var(--color-field)] lg:bottom-[68px] lg:left-[-45px] lg:h-[134px] lg:w-[134px] lg:shadow-[0_0_0_9px_var(--color-field)]" aria-label={[hero.imageMarker, hero.imageMarkerNote].filter(Boolean).join(', ')}>
+                <strong className="serif-lg num">{hero.imageMarker}</strong>
+                {hero.imageMarkerNote ? <span className="mt-1.5 px-2 text-[8px] uppercase tracking-[0.08em] lg:mt-2 lg:text-[10px]">{hero.imageMarkerNote}</span> : null}
+              </div>
+            ) : null}
+            {hero?.imageCaption || hero?.imageCaptionNote ? (
+              <figcaption className="mt-3.5 flex justify-between gap-4 text-[9px] leading-[1.5] text-text-2-dark lg:text-[11px]">
+                <span>{hero.imageCaption}</span>
+                {hero.imageCaptionNote ? <span className="text-right">{hero.imageCaptionNote}</span> : null}
+              </figcaption>
+            ) : null}
+          </figure>
         </div>
       </section>
     )
   }
 
+  if (style === 'schematic') {
+    // Light hero with the annotated bead cross-section (BUILD-BRIEF item 1). The label row above the
+    // drawing and the caption under it come from the hero's marker / caption fields.
+    return (
+      <section className="relative overflow-hidden border-b border-rule bg-surface">
+        <div className="container-x grid gap-8 pb-10 pt-8 lg:min-h-[600px] lg:grid-cols-[1.08fr_1fr] lg:gap-[70px] lg:pb-[64px] lg:pt-[58px]">
+          <div className="relative z-[2] lg:pt-[18px]">
+            {breadcrumbs ? (
+              <div className="mb-8">
+                <Breadcrumbs items={breadcrumbs} />
+              </div>
+            ) : null}
+            {hero?.eyebrow ? (
+              <p className="eyebrow mb-5 flex items-center gap-3">
+                <span className="dot" aria-hidden />
+                {hero.eyebrow}
+              </p>
+            ) : null}
+            <h1 className="heading-display">
+              <Highlighted text={heading} highlight={hero?.highlight} className="text-teal-deep" />
+            </h1>
+            {hero?.text ? <p className="lede mt-6 max-w-[470px] lg:mt-[30px]">{hero.text}</p> : null}
+            <CmsLinks links={hero?.links} className="mt-6 lg:mt-[30px]" />
+            {children}
+          </div>
+          <figure className="self-center lg:pl-2">
+            {hero?.imageMarker || hero?.imageMarkerNote ? (
+              <div className="mb-4 flex items-center justify-between gap-4 border-b border-rule pb-3 text-[10px] uppercase tracking-[0.14em] text-text-2 lg:text-[11px]">
+                <span>{hero.imageMarker}</span>
+                {hero.imageMarkerNote ? <span className="num text-right">{hero.imageMarkerNote}</span> : null}
+              </div>
+            ) : null}
+            <BeadSchematic tone="light" className="mx-auto max-w-[560px]" />
+            {hero?.imageCaption || hero?.imageCaptionNote ? (
+              <figcaption className="mt-4 flex justify-between gap-4 border-t border-rule pt-3 text-[10px] uppercase tracking-[0.14em] text-text-2 lg:text-[11px]">
+                <span>{hero.imageCaption}</span>
+                {hero.imageCaptionNote ? <span className="text-right">{hero.imageCaptionNote}</span> : null}
+              </figcaption>
+            ) : null}
+          </figure>
+        </div>
+      </section>
+    )
+  }
+
+  const dark = tone === 'dark'
   return (
-    <section className="border-b border-line bg-surface-2">
-      <div className="container-x py-12 sm:py-16">
-        {breadcrumbs ? <div className="mb-5"><Breadcrumbs items={breadcrumbs} /></div> : null}
-        {hero?.eyebrow ? <p className="eyebrow mb-3">{hero.eyebrow}</p> : null}
-        <h1 className="heading-1 max-w-4xl text-4xl sm:text-5xl">{heading}</h1>
-        {hero?.text ? <p className="lede mt-4 max-w-3xl">{hero.text}</p> : null}
-        <CmsLinks links={hero?.links} className="mt-6" />
-        {children}
+    <section className={cn('relative overflow-hidden', dark ? 'surface-dark' : 'border-b border-rule bg-surface')}>
+      {dark ? <BeadField density="normal" opacity={0.14} className="bottom-[-190px] right-[-60px] w-[420px] lg:bottom-[-155px] lg:right-[35px] lg:w-[630px]" /> : null}
+      <div className={cn('container-x relative py-10 lg:py-11', aside && 'grid gap-8 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-end')}>
+        <div className="min-w-0">
+          {breadcrumbs ? (
+            <div className="mb-6">
+              <Breadcrumbs items={breadcrumbs} onDark={dark} />
+            </div>
+          ) : null}
+          {hero?.eyebrow ? <p className="eyebrow mb-4">{hero.eyebrow}</p> : null}
+          <h1 className="heading-1 max-w-[900px]">
+            <Lines text={heading} />
+          </h1>
+          {hero?.text ? (
+            <p className={cn('lede mt-4 max-w-[650px]', dark && 'lg:mt-[18px]')}>
+              <Lines text={hero.text} />
+            </p>
+          ) : null}
+          <CmsLinks links={hero?.links} onDark={dark} className="mt-6" />
+          {children}
+        </div>
+        {aside}
       </div>
     </section>
   )
 }
 
 /** Hero for listing routes that may or may not have a CMS page behind them. */
-export function ListingHero({ page, fallback, breadcrumbs, children }: { page: Page | null; fallback: { title: string; text?: string; eyebrow?: string }; breadcrumbs?: { label: string; href?: string }[]; children?: React.ReactNode }) {
-  const hero = page?.hero?.style && page.hero.style !== 'none' ? page.hero : { style: 'compact' as const, eyebrow: fallback.eyebrow, heading: fallback.title, text: fallback.text }
+export function ListingHero({ page, fallback, breadcrumbs, children, tone, aside }: { page: Page | null; fallback: { title: string; text?: string; eyebrow?: string; highlight?: string }; breadcrumbs?: { label: string; href?: string }[]; children?: React.ReactNode; tone?: 'light' | 'dark'; aside?: React.ReactNode }) {
+  // Without a CMS page (or with a hero switched off) the route gets the dark page hero with its
+  // fallback copy; `tone="light"` asks for the compact light strip instead.
+  const hero =
+    page?.hero?.style && page.hero.style !== 'none'
+      ? page.hero
+      : { style: tone === 'light' ? ('compact' as const) : ('standard' as const), eyebrow: fallback.eyebrow, heading: fallback.title, highlight: fallback.highlight, text: fallback.text }
   return (
-    <PageHero hero={hero as Hero} title={page?.title ?? fallback.title} breadcrumbs={breadcrumbs}>
+    <PageHero hero={hero as Hero} title={page?.title ?? fallback.title} breadcrumbs={breadcrumbs} tone={tone} aside={aside}>
       {children}
     </PageHero>
   )

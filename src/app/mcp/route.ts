@@ -1,11 +1,13 @@
 import { createMcpHandler } from 'mcp-handler'
 import { z } from 'zod'
-import { getApplications, getDocuments, getPayloadClient, getProduct, getProducts, getServices, getSiteSettings } from '@/lib/data'
+import { getApplications, getDocuments, getPayloadClient, getProduct, getProducts, getServices, getSiteSettings, getUpdates } from '@/lib/data'
 import { createInquiry, inquirySchema, rateLimit } from '@/lib/inquiries'
 import { applicationToMarkdown, companyMarkdown, productToMarkdown, serviceToMarkdown } from '@/lib/markdown'
-import { publicDocument, publicProduct } from '@/lib/public-api'
+import { publicDocument, publicProduct, publicUpdate } from '@/lib/public-api'
+import { UPDATE_KINDS } from '@/collections/Updates'
+import { GRADE_VALUES, PURPOSE_VALUES, SAMPLE_KIT_POLICY, describeItem } from '@/lib/rfq'
 import { SITE_URL } from '@/lib/utils'
-import type { ProductCategory } from '@/payload-types'
+import { categoryOf } from '@/lib/catalog'
 
 const text = (t: string) => ({ content: [{ type: 'text' as const, text: t }] })
 const readOnly = { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: false }
@@ -34,7 +36,7 @@ const handler = createMcpHandler(
       async ({ category, grade, query }) => {
         let products = await getProducts({ category, search: query })
         if (grade) products = products.filter((p) => p.grades?.some((g) => g.grade === grade))
-        const cats = Array.from(new Set(products.map((p) => (p.category as ProductCategory)?.slug))).filter(Boolean)
+        const cats = Array.from(new Set(products.map((p) => categoryOf(p)?.slug))).filter(Boolean)
         return { ...text(JSON.stringify({ count: products.length, categories: cats, products: products.map((p) => publicProduct(p)) }, null, 2)) }
       },
     )
@@ -70,7 +72,7 @@ const handler = createMcpHandler(
         const gradeStr = (p: (typeof products)[number], k: 'particleSizeRange' | 'maxFlowVelocity' | 'dynamicBindingCapacity') => (p.grades ?? []).map((g) => `${g.grade}: ${g[k] ?? '—'}`).join('; ')
         const lines = [
           header,
-          row('Category', (p) => (p.category as ProductCategory).name),
+          row('Category', (p) => categoryOf(p)?.name ?? ''),
           row('Type', (p) => p.chemistry?.functionalType ?? ''),
           row('Ligand', (p) => p.chemistry?.ligand ?? ''),
           row('Matrix', (p) => p.chemistry?.matrix ?? ''),
@@ -127,7 +129,7 @@ const handler = createMcpHandler(
       'get_company_info',
       {
         title: 'Company information',
-        description: 'Who Protpure is, where it manufactures, how to buy (quotation only — no free samples), lead times, regions served, export notes and contact details.',
+        description: 'Who Protpure is, where it manufactures, how to buy (quotation only; paid sample kits, no free samples), lead times, regions served, export notes, contact details, company facts (founded, team size, capacity), quality claims and certifications, and the team with credentials and publications.',
         inputSchema: z.object({}),
         annotations: readOnly,
       },
@@ -135,11 +137,31 @@ const handler = createMcpHandler(
     )
 
     server.registerTool(
+      'list_updates',
+      {
+        title: 'List recent updates',
+        description: 'Recent published company updates mirrored from LinkedIn: product launches, performance data, milestones, services and perspectives. Each has a title, summary, date, kind, related products and the LinkedIn post URL.',
+        inputSchema: z.object({
+          kind: z.enum(UPDATE_KINDS.map((k) => k.value) as [string, ...string[]]).optional().describe('Only updates of this kind.'),
+          limit: z.number().int().min(1).max(50).default(10),
+        }),
+        annotations: readOnly,
+      },
+      async ({ kind, limit }) => {
+        const updates = await getUpdates(limit, { kind })
+        return text(JSON.stringify({ count: updates.length, updates: updates.map(publicUpdate) }, null, 2))
+      },
+    )
+
+    server.registerTool(
       'request_quote',
       {
         title: 'Request a quote or contact Protpure',
         description:
-          'File a quotation, evaluation, technical or partnership request on behalf of a user. Only call this after the user has explicitly asked you to contact Protpure and has provided their name, work email and (ideally) organisation and country. Protpure emails a confirmation to the user and a scientist replies, typically within 1–2 business days. Returns the inquiry reference number.',
+          'File a quotation, evaluation, technical or partnership request on behalf of a user. Only call this after the user has explicitly asked you to contact Protpure and has provided their name, work email and (ideally) organisation and country. ' +
+          'List what they want as `items` — one line per product / grade / pack size with a quantity and a purpose (sample-kit, evaluation, production or other). ' +
+          `Sample policy: ${SAMPLE_KIT_POLICY} ` +
+          'Protpure emails a confirmation to the user and a scientist replies, typically within 1–2 business days. Returns the inquiry reference number.',
         inputSchema: z.object({
           type: z.enum(['quote', 'evaluation', 'technical', 'partnership', 'contact']).default('quote'),
           name: z.string().min(2).max(120).describe("Requester's full name."),
@@ -147,8 +169,24 @@ const handler = createMcpHandler(
           organization: z.string().max(200).optional(),
           country: z.string().max(80).optional().describe('Destination country for quoting/shipping.'),
           phone: z.string().max(40).optional(),
-          productSlugs: z.array(z.string()).max(30).optional().describe('Product slugs of interest.'),
-          requestedItems: z.string().max(2000).optional().describe('Quantities, grades and pack sizes, e.g. "SP Agarose Precise 2 × 1 L".'),
+          items: z
+            .array(
+              z.object({
+                productSlug: z.string().max(120).optional().describe('Product slug from list_products, e.g. "sp-agarose". Omit for a product not in the catalogue and give productName instead.'),
+                productName: z.string().max(200).optional().describe('Free-text product name when there is no slug.'),
+                grade: z.enum(GRADE_VALUES).optional().describe('Particle-size grade, if the user has a preference.'),
+                packSize: z.string().max(80).optional().describe('Pack size from get_product, e.g. "1 L", "25 mL" or "Bulk (custom)".'),
+                catalogNumber: z.string().max(80).optional(),
+                quantity: z.number().int().min(1).max(10000).default(1).describe('Number of packs.'),
+                purpose: z.enum(PURPOSE_VALUES).default('production').describe('sample-kit = paid sample kit credited against the first bulk order; evaluation = pilot quantity; production = bulk / production quantity.'),
+                notes: z.string().max(300).optional().describe('Line note, e.g. column geometry or target volume.'),
+              }),
+            )
+            .max(50)
+            .optional()
+            .describe('Requested lines. Preferred over productSlugs/requestedItems.'),
+          productSlugs: z.array(z.string()).max(30).optional().describe('Legacy: product slugs of interest without quantities. Prefer `items`.'),
+          requestedItems: z.string().max(2000).optional().describe('Legacy free text for quantities, grades and pack sizes. Prefer `items`.'),
           application: z.string().max(500).optional().describe('What the user is purifying.'),
           message: z.string().max(5000).optional(),
         }),
@@ -167,14 +205,21 @@ const handler = createMcpHandler(
         if (!parsed.success) return { ...text(`Validation failed: ${parsed.error.issues.map((i) => `${i.path.join('.')}: ${i.message}`).join('; ')}`), isError: true }
         const doc = await createInquiry(payload, parsed.data, { source: 'mcp', ip, userAgent: 'mcp' })
         const settings = await getSiteSettings()
-        return text(`Inquiry #${doc.id} filed. A confirmation email has been sent to ${doc.email}; Protpure replies ${settings.responseTime || 'within 1–2 business days'}. Reference #${doc.id} when following up${settings.email ? ` at ${settings.email}` : ''}.`)
+        const lines = (doc.items ?? []).map((i) => `- ${describeItem(i)}`)
+        return text(
+          [
+            `Inquiry #${doc.id} filed${lines.length ? ` with ${lines.length} item${lines.length === 1 ? '' : 's'}:` : '.'}`,
+            ...lines,
+            `A confirmation email has been sent to ${doc.email}; Protpure replies ${settings.responseTime || 'within 1–2 business days'}. Reference #${doc.id} when following up${settings.email ? ` at ${settings.email}` : ''}.`,
+          ].join('\n'),
+        )
       },
     )
   },
   {
     serverInfo: { name: 'protpure', version: '1.0.0' },
     instructions:
-      'Protpure Tech Pvt. Ltd. manufactures agarose-based chromatography resins in Anand, India and supplies worldwide. Use list_products/get_product for specifications, compare_products for side-by-side tables, search_documents for datasheets, and request_quote only when the user explicitly asks to contact Protpure. Pricing is by quotation; there are no free samples.',
+      'Protpure Tech Pvt. Ltd. manufactures agarose-based chromatography resins in Anand, India and supplies worldwide. Use list_products/get_product for specifications, compare_products for side-by-side tables, search_documents for datasheets, get_company_info for company facts, certifications and the team, list_updates for recent news, and request_quote only when the user explicitly asks to contact Protpure. Pricing is by quotation. There are no free samples: paid sample kits (5–25 mL packs or a 1 mL pre-packed column) are credited against the first bulk order — file them as request_quote items with purpose "sample-kit".',
   },
 )
 

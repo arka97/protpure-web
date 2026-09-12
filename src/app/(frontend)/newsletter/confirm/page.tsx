@@ -1,6 +1,5 @@
 import type { Metadata } from 'next'
-import { CircleCheck, TriangleAlert } from 'lucide-react'
-import { ButtonLink } from '@/components/ui'
+import { StatusPage } from '@/components/StatusPage'
 import { getPayloadClient } from '@/lib/data'
 import { sendNewsletterWelcome } from '@/emails/send'
 
@@ -22,16 +21,9 @@ export default async function ConfirmPage({ searchParams }: { searchParams: Prom
       ok = true
     }
   }
-  return (
-    <section className="section">
-      <div className="container-x max-w-xl text-center">
-        {ok ? <CircleCheck className="mx-auto h-12 w-12 text-teal-500" /> : <TriangleAlert className="mx-auto h-12 w-12 text-amber-500" />}
-        <h1 className="heading-2 mt-6">{ok ? 'Subscription confirmed' : 'This link is not valid'}</h1>
-        <p className="mt-3 text-ink-soft">{ok ? 'Thanks — you will hear from us when there is something worth reading.' : 'The confirmation link may have expired. Please subscribe again from the footer.'}</p>
-        <div className="mt-8 flex justify-center">
-          <ButtonLink href="/">Back to homepage</ButtonLink>
-        </div>
-      </div>
-    </section>
+  return ok ? (
+    <StatusPage eyebrow="Newsletter" heading="Subscription *confirmed.*" text="Thanks — you will hear from us when there is something worth reading: product updates, performance data and technical notes." links={[{ href: '/blog', label: 'Notes from the bench', appearance: 'primary' }, { href: '/', label: 'Back to homepage', appearance: 'secondary' }]} />
+  ) : (
+    <StatusPage tone="attention" eyebrow="Newsletter" heading="This link is *not valid.*" text="The confirmation link may have expired or was already used. Subscribe again from the footer and we will send a fresh one." links={[{ href: '/#newsletter', label: 'Subscribe again', appearance: 'primary' }, { href: '/contact', label: 'Contact us', appearance: 'secondary' }]} />
   )
 }

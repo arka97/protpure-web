@@ -9,8 +9,9 @@ import path from 'path'
 import fs from 'fs/promises'
 import type { Payload } from 'payload'
 import { products as seedProducts } from './data/products'
-import { applications, categories, faqs, footer, header, services, siteSettings, team } from './data/content'
+import { applications, categories, certifications, faqs, footer, header, services, siteSettings, team, updates } from './data/content'
 import { documents, mediaAlts, pages, posts } from './data/pages'
+import { EVALUATION_NOTE_DEFAULT } from '@/lib/rfq'
 
 const SEED_DIR = process.env.SEED_DIR || path.resolve(process.cwd(), 'seed')
 const ctx = { context: { disableRevalidate: true, skipEmails: true }, overrideAccess: true as const }
@@ -21,7 +22,7 @@ export async function runSeed(payload: Payload, opts: { reset?: boolean } = {}) 
   const log = (m: string) => payload.logger.info(`[seed] ${m}`)
 
   if (opts.reset) {
-    for (const c of ['posts', 'pages', 'products', 'documents', 'product-categories', 'applications', 'services', 'faqs', 'team', 'testimonials', 'updates', 'media'] as const) {
+    for (const c of ['posts', 'pages', 'products', 'documents', 'product-categories', 'applications', 'services', 'faqs', 'team', 'testimonials', 'certifications', 'customers', 'updates', 'media'] as const) {
       await payload.delete({ collection: c, where: { id: { exists: true } }, ...ctx })
       log(`cleared ${c}`)
     }
@@ -109,6 +110,7 @@ export async function runSeed(payload: Payload, opts: { reset?: boolean } = {}) 
       packSizes: p.packSizes,
       leadTime: p.leadTime ?? '2–3 weeks ex-works',
       bulkAvailable: true,
+      evaluationNote: p.evaluationNote ?? EVALUATION_NOTE_DEFAULT,
       documents: (p.documents ?? []).map((f) => documentIds.get(f)!).filter(Boolean),
       _status: 'published',
     }
@@ -144,9 +146,30 @@ export async function runSeed(payload: Payload, opts: { reset?: boolean } = {}) 
   // ---------- Team ----------
   const teamIds = new Map<string, number>()
   for (const t of team) {
-    const doc = await upsert(payload, 'team', { name: { equals: t.name } }, t)
+    const { credentials, expertise, ...rest } = t
+    const doc = await upsert(payload, 'team', { name: { equals: t.name } }, { ...rest, credentials: (credentials ?? []).map((text) => ({ text })), expertise: (expertise ?? []).map((text) => ({ text })) })
     teamIds.set(t.name, doc.id)
   }
+  log(`team: ${teamIds.size}`)
+
+  // ---------- Certifications & claims (the Customers and Testimonials collections are deliberately left empty) ----------
+  for (const c of certifications) {
+    await upsert(payload, 'certifications', { name: { equals: c.name } }, c)
+  }
+  log(`certifications: ${certifications.length}`)
+
+  // ---------- LinkedIn updates: drafts only (no URL yet) — the editor pastes the post URL and publishes ----------
+  for (const u of updates) {
+    const existing = await payload.find({ collection: 'updates', where: { title: { equals: u.title } }, limit: 1, draft: true, ...ctx })
+    if (existing.docs[0]) continue // never overwrite an update the editor may have published
+    await payload.create({
+      collection: 'updates',
+      draft: true,
+      data: { title: u.title, summary: u.summary, kind: u.kind as never, publishedAt: u.publishedAt, image: media(u.image), relatedProducts: u.relatedProducts.map((slug) => productIds.get(slug)!).filter(Boolean), _status: 'draft' },
+      ...ctx,
+    })
+  }
+  log(`updates (drafts): ${updates.length}`)
 
   // ---------- Globals ----------
   await payload.updateGlobal({ slug: 'site-settings', data: { ...siteSettings, logo: media('protpure-logo.svg'), ogImage: media('hero-resins-concept.webp') } as never, ...ctx })
@@ -173,13 +196,20 @@ export async function runSeed(payload: Payload, opts: { reset?: boolean } = {}) 
     return base
   }
   const resolveLinks = (links?: Link[]) => (links ?? []).map((l) => ({ link: resolveLink(l) }))
+  const faqIdByQuestion = new Map((await payload.find({ collection: 'faqs', limit: 200, ...ctx })).docs.map((f) => [f.question, f.id] as const))
   for (const p of pages) {
-    const hero = { ...p.hero, image: media((p.hero as { image?: string }).image), links: resolveLinks((p.hero as { links?: Link[] }).links) }
+    // Explicit empty arrays: a group update keeps existing array values it is not told about.
+    const hero = { badges: [], ...p.hero, image: media((p.hero as { image?: string }).image), links: resolveLinks((p.hero as { links?: Link[] }).links) }
     const layout = p.layout.map((b) => {
       const blk = { ...b } as Record<string, unknown>
       if ('image' in blk && typeof blk.image === 'string') blk.image = media(blk.image)
+      if ('secondImage' in blk && typeof blk.secondImage === 'string') blk.secondImage = media(blk.secondImage)
       if ('links' in blk) blk.links = resolveLinks(blk.links as Link[])
+      if ('link' in blk && blk.link) blk.link = resolveLink(blk.link as Link)
       if (blk.blockType === 'featureGrid') blk.items = (blk.items as Record<string, unknown>[]).map((it) => ({ ...it, link: it.link ? resolveLink(it.link as Link) : undefined }))
+      // Category slugs → ids; FAQ questions → ids (seed data is written by slug / question, not id).
+      if (blk.blockType === 'productCategories' && Array.isArray(blk.categories)) blk.categories = (blk.categories as string[]).map((slug) => categoryIds.get(slug)!).filter(Boolean)
+      if (blk.blockType === 'faqBlock' && Array.isArray(blk.faqs)) blk.faqs = (blk.faqs as string[]).map((q) => faqIdByQuestion.get(q)!).filter(Boolean)
       return blk
     })
     await payload.update({ collection: 'pages', id: pageIds.get(p.slug)!, data: { hero: hero as never, layout: layout as never, _status: 'published' }, ...ctx })
@@ -190,6 +220,7 @@ export async function runSeed(payload: Payload, opts: { reset?: boolean } = {}) 
   await payload.updateGlobal({
     slug: 'header',
     data: {
+      tagline: header.tagline,
       items: header.items.map((it) => ({ link: resolveLink(it as Link), children: (it.children ?? []).map((c) => ({ link: resolveLink(c as Link), description: c.description })) })),
       cta: { link: resolveLink(header.cta) },
     } as never,
@@ -200,6 +231,7 @@ export async function runSeed(payload: Payload, opts: { reset?: boolean } = {}) 
     data: {
       tagline: footer.tagline,
       columns: footer.columns.map((c) => ({ title: c.title, links: c.links.map((l) => ({ link: resolveLink(l as Link) })) })),
+      newsletter: footer.newsletter,
       legalLinks: footer.legalLinks.map((l) => ({ link: resolveLink(l as Link) })),
       bottomText: footer.bottomText,
     } as never,
@@ -226,10 +258,10 @@ export async function runSeed(payload: Payload, opts: { reset?: boolean } = {}) 
   log(`posts: ${posts.length}`)
 
   log('done ✔')
-  return { products: productIds.size, pages: pages.length, media: mediaIds.size, documents: documentIds.size, posts: posts.length }
+  return { products: productIds.size, pages: pages.length, media: mediaIds.size, documents: documentIds.size, posts: posts.length, certifications: certifications.length, updateDrafts: updates.length }
 }
 
-async function upsert(payload: Payload, collection: 'product-categories' | 'applications' | 'services' | 'products' | 'faqs' | 'team' | 'pages' | 'posts', where: Record<string, unknown>, data: Record<string, unknown>) {
+async function upsert(payload: Payload, collection: 'product-categories' | 'applications' | 'services' | 'products' | 'faqs' | 'team' | 'certifications' | 'pages' | 'posts', where: Record<string, unknown>, data: Record<string, unknown>) {
   const existing = await payload.find({ collection, where: where as never, limit: 1, ...ctx })
   if (existing.docs[0]) {
     return payload.update({ collection, id: existing.docs[0].id, data: data as never, ...ctx })

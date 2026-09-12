@@ -9,6 +9,7 @@ export const Header: GlobalConfig = {
   access: { read: anyone, update: editors },
   hooks: { afterChange: [revalidateGlobal] },
   fields: [
+    { name: 'tagline', type: 'text', admin: { description: 'Short descriptor beside the logo, e.g. "Chromatography resins · Made in Anand, India". Use " · " to break lines.' } },
     {
       name: 'items',
       type: 'array',

@@ -1,40 +1,48 @@
 'use client'
 
 import * as React from 'react'
-import { ArrowUpRight } from 'lucide-react'
 import { CmsImage } from '@/components/ui'
+import { ArrowUpRightIcon } from '@/components/visual/icons'
 import { formatDate } from '@/lib/utils'
 import type { Update } from '@/payload-types'
 
+export const UPDATE_KIND_LABELS: Record<string, string> = { 'product-launch': 'Product launch', data: 'Data / performance', milestone: 'Milestone', services: 'Services', perspective: 'Perspective' }
+
 /**
- * Shows the editor-written summary card by default; switches to LinkedIn's official embed on demand
- * so the page loads fast and never depends on LinkedIn being reachable.
+ * LinkedIn update: kind eyebrow, mono dateline, title and the editor's summary. The official
+ * LinkedIn embed loads only on request, so the page stays fast and never depends on LinkedIn.
  */
 export function UpdateCard({ update, embedByDefault }: { update: Update; embedByDefault?: boolean }) {
   const [embed, setEmbed] = React.useState(Boolean(embedByDefault))
   const embedUrl = update.urn ? `https://www.linkedin.com/embed/feed/update/${update.urn}` : null
+  const hasImage = update.image && typeof update.image === 'object'
 
   return (
-    <article className="card flex h-full flex-col overflow-hidden">
+    <article className="card flex h-full flex-col" data-block="update">
       {embed && embedUrl ? (
         <iframe src={embedUrl} title={update.title} className="h-[560px] w-full" loading="lazy" allowFullScreen />
       ) : (
         <>
-          {update.image && typeof update.image === 'object' ? (
-            <div className="relative aspect-[16/9]">
-              <CmsImage media={update.image} size="card" fill className="object-cover" sizes="(min-width: 768px) 33vw, 100vw" />
+          {hasImage ? (
+            <div className="relative m-4 mb-0 aspect-[16/10] overflow-hidden rounded-[2px] bg-surface-recessed">
+              <CmsImage media={update.image} size="card" fill className="object-cover" sizes="(min-width: 768px) 33vw, 100vw" fallbackAlt={update.title} />
             </div>
           ) : null}
-          <div className="flex flex-1 flex-col p-5">
-            <p className="text-xs font-semibold uppercase tracking-wide text-[#0a66c2]">LinkedIn · {formatDate(update.publishedAt)}</p>
-            <h3 className="mt-1.5 font-display text-lg font-bold leading-snug text-navy-900">{update.title}</h3>
-            <p className="mt-2 text-sm leading-relaxed text-ink-soft">{update.summary}</p>
-            <div className="mt-auto flex items-center gap-4 pt-4 text-sm font-semibold">
-              <a href={update.url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-navy-900 hover:text-teal-600">
-                View on LinkedIn <ArrowUpRight className="h-4 w-4" />
+          <div className="flex flex-1 flex-col p-5 lg:p-6">
+            <p className="flex items-center justify-between gap-3">
+              <span className="eyebrow text-[9px] tracking-[0.1em]">{update.kind ? UPDATE_KIND_LABELS[update.kind] ?? update.kind : 'LinkedIn'}</span>
+              <time dateTime={update.publishedAt} className="mono text-[11px] text-text-2">
+                {formatDate(update.publishedAt)}
+              </time>
+            </p>
+            <h3 className="mt-3 font-display text-[24px] leading-[1.15] tracking-[-0.03em] text-ink lg:text-[27px]">{update.title}</h3>
+            <p className="mt-3 text-[13px] leading-[1.6] text-text-2 lg:text-[14px]">{update.summary}</p>
+            <div className="mt-auto flex items-center justify-between gap-4 border-t border-rule pt-3.5 text-[12px] font-medium">
+              <a href={update.url} target="_blank" rel="noopener noreferrer" className="inline-flex min-h-8 items-center gap-1.5 text-ink hover:text-teal-deep">
+                View on LinkedIn <ArrowUpRightIcon className="h-4 w-4" />
               </a>
               {embedUrl ? (
-                <button type="button" onClick={() => setEmbed(true)} className="text-muted hover:text-navy-900">
+                <button type="button" onClick={() => setEmbed(true)} className="min-h-8 text-text-2 hover:text-ink">
                   Show post
                 </button>
               ) : null}

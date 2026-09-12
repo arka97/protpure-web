@@ -39,15 +39,32 @@ export const Pages: CollectionConfig = {
                   defaultValue: 'standard',
                   options: [
                     { label: 'Standard (dark, with image)', value: 'standard' },
+                    { label: 'Schematic (light, with the bead cross-section drawing)', value: 'schematic' },
                     { label: 'Compact (title + intro)', value: 'compact' },
                     { label: 'None', value: 'none' },
                   ],
                 },
                 { name: 'eyebrow', type: 'text', admin: { condition: (_, s) => s?.style !== 'none' } },
-                { name: 'heading', type: 'text', admin: { condition: (_, s) => s?.style !== 'none', description: 'Defaults to the page title.' } },
-                { name: 'highlight', type: 'text', admin: { condition: (_, s) => s?.style === 'standard', description: 'Optional: words from the heading to colour in the accent shade.' } },
+                { name: 'heading', type: 'textarea', admin: { rows: 2, condition: (_, s) => s?.style !== 'none', description: 'Defaults to the page title. Line breaks are kept.' } },
+                { name: 'highlight', type: 'text', admin: { condition: (_, s) => s?.style === 'standard' || s?.style === 'schematic', description: 'Optional: words from the heading to colour in the accent shade.' } },
                 { name: 'text', type: 'textarea', admin: { condition: (_, s) => s?.style !== 'none' } },
                 { name: 'image', type: 'upload', relationTo: 'media', admin: { condition: (_, s) => s?.style === 'standard' } },
+                {
+                  type: 'row',
+                  admin: { condition: (_, s) => s?.style === 'standard' || s?.style === 'schematic' },
+                  fields: [
+                    { name: 'imageMarker', type: 'text', admin: { width: '50%', description: 'Standard: medallion on the photo, e.g. "BPG 200". Schematic: label above the drawing, e.g. "Particle architecture".' } },
+                    { name: 'imageMarkerNote', type: 'text', admin: { width: '50%', description: 'Standard: small line in the medallion, e.g. "Client deployment". Schematic: right-hand label, e.g. "Fig. 01 / Schematic".' } },
+                  ],
+                },
+                {
+                  type: 'row',
+                  admin: { condition: (_, s) => s?.style === 'standard' || s?.style === 'schematic' },
+                  fields: [
+                    { name: 'imageCaption', type: 'text', admin: { width: '60%', description: 'Caption under the photo or drawing, e.g. "Ni-NTA Agarose in a process column".' } },
+                    { name: 'imageCaptionNote', type: 'text', admin: { width: '40%', description: 'Right-hand caption, e.g. "At a client site".' } },
+                  ],
+                },
                 { name: 'links', type: 'array', maxRows: 2, fields: [linkField({ appearance: true })], admin: { condition: (_, s) => s?.style !== 'none' } },
                 {
                   name: 'badges',

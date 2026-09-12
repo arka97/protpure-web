@@ -1,6 +1,17 @@
 import * as React from 'react'
 import { Button, Section, Text } from '@react-email/components'
 import { EmailLayout, Field, styles, type Brand } from './Layout'
+import { GRADE_LABELS, purposeLabel, SAMPLE_KIT_POLICY, type GradeValue } from '@/lib/rfq'
+
+export type InquiryEmailItem = {
+  productName: string
+  grade?: string | null
+  packSize?: string | null
+  catalogNumber?: string | null
+  quantity?: number | null
+  purpose?: string | null
+  notes?: string | null
+}
 
 export type InquiryEmailData = {
   id: string | number
@@ -12,6 +23,9 @@ export type InquiryEmailData = {
   jobTitle?: string | null
   phone?: string | null
   country?: string | null
+  /** Structured lines from the RFQ basket / API. */
+  items: InquiryEmailItem[]
+  /** Products referenced without line detail (legacy callers). */
   productNames: string[]
   requestedItems?: string | null
   application?: string | null
@@ -23,11 +37,54 @@ export type InquiryEmailData = {
 }
 
 const intro: Record<string, string> = {
-  quote: 'Thank you for your quote request. Our team is reviewing the products and quantities you listed and will reply with pricing, lead time and shipping options',
+  quote: 'Thank you for your quote request. Our team is reviewing the items you listed and will reply with pricing, lead time and shipping options',
   evaluation: 'Thank you for your interest in evaluating Protpure resins. A scientist from our team will get in touch to discuss your process and the most suitable evaluation format',
   technical: 'Thank you for your question. One of our application scientists will review it and reply',
   partnership: 'Thank you for your interest in partnering with Protpure. Our team will review your message and get back to you',
   contact: 'Thank you for contacting Protpure. We have received your message and will reply',
+}
+
+const cell = { border: `1px solid #e5e7eb`, padding: '6px 8px', fontSize: 13, lineHeight: '18px', color: '#1f2937', verticalAlign: 'top' as const }
+const head = { ...cell, backgroundColor: '#eef3f9', color: '#0b2545', fontWeight: 600, fontSize: 12, textTransform: 'uppercase' as const, letterSpacing: '0.04em' }
+
+/** Line-item table shared by the confirmation and the sales notification. */
+export function ItemsTable({ items }: { items: InquiryEmailItem[] }) {
+  if (!items.length) return null
+  const hasSampleKit = items.some((i) => i.purpose === 'sample-kit')
+  return (
+    <>
+      <Text style={styles.label}>Requested items ({items.length})</Text>
+      <table role="presentation" cellPadding={0} cellSpacing={0} style={{ width: '100%', borderCollapse: 'collapse', margin: '4px 0 8px' }}>
+        <thead>
+          <tr>
+            <th align="left" style={head}>Product</th>
+            <th align="left" style={head}>Grade</th>
+            <th align="left" style={head}>Pack size</th>
+            <th align="right" style={head}>Qty</th>
+            <th align="left" style={head}>Purpose</th>
+          </tr>
+        </thead>
+        <tbody>
+          {items.map((i, idx) => (
+            <tr key={idx}>
+              <td style={cell}>
+                {i.productName}
+                {i.notes ? <span style={{ display: 'block', color: '#6b7280', fontSize: 12 }}>{i.notes}</span> : null}
+              </td>
+              <td style={cell}>{i.grade ? GRADE_LABELS[i.grade as GradeValue] ?? i.grade : '—'}</td>
+              <td style={cell}>
+                {i.packSize || '—'}
+                {i.catalogNumber ? <span style={{ display: 'block', color: '#6b7280', fontSize: 12, fontFamily: 'monospace' }}>{i.catalogNumber}</span> : null}
+              </td>
+              <td align="right" style={cell}>{i.quantity ?? 1}</td>
+              <td style={cell}>{purposeLabel(i.purpose, true) || '—'}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+      {hasSampleKit ? <Text style={{ ...styles.muted, margin: '0 0 8px' }}>{SAMPLE_KIT_POLICY}</Text> : null}
+    </>
+  )
 }
 
 export function InquiryConfirmation({ brand, data }: { brand: Brand; data: InquiryEmailData }) {
@@ -39,8 +96,9 @@ export function InquiryConfirmation({ brand, data }: { brand: Brand; data: Inqui
       <Text style={styles.p}>For your records, here is a summary of what you sent us:</Text>
       <Section style={{ backgroundColor: '#f8fafc', borderRadius: 8, padding: '4px 16px 16px' }}>
         <Field label="Reference" value={`#${data.id}`} />
-        <Field label="Products" value={data.productNames.join(', ')} />
-        <Field label="Requested items" value={data.requestedItems} />
+        <ItemsTable items={data.items} />
+        {!data.items.length ? <Field label="Products" value={data.productNames.join(', ')} /> : null}
+        <Field label={data.items.length ? 'Additional items' : 'Requested items'} value={data.requestedItems} />
         <Field label="Application" value={data.application} />
         <Field label="Message" value={data.message} />
         <Field label="Organisation" value={[data.organization, data.country].filter(Boolean).join(', ')} />
@@ -66,8 +124,9 @@ export function InquiryNotification({ brand, data }: { brand: Brand; data: Inqui
         <Field label="Organisation" value={[data.organization, data.jobTitle].filter(Boolean).join(' · ')} />
         <Field label="Phone" value={data.phone} />
         <Field label="Country" value={data.country} />
-        <Field label="Products" value={data.productNames.join(', ')} />
-        <Field label="Requested items" value={data.requestedItems} />
+        <ItemsTable items={data.items} />
+        {!data.items.length ? <Field label="Products" value={data.productNames.join(', ')} /> : null}
+        <Field label={data.items.length ? 'Additional items' : 'Requested items'} value={data.requestedItems} />
         <Field label="Application" value={data.application} />
         <Field label="Message" value={data.message} />
         <Field label="Source" value={[data.source, data.pageUrl].filter(Boolean).join(' · ')} />

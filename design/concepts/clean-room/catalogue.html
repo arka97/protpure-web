@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Resin catalogue / Protpure — Clean Room</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&amp;family=Space+Grotesk:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+
+:root { --paper:#ffffff; --wash:#f3f6f6; --ink:#172526; --muted:#526465; --line:#cbd6d6; --accent:#006e73; --tint:#e5f1f0; --mono:'IBM Plex Mono',ui-monospace,monospace; --sans:'Space Grotesk',system-ui,sans-serif; }
+* { box-sizing:border-box; }
+html { width:1440px; margin:0; scroll-behavior:smooth; }
+body { margin:0; background:var(--paper); color:var(--ink); font-family:var(--sans); font-size:16px; line-height:1.5; -webkit-font-smoothing:antialiased; }
+::selection { background:var(--tint); }
+a { color:inherit; text-decoration:none; }
+button,input,select,textarea { font:inherit; color:inherit; }
+button,a,input,select,summary { -webkit-tap-highlight-color:transparent; }
+button { cursor:pointer; }
+:focus-visible { outline:2px solid var(--accent); outline-offset:4px; }
+button,a { transition:background 140ms,color 140ms; }
+svg { display:block; }
+.icon { width:20px; height:20px; flex:none; stroke:currentColor; stroke-width:1.5; fill:none; stroke-linecap:round; stroke-linejoin:round; }
+p,h1,h2,h3,h4,figure { margin:0; }
+h1,h2,h3 { font-weight:500; }
+h1 { font-size:80px; line-height:1.02; letter-spacing:-5px; }
+h2 { font-size:42px; line-height:1.12; letter-spacing:-1.8px; }
+h3 { font-size:24px; line-height:1.2; letter-spacing:-.65px; }
+p { color:var(--muted); }
+.mono,table td:not(:first-child),.metric strong,.num { font-family:var(--mono); font-variant-numeric:tabular-nums; }
+.label { font-family:var(--mono); font-size:11px; line-height:1.5; text-transform:uppercase; letter-spacing:1.2px; }
+.muted { color:var(--muted); }
+.teal { color:var(--accent); }
+.small { font-size:13px; line-height:1.55; }
+.wrap { width:1280px; margin:0 auto; }
+.topbar { height:30px; background:var(--wash); border-bottom:1px solid var(--line); }
+.topbar .wrap { display:flex; justify-content:space-between; align-items:center; height:100%; font-family:var(--mono); font-size:10px; letter-spacing:.5px; }
+.nav { height:88px; border-bottom:1px solid var(--line); background:white; }
+.nav .wrap { display:flex; align-items:center; height:100%; gap:48px; }
+.logo { width:136px; height:48px; object-fit:contain; }
+.navlinks { display:flex; gap:30px; align-items:center; margin-left:70px; font-size:14px; }
+.navlinks a:hover,.textlink:hover { color:var(--accent); }
+.navlinks a.active { color:var(--accent); border-bottom:1px solid var(--accent); }
+.basket-link { margin-left:auto; display:flex; gap:12px; align-items:center; font-size:14px; }
+.count { display:grid; place-items:center; width:26px; height:26px; background:var(--tint); color:var(--accent); font:12px var(--mono); }
+.mobile-menu { display:none; }
+.btn { display:inline-flex; align-items:center; justify-content:center; gap:20px; padding:14px 20px; min-height:48px; border:1px solid var(--accent); background:var(--accent); color:white; font-size:14px; font-weight:500; border-radius:2px; }
+.btn:hover { background:#00565a; }
+.btn.secondary { background:transparent; color:var(--ink); border-color:var(--line); }
+.btn.secondary:hover { background:var(--wash); }
+.btn.compact { min-height:40px; padding:9px 14px; gap:12px; font-size:13px; }
+.textlink { display:inline-flex; gap:14px; align-items:center; font-size:14px; border-bottom:1px solid var(--line); padding-bottom:5px; }
+.actions { display:flex; align-items:center; gap:28px; margin-top:28px; }
+.section { padding:64px 0; border-bottom:1px solid var(--line); }
+.section-head { display:flex; justify-content:space-between; align-items:end; gap:40px; margin-bottom:32px; }
+.section-head .label { margin-bottom:14px; color:var(--accent); }
+.section-head p { max-width:420px; font-size:15px; }
+.home-hero { display:grid; grid-template-columns:1.08fr 1fr; min-height:550px; }
+.hero-copy { padding:64px 36px 48px 0; }
+.hero-copy .label { color:var(--accent); margin-bottom:25px; }
+.hero-copy h1 { margin-bottom:24px; }
+.hero-copy h1 span { color:var(--accent); }
+.hero-copy p { max-width:490px; font-size:17px; line-height:1.6; }
+.hero-drawing { border-left:1px solid var(--line); padding:24px 0 24px 32px; display:flex; flex-direction:column; justify-content:space-between; }
+.drawing-label { display:flex; justify-content:space-between; color:var(--muted); }
+.bead-diagram { width:100%; height:388px; color:var(--accent); }
+.drawing-note { display:flex; justify-content:space-between; border-top:1px solid var(--line); padding-top:12px; }
+.hero-metrics { display:grid; grid-template-columns:repeat(3,1fr); border-top:1px solid var(--ink); padding:25px 0; }
+.metric { padding-left:32px; border-left:1px solid var(--line); }
+.metric:first-child { padding-left:0; border:0; }
+.metric strong { display:block; font-size:38px; font-weight:400; line-height:1.2; letter-spacing:-2px; }
+.metric strong span { font-size:19px; letter-spacing:-.5px; }
+.metric p { font-size:13px; margin-top:7px; }
+.trust { border-top:1px solid var(--line); border-bottom:1px solid var(--line); background:var(--wash); }
+.trust .wrap { display:flex; justify-content:space-between; padding:17px 0; }
+.trust span { display:flex; align-items:center; gap:10px; font-size:13px; }
+.trust .icon { color:var(--accent); width:16px; height:16px; }
+.mode-grid { display:grid; grid-template-columns:repeat(3,1fr); border-left:1px solid var(--line); border-top:1px solid var(--line); }
+.mode-card { padding:24px; border-right:1px solid var(--line); border-bottom:1px solid var(--line); display:grid; grid-template-columns:40px 1fr 20px; gap:15px; align-items:start; min-height:132px; }
+.mode-card:hover { background:var(--wash); }
+.mode-card h3 { font-size:20px; margin-bottom:8px; }
+.mode-card p { font-size:13px; }
+.mode-symbol { width:32px; height:32px; color:var(--accent); }
+.inline-row { display:flex; justify-content:space-between; align-items:center; gap:20px; padding-top:20px; font-size:13px; }
+.platform { background:var(--wash); }
+.platform-grid { display:grid; grid-template-columns:290px 1fr; gap:60px; }
+.platform-intro h2 { margin:12px 0 22px; }
+.platform-intro p { font-size:14px; }
+.platform-intro .textlink { margin-top:24px; }
+.grade-axis,.grade-row { display:grid; grid-template-columns:140px 1fr 100px 114px; align-items:center; gap:20px; }
+.grade-axis { font:10px var(--mono); text-transform:uppercase; color:var(--muted); padding-bottom:14px; border-bottom:1px solid var(--ink); }
+.grade-axis div:last-child { text-align:right; }
+.grade-row { min-height:87px; border-bottom:1px solid var(--line); }
+.grade-name { font-size:16px; font-weight:500; }
+.grade-name small { display:block; font-size:11px; font-weight:400; color:var(--muted); margin-top:4px; }
+.range-track { position:relative; height:35px; border-left:1px solid var(--line); border-right:1px solid var(--line); background:repeating-linear-gradient(90deg,transparent 0,transparent calc(25% - 1px),var(--line) calc(25% - 1px),var(--line) 25%); }
+.range-mark { position:absolute; height:12px; top:11px; border:1px solid var(--accent); background:var(--tint); }
+.range-dot { position:absolute; height:20px; width:2px; top:7px; background:var(--accent); }
+.grade-row .num { font-size:16px; }
+.grade-row .num:last-child { text-align:right; }
+.axis-ticks { display:flex; justify-content:space-between; font:10px var(--mono); color:var(--muted); margin:10px 254px 0 160px; }
+.footnote { font-size:11px; line-height:1.6; color:var(--muted); margin-top:14px; }
+.reason-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:36px; margin-bottom:35px; }
+.reason .label { color:var(--accent); margin-bottom:15px; }
+.reason h3 { font-size:20px; margin-bottom:10px; }
+.reason p { font-size:14px; }
+table { width:100%; border-collapse:collapse; font-size:13px; }
+caption { text-align:left; font-size:20px; font-weight:500; margin-bottom:15px; }
+th { text-align:left; font-size:11px; font-weight:500; padding:13px 18px; border-top:1px solid var(--ink); border-bottom:1px solid var(--line); color:var(--muted); background:var(--wash); }
+td { padding:13px 18px; border-bottom:1px solid var(--line); vertical-align:top; }
+td:first-child { font-weight:500; }
+.highlight { background:var(--tint); color:var(--accent); }
+.comparison td:not(:first-child) { font-family:var(--sans); }
+.comparison th:first-child { width:25%; }
+.comparison th:nth-child(2) { width:32%; }
+.workflow-grid { display:grid; grid-template-columns:repeat(3,1fr); }
+.workflow { display:flex; justify-content:space-between; border-top:1px solid var(--line); padding:17px 20px 17px 0; margin-right:30px; font-size:16px; }
+.factory-grid { display:grid; grid-template-columns:1.1fr 1fr; gap:64px; margin-top:42px; }
+.photo-placeholder { min-height:200px; border:1px solid var(--line); background:var(--wash); position:relative; display:grid; place-items:center; font:11px var(--mono); color:var(--muted); }
+.photo-placeholder:before,.photo-placeholder:after { content:''; position:absolute; width:18px; height:18px; border-color:var(--muted); border-style:solid; }
+.photo-placeholder:before { left:14px; top:14px; border-width:1px 0 0 1px; }
+.photo-placeholder:after { right:14px; bottom:14px; border-width:0 1px 1px 0; }
+.factory-caption { display:flex; justify-content:space-between; margin-top:12px; font-size:12px; }
+.founder-head { display:grid; grid-template-columns:110px 1fr; gap:24px; align-items:center; margin-bottom:20px; }
+.founder-head .photo-placeholder { min-height:124px; font-size:9px; text-align:center; padding:15px; }
+.founder-head h3 { margin:8px 0; }
+.founder-copy { font-size:15px; line-height:1.7; }
+.social-proof { display:grid; grid-template-columns:1fr 2fr; gap:40px; border-top:1px solid var(--line); padding-top:28px; margin-top:34px; }
+.logo-slots { display:grid; grid-template-columns:repeat(3,1fr); }
+.logo-slot { display:grid; place-items:center; min-height:65px; border:1px dashed var(--line); font:10px var(--mono); color:var(--muted); }
+.services-grid { display:grid; grid-template-columns:1fr 1fr; gap:64px; }
+.service-list { border-top:1px solid var(--ink); }
+.service-item { display:flex; justify-content:space-between; align-items:center; padding:17px 0; border-bottom:1px solid var(--line); }
+.service-item h3 { font-size:18px; }
+.service-item p { margin-top:5px; font-size:12px; }
+.lab-image { width:100%; height:245px; object-fit:cover; object-position:center 60%; }
+.evaluation { padding:28px; background:var(--tint); display:grid; grid-template-columns:1fr auto; align-items:center; gap:30px; margin-top:35px; }
+.evaluation h3 { margin:9px 0; font-size:27px; }
+.evaluation p { max-width:760px; font-size:14px; }
+.faq-grid { display:grid; grid-template-columns:1fr 2fr; gap:60px; }
+.faq-grid h2 { margin:14px 0; }
+details { border-top:1px solid var(--line); }
+details:last-child { border-bottom:1px solid var(--line); }
+summary { list-style:none; cursor:pointer; padding:17px 0; display:flex; justify-content:space-between; gap:16px; font-size:16px; }
+summary::-webkit-details-marker { display:none; }
+summary:after { content:'+'; font:20px var(--mono); color:var(--accent); }
+details[open] summary:after { content:'−'; }
+details p { padding:0 36px 20px 0; font-size:14px; }
+.final-cta { background:var(--wash); padding:45px 0; border-bottom:1px solid var(--line); }
+.final-cta .wrap { display:flex; justify-content:space-between; align-items:center; }
+.final-cta h2 { font-size:36px; }
+.final-cta p { margin-top:12px; font-size:14px; }
+.footer { padding:38px 0 22px; }
+.footer-grid { display:grid; grid-template-columns:1.3fr 1fr 1fr 1.4fr; gap:38px; }
+.footer .logo { width:120px; height:43px; }
+.footer p { margin-top:12px; font-size:12px; line-height:1.7; }
+.footer h4 { font-size:13px; font-weight:500; margin-bottom:14px; }
+.footer a:not(.brand) { display:block; font-size:12px; margin:8px 0; color:var(--muted); }
+.newsletter { display:flex; border-bottom:1px solid var(--ink); margin-top:15px; }
+.newsletter input { width:100%; border:0; padding:12px 0; font-size:13px; background:transparent; }
+.newsletter button { background:transparent; border:0; color:var(--accent); }
+.footer-bottom { border-top:1px solid var(--line); margin-top:32px; padding-top:16px; display:flex; justify-content:space-between; font:10px var(--mono); color:var(--muted); }
+.breadcrumb { font-size:12px; color:var(--muted); padding:25px 0; }
+.page-title { display:flex; justify-content:space-between; align-items:end; padding:12px 0 35px; }
+.page-title h1 { font-size:64px; letter-spacing:-3px; margin:12px 0; }
+.page-title p { font-size:15px; }
+.catalogue-layout { display:grid; grid-template-columns:218px 1fr; gap:44px; padding:32px 0 64px; border-top:1px solid var(--line); }
+.filters h2 { font-size:16px; letter-spacing:0; padding-bottom:20px; border-bottom:1px solid var(--line); display:flex; justify-content:space-between; }
+.filter-group { border:0; border-bottom:1px solid var(--line); margin:0; padding:24px 0; }
+.filter-group legend { float:left; width:100%; font:10px var(--mono); letter-spacing:1px; text-transform:uppercase; margin-bottom:16px; color:var(--muted); }
+.filter-option { display:flex; align-items:center; gap:9px; font-size:12px; padding:6px 0; clear:both; }
+.filter-option span:last-child { margin-left:auto; font:10px var(--mono); color:var(--muted); }
+input[type='checkbox'],input[type='radio'] { accent-color:var(--accent); width:14px; height:14px; margin:0; }
+.wizard { background:var(--tint); padding:18px 22px; margin-bottom:22px; }
+.wizard summary { padding:0; font-size:16px; }
+.wizard small { display:block; font-size:12px; color:var(--muted); margin-top:3px; }
+.wizard-body { display:flex; gap:16px; align-items:end; padding-top:20px; }
+.wizard-body label { flex:1; font-size:12px; }
+select,input[type='number'],textarea,input[type='email'],input[type='text'] { border:1px solid var(--line); background:white; border-radius:2px; padding:9px 11px; }
+select { min-height:39px; font-size:12px; width:100%; }
+.catalogue-toolbar { display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; font-size:13px; }
+.catalogue-toolbar label { display:flex; align-items:center; gap:12px; }
+.catalogue-toolbar select { width:166px; }
+.product-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; }
+.product-card { border:1px solid var(--line); padding:21px 18px 18px; min-width:0; background:white; }
+.card-top { display:flex; align-items:center; justify-content:space-between; margin-bottom:19px; }
+.card-top .label { font-size:9px; letter-spacing:.65px; color:var(--accent); }
+.status { font:10px var(--mono); color:var(--accent); display:inline-flex; gap:6px; align-items:center; }
+.status:before { content:''; width:5px; height:5px; background:var(--accent); border-radius:50%; }
+.status.mto { color:var(--muted); }
+.status.mto:before { background:transparent; border:1px solid var(--muted); }
+.product-card h3 { font-size:22px; min-height:53px; }
+.product-card .description { font-size:12px; min-height:39px; margin:8px 0 20px; }
+.card-specs { display:grid; grid-template-columns:1fr 1fr; border-top:1px solid var(--line); border-bottom:1px solid var(--line); padding:12px 0; gap:8px; min-height:88px; }
+.card-specs dt { font:9px var(--mono); color:var(--muted); text-transform:uppercase; margin-bottom:7px; }
+.card-specs dd { font:15px var(--mono); margin:0; line-height:1.4; }
+.card-specs dd small { display:block; font-size:9px; color:var(--muted); margin-top:3px; }
+.card-config { display:grid; grid-template-columns:1.2fr 1fr; gap:8px; margin:15px 0; }
+.card-config label { font:9px var(--mono); text-transform:uppercase; color:var(--muted); }
+.card-config select { margin-top:6px; font-family:var(--sans); color:var(--ink); padding:8px; font-size:11px; }
+.card-bottom { display:flex; align-items:center; justify-content:space-between; gap:6px; }
+.compare { display:flex; align-items:center; gap:6px; font-size:11px; }
+.card-bottom .btn { font-size:11px; padding:9px 10px; gap:7px; }
+.catalogue-note { margin-top:24px; border-top:1px solid var(--line); padding-top:18px; font-size:12px; }
+.product-hero { display:grid; grid-template-columns:1.3fr 1fr; gap:64px; padding:8px 0 44px; }
+.product-hero h1 { font-size:80px; margin:22px 0 7px; }
+.product-subtitle { font-size:23px; color:var(--accent); margin-bottom:20px; }
+.product-hero .description { max-width:660px; font-size:16px; }
+.product-facts { display:grid; grid-template-columns:1fr 1.5fr 1fr; gap:25px; margin-top:30px; border-top:1px solid var(--line); padding-top:20px; }
+.product-facts dt { font:10px var(--mono); color:var(--muted); margin-bottom:8px; text-transform:uppercase; }
+.product-facts dd { margin:0; font-size:13px; }
+.product-visual { border:1px solid var(--line); position:relative; display:grid; place-items:center; }
+.product-visual img { width:340px; height:340px; object-fit:contain; }
+.product-visual .label { position:absolute; left:20px; top:16px; font-size:10px; color:var(--muted); }
+.product-visual .visual-caption { position:absolute; bottom:12px; left:20px; right:20px; display:flex; justify-content:space-between; border-top:1px solid var(--line); padding-top:8px; font:10px var(--mono); color:var(--muted); }
+.section-nav { position:sticky; top:0; z-index:10; background:white; border-block:1px solid var(--line); }
+.section-nav .wrap { display:flex; align-items:center; gap:35px; height:66px; font-size:13px; }
+.section-nav .btn { margin-left:auto; }
+section[id] { scroll-margin-top:84px; }
+.overview-grid { display:grid; grid-template-columns:1fr 2fr; gap:60px; }
+.overview-grid p { font-size:16px; }
+.use-tags { display:flex; flex-wrap:wrap; gap:7px; margin-top:20px; }
+.tag { font-size:11px; border:1px solid var(--line); padding:6px 9px; }
+.grade-table td { font-size:12px; }
+.grade-table td small { display:block; color:var(--muted); font-size:10px; margin-top:5px; }
+.grade-table td:first-child { min-width:140px; }
+.grade-table th { font-size:10px; }
+.spec-table th:first-child { width:27%; }
+.spec-table th:nth-child(2) { width:37%; }
+.spec-table td { line-height:1.65; }
+.ordering-layout { display:grid; grid-template-columns:1fr 355px; gap:38px; align-items:start; }
+.order-controls { display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; }
+.order-controls label { display:flex; align-items:center; gap:14px; font-size:13px; }
+.order-controls select { width:160px; }
+.order-table td { vertical-align:middle; padding:10px 12px; }
+.order-table input { width:60px; padding:7px; font-size:12px; }
+.order-table .btn { font:12px var(--sans); }
+.drawer-mock { border:1px solid var(--ink); background:white; padding:24px; box-shadow:8px 8px 0 var(--wash); }
+.drawer-heading { display:flex; justify-content:space-between; align-items:center; padding-bottom:20px; border-bottom:1px solid var(--line); }
+.drawer-heading h3 { font-size:23px; }
+.drawer-item { padding:20px 0; border-bottom:1px solid var(--line); }
+.drawer-item h4 { font-size:16px; font-weight:500; margin-bottom:7px; }
+.drawer-item p { font:11px var(--mono); }
+.drawer-item .inline-row { padding-top:12px; }
+.drawer-form { margin-top:22px; }
+.drawer-form label { display:block; font-size:12px; margin-top:12px; }
+.drawer-form input,.drawer-form textarea { display:block; width:100%; margin-top:6px; }
+.drawer-form .btn { width:100%; margin-top:20px; }
+.documents { display:grid; grid-template-columns:repeat(3,1fr); gap:20px; }
+.document { border:1px solid var(--line); padding:22px; }
+.document h3 { font-size:18px; margin:20px 0 10px; }
+.document .textlink { margin-top:18px; }
+.related-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:20px; }
+.quote-bar { position:sticky; bottom:0; z-index:12; background:var(--ink); color:white; padding:14px 0; }
+.quote-bar .wrap { display:flex; align-items:center; justify-content:space-between; }
+.quote-bar p { color:#cbd6d6; font-size:12px; }
+.quote-bar .btn { background:white; color:var(--ink); border-color:white; }
+.quote-bar strong { font-weight:500; }
+.rfq-overlay { display:none; position:fixed; inset:0; z-index:100; background:rgb(23 37 38 / .22); }
+.rfq-overlay:target { display:block; }
+.rfq-panel { position:absolute; right:0; top:0; bottom:0; width:440px; overflow:auto; background:white; padding:32px; box-shadow:-8px 0 30px rgb(23 37 38 / .08); }
+.rfq-close { display:grid; place-items:center; width:32px; height:32px; }
+.empty-rfq { margin:24px 0; font-size:14px; }
+.notice { font-size:12px; color:var(--accent); margin-top:14px; }
+[hidden] { display:none !important; }
+@media(prefers-reduced-motion:reduce) { html { scroll-behavior:auto; } * { transition:none !important; } }
+
+</style>
+</head>
+<body>
+<div class="topbar"><div class="wrap"><span>MANUFACTURED IN ANAND, INDIA · SUPPLIED WORLDWIDE</span><span>SCIENTIST-TO-SCIENTIST SUPPORT · +91 94265 96644</span></div></div><header class="nav"><div class="wrap"><a class="brand" href="home.html" aria-label="Protpure home"><img class="logo" src="protpure-logo.png" alt="ProtPure"></a><nav class="navlinks" aria-label="Main navigation"><a class="active" href="catalogue.html">Products</a><a class="" href="home.html#platform">Technology</a><a class="" href="home.html#applications">Applications</a><a class="" href="home.html#services">Services</a><a class="" href="home.html#company">Company</a></nav><a class="basket-link" href="#rfq"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 8h18l-2 12H5L3 8Zm4 0 3-5m7 5-3-5M9 11v6m6-6v6"></path></svg><span class="basket-word">RFQ basket</span><span class="count basket-count">0</span></a><details class="mobile-menu"><summary aria-label="Open menu"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 16h16"></path></svg></summary><nav aria-label="Mobile navigation"><a class="active" href="catalogue.html">Products</a><a class="" href="home.html#platform">Technology</a><a class="" href="home.html#applications">Applications</a><a class="" href="home.html#services">Services</a><a class="" href="home.html#company">Company</a></nav></details></div></header><main class="wrap"><div class="breadcrumb"><a href="home.html">Home</a> / Products</div><div class="page-title"><div><div class="label teal">Catalogue / chromatography media</div><h1>Find your resin.</h1><p>Real specifications. From evaluation to manufacturing scale.</p></div><div class="label muted">16 products<br>Quoted to your grade & volume</div></div><div class="catalogue-layout"><aside class="filters"><h2>Filter products <button id="reset-filters" type="button" style="border:0;background:none;font-size:11px;color:var(--accent)">Reset</button></h2><fieldset class="filter-group"><legend>Chromatography mode</legend><label class="filter-option"><input type="checkbox" data-filter="mode" value="Ion exchange"><span>Ion exchange</span><span>04</span></label><label class="filter-option"><input type="checkbox" data-filter="mode" value="Affinity"><span>Affinity</span><span>05</span></label><label class="filter-option"><input type="checkbox" data-filter="mode" value="Size exclusion"><span>Size exclusion</span><span>01</span></label><label class="filter-option"><input type="checkbox" data-filter="mode" value="HIC"><span>HIC</span><span>01</span></label><label class="filter-option"><input type="checkbox" data-filter="mode" value="Mixed-mode"><span>Mixed-mode</span><span>01</span></label><label class="filter-option"><input type="checkbox" data-filter="mode" value="Activated &amp; coupling"><span>Activated & coupling</span><span>01</span></label><label class="filter-option"><input type="checkbox" data-filter="mode" value="Pre-packed columns"><span>Pre-packed columns</span><span>01</span></label><label class="filter-option"><input type="checkbox" data-filter="mode" value="Kits &amp; tools"><span>Kits & tools</span><span>01</span></label><label class="filter-option"><input type="checkbox" data-filter="mode" value="Magnetic beads"><span>Magnetic beads</span><span>01</span></label></fieldset><fieldset class="filter-group"><legend>Exchanger type</legend><label class="filter-option"><input type="checkbox" data-filter="exchanger" value="Strong cation"><span>Strong cation</span><span>01</span></label><label class="filter-option"><input type="checkbox" data-filter="exchanger" value="Weak cation"><span>Weak cation</span><span>01</span></label><label class="filter-option"><input type="checkbox" data-filter="exchanger" value="Strong anion"><span>Strong anion</span><span>01</span></label><label class="filter-option"><input type="checkbox" data-filter="exchanger" value="Weak anion"><span>Weak anion</span><span>01</span></label></fieldset><fieldset class="filter-group"><legend>Grade / bead size</legend><label class="filter-option"><input type="checkbox" data-filter="grades" value="Faster"><span>Faster / ~163 µm</span><span></span></label><label class="filter-option"><input type="checkbox" data-filter="grades" value="Fast Flow"><span>Fast Flow / ~96 µm</span><span></span></label><label class="filter-option"><input type="checkbox" data-filter="grades" value="Standard"><span>Standard / ~90 µm</span><span></span></label><label class="filter-option"><input type="checkbox" data-filter="grades" value="Precise"><span>Precise / ~60 µm</span><span></span></label><label class="filter-option"><input type="checkbox" data-filter="grades" value="HR"><span>HR / ~40 µm</span><span></span></label></fieldset><fieldset class="filter-group"><legend>Availability</legend><label class="filter-option"><input type="checkbox" data-filter="availability" value="Available"><span>Available</span><span>15</span></label><label class="filter-option"><input type="checkbox" data-filter="availability" value="Made to order"><span>Made to order</span><span>01</span></label></fieldset><p class="footnote">Particle sizes are platform guides. Product-specific ranges are on each product page.</p><p class="footnote">Protein A is an affinity resin; IMAC applies to the four NTA resins.</p></aside><div><details class="wizard"><summary><span>Find the right chemistry in three steps<small>Tell us your target, workflow and scale.</small></span></summary><div class="wizard-body"><label>01 / Target<select><option>His-tagged protein</option><option>Antibody / IgG</option><option>Other protein</option></select></label><label>02 / Workflow<select><option>Capture</option><option>Intermediate purification</option><option>Polishing</option></select></label><label>03 / Scale<select><option>Research</option><option>Process development</option><option>Manufacturing</option></select></label><a class="btn compact" href="#rfq">Ask a scientist <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h16m-6-6 6 6-6 6"></path></svg></a></div></details><div class="catalogue-toolbar"><span><strong class="mono" id="result-count">16</strong> products <span class="muted">/ 16 total</span></span><label>Sort by<select id="sort"><option value="default">Catalogue order</option><option value="az">Name: A–Z</option><option value="za">Name: Z–A</option></select></label></div><div class="product-grid" id="product-grid"><article class="product-card" data-name="SP Agarose" data-mode="Ion exchange" data-availability="Available" data-grades="Fast Flow Faster Precise HR" data-exchanger="Sulfopropyl · Strong cation exchanger"><div class="card-top"><span class="label">Ion exchange</span><span class="status">Available</span></div><h3><a href="product.html">SP Agarose</a></h3><p class="description">Sulfopropyl · Strong cation exchanger</p><div class="label muted" style="font-size:8px;letter-spacing:.4px">Reference specs / Fast Flow</div><dl class="card-specs"><div><dt>DBC</dt><dd>≈100<small>mg lysozyme/mL</small></dd></div><div><dt>Max flow / range</dt><dd>250–450<small>cm/h · Fast Flow</small></dd></div></dl><div class="card-config"><label for="grade-0">Grade<select id="grade-0" class="grade-select"><option>Fast Flow</option><option>Faster</option><option>Precise</option><option>HR</option></select></label><label for="pack-0">Pack size<select id="pack-0" class="pack-select"><option value="50 mL" data-code="SP01">50 mL</option><option value="100 mL" data-code="SP02">100 mL</option><option value="250 mL" data-code="SP03">250 mL</option><option value="500 mL" data-code="SP04">500 mL</option><option value="1 L" data-code="SP05">1 L</option><option value="5 L" data-code="SP06">5 L</option><option value="10 L" data-code="SP07">10 L</option><option value="25 L" data-code="SP08">25 L</option><option value="Bulk (custom)" data-code="SP09">Bulk (custom)</option></select></label></div><div class="card-bottom"><label class="compare"><input type="checkbox" class="compare-check">Compare</label><button class="btn compact add-rfq" type="button"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg>Add to RFQ</button></div></article><article class="product-card" data-name="CM Agarose" data-mode="Ion exchange" data-availability="Available" data-grades="Standard Faster" data-exchanger="Carboxymethyl · Weak cation exchanger"><div class="card-top"><span class="label">Ion exchange</span><span class="status">Available</span></div><h3><a href="/products/cm-agarose">CM Agarose</a></h3><p class="description">Carboxymethyl · Weak cation exchanger</p><div class="label muted" style="font-size:8px;letter-spacing:.4px">Reference specs / Standard</div><dl class="card-specs"><div><dt>DBC</dt><dd style="font-size:11px">[Not specified]<small>DBC</small></dd></div><div><dt>Max flow / range</dt><dd>400–700<small>cm/h · Standard</small></dd></div></dl><div class="card-config"><label for="grade-1">Grade<select id="grade-1" class="grade-select"><option>Standard</option><option>Faster</option></select></label><label for="pack-1">Pack size<select id="pack-1" class="pack-select"><option value="50 mL" data-code="CM01">50 mL</option><option value="100 mL" data-code="CM02">100 mL</option><option value="250 mL" data-code="CM03">250 mL</option><option value="500 mL" data-code="CM04">500 mL</option><option value="1 L" data-code="CM05">1 L</option><option value="5 L" data-code="CM06">5 L</option><option value="10 L" data-code="CM07">10 L</option><option value="25 L" data-code="CM08">25 L</option><option value="Bulk (custom)" data-code="CM09">Bulk (custom)</option></select></label></div><div class="card-bottom"><label class="compare"><input type="checkbox" class="compare-check">Compare</label><button class="btn compact add-rfq" type="button"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg>Add to RFQ</button></div></article><article class="product-card" data-name="Q Agarose" data-mode="Ion exchange" data-availability="Available" data-grades="Fast Flow Faster Precise HR" data-exchanger="Quaternary amine · Strong anion exchanger"><div class="card-top"><span class="label">Ion exchange</span><span class="status">Available</span></div><h3><a href="/products/q-agarose">Q Agarose</a></h3><p class="description">Quaternary amine · Strong anion exchanger</p><div class="label muted" style="font-size:8px;letter-spacing:.4px">Reference specs / Fast Flow</div><dl class="card-specs"><div><dt>DBC</dt><dd>≈80<small>mg BSA/mL</small></dd></div><div><dt>Max flow / range</dt><dd>250–450<small>cm/h · Fast Flow</small></dd></div></dl><div class="card-config"><label for="grade-2">Grade<select id="grade-2" class="grade-select"><option>Fast Flow</option><option>Faster</option><option>Precise</option><option>HR</option></select></label><label for="pack-2">Pack size<select id="pack-2" class="pack-select"><option value="50 mL" data-code="QA01">50 mL</option><option value="100 mL" data-code="QA02">100 mL</option><option value="250 mL" data-code="QA03">250 mL</option><option value="500 mL" data-code="QA04">500 mL</option><option value="1 L" data-code="QA05">1 L</option><option value="5 L" data-code="QA06">5 L</option><option value="10 L" data-code="QA07">10 L</option><option value="25 L" data-code="QA08">25 L</option><option value="Bulk (custom)" data-code="QA09">Bulk (custom)</option></select></label></div><div class="card-bottom"><label class="compare"><input type="checkbox" class="compare-check">Compare</label><button class="btn compact add-rfq" type="button"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg>Add to RFQ</button></div></article><article class="product-card" data-name="DEAE Agarose" data-mode="Ion exchange" data-availability="Available" data-grades="Fast Flow Faster Precise HR" data-exchanger="Diethylaminoethyl · Weak anion exchanger"><div class="card-top"><span class="label">Ion exchange</span><span class="status">Available</span></div><h3><a href="/products/deae-agarose">DEAE Agarose</a></h3><p class="description">Diethylaminoethyl · Weak anion exchanger</p><div class="label muted" style="font-size:8px;letter-spacing:.4px">Reference specs / Fast Flow</div><dl class="card-specs"><div><dt>DBC</dt><dd>≈90<small>mg BSA/mL</small></dd></div><div><dt>Max flow / range</dt><dd>250–450<small>cm/h · Fast Flow</small></dd></div></dl><div class="card-config"><label for="grade-3">Grade<select id="grade-3" class="grade-select"><option>Fast Flow</option><option>Faster</option><option>Precise</option><option>HR</option></select></label><label for="pack-3">Pack size<select id="pack-3" class="pack-select"><option value="50 mL" data-code="DE01">50 mL</option><option value="100 mL" data-code="DE02">100 mL</option><option value="250 mL" data-code="DE03">250 mL</option><option value="500 mL" data-code="DE04">500 mL</option><option value="1 L" data-code="DE05">1 L</option><option value="5 L" data-code="DE06">5 L</option><option value="10 L" data-code="DE07">10 L</option><option value="25 L" data-code="DE08">25 L</option><option value="Bulk (custom)" data-code="DE09">Bulk (custom)</option></select></label></div><div class="card-bottom"><label class="compare"><input type="checkbox" class="compare-check">Compare</label><button class="btn compact add-rfq" type="button"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg>Add to RFQ</button></div></article><article class="product-card" data-name="Ni-NTA Agarose" data-mode="Affinity" data-availability="Available" data-grades="Standard Faster" data-exchanger="Ni²⁺–NTA · His-tagged proteins"><div class="card-top"><span class="label">Affinity</span><span class="status">Available</span></div><h3><a href="/products/ni-nta-agarose">Ni-NTA Agarose</a></h3><p class="description">Ni²⁺–NTA · His-tagged proteins</p><div class="label muted" style="font-size:8px;letter-spacing:.4px">Reference specs / Standard</div><dl class="card-specs"><div><dt>DBC</dt><dd>~40<small>mg His-tagged protein/mL</small></dd></div><div><dt>Max flow / range</dt><dd>~700<small>cm/h · Standard</small></dd></div></dl><div class="card-config"><label for="grade-4">Grade<select id="grade-4" class="grade-select"><option>Standard</option><option>Faster</option></select></label><label for="pack-4">Pack size<select id="pack-4" class="pack-select"><option value="5 mL" data-code="NN01">5 mL</option><option value="10 mL" data-code="NN02">10 mL</option><option value="25 mL" data-code="NN03">25 mL</option><option value="50 mL" data-code="NN04">50 mL</option><option value="100 mL" data-code="NN05">100 mL</option><option value="250 mL" data-code="NN06">250 mL</option><option value="500 mL" data-code="NN07">500 mL</option><option value="1 L" data-code="NN08">1 L</option><option value="5 L" data-code="NN09">5 L</option><option value="10 L" data-code="NN10">10 L</option><option value="Bulk (custom)" data-code="NN11">Bulk (custom)</option></select></label></div><div class="card-bottom"><label class="compare"><input type="checkbox" class="compare-check">Compare</label><button class="btn compact add-rfq" type="button"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg>Add to RFQ</button></div></article><article class="product-card" data-name="Co-NTA Agarose" data-mode="Affinity" data-availability="Available" data-grades="Standard" data-exchanger="Co²⁺–NTA · Higher selectivity"><div class="card-top"><span class="label">Affinity</span><span class="status">Available</span></div><h3><a href="/products/co-nta-agarose">Co-NTA Agarose</a></h3><p class="description">Co²⁺–NTA · Higher selectivity</p><div class="label muted" style="font-size:8px;letter-spacing:.4px">Reference specs / Standard</div><dl class="card-specs"><div><dt>DBC</dt><dd>≤20<small>mg His-tagged protein/mL</small></dd></div><div><dt>Max flow / range</dt><dd>~700<small>cm/h · Standard</small></dd></div></dl><div class="card-config"><label for="grade-5">Grade<select id="grade-5" class="grade-select"><option>Standard</option></select></label><label for="pack-5">Pack size<select id="pack-5" class="pack-select"><option value="5 mL" data-code="CN01">5 mL</option><option value="10 mL" data-code="CN02">10 mL</option><option value="25 mL" data-code="CN03">25 mL</option><option value="50 mL" data-code="CN04">50 mL</option><option value="100 mL" data-code="CN05">100 mL</option><option value="250 mL" data-code="CN06">250 mL</option><option value="500 mL" data-code="CN07">500 mL</option><option value="1 L" data-code="CN08">1 L</option><option value="Bulk (custom)" data-code="CN09">Bulk (custom)</option></select></label></div><div class="card-bottom"><label class="compare"><input type="checkbox" class="compare-check">Compare</label><button class="btn compact add-rfq" type="button"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg>Add to RFQ</button></div></article><article class="product-card" data-name="Cu-NTA Agarose" data-mode="Affinity" data-availability="Available" data-grades="Standard" data-exchanger="Cu²⁺–NTA · Strong binding"><div class="card-top"><span class="label">Affinity</span><span class="status">Available</span></div><h3><a href="/products/cu-nta-agarose">Cu-NTA Agarose</a></h3><p class="description">Cu²⁺–NTA · Strong binding</p><div class="label muted" style="font-size:8px;letter-spacing:.4px">Reference specs / Standard</div><dl class="card-specs"><div><dt>DBC</dt><dd>≤20<small>mg His-tagged protein/mL</small></dd></div><div><dt>Max flow / range</dt><dd>~700<small>cm/h · Standard</small></dd></div></dl><div class="card-config"><label for="grade-6">Grade<select id="grade-6" class="grade-select"><option>Standard</option></select></label><label for="pack-6">Pack size<select id="pack-6" class="pack-select"><option value="5 mL" data-code="CU01">5 mL</option><option value="10 mL" data-code="CU02">10 mL</option><option value="25 mL" data-code="CU03">25 mL</option><option value="50 mL" data-code="CU04">50 mL</option><option value="100 mL" data-code="CU05">100 mL</option><option value="250 mL" data-code="CU06">250 mL</option><option value="500 mL" data-code="CU07">500 mL</option><option value="1 L" data-code="CU08">1 L</option><option value="Bulk (custom)" data-code="CU09">Bulk (custom)</option></select></label></div><div class="card-bottom"><label class="compare"><input type="checkbox" class="compare-check">Compare</label><button class="btn compact add-rfq" type="button"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg>Add to RFQ</button></div></article><article class="product-card" data-name="Zn-NTA Agarose" data-mode="Affinity" data-availability="Available" data-grades="Standard" data-exchanger="Zn²⁺–NTA · Zinc-binding proteins"><div class="card-top"><span class="label">Affinity</span><span class="status">Available</span></div><h3><a href="/products/zn-nta-agarose">Zn-NTA Agarose</a></h3><p class="description">Zn²⁺–NTA · Zinc-binding proteins</p><div class="label muted" style="font-size:8px;letter-spacing:.4px">Reference specs / Standard</div><dl class="card-specs"><div><dt>DBC</dt><dd>≤20<small>mg His-tagged protein/mL</small></dd></div><div><dt>Max flow / range</dt><dd>~700<small>cm/h · Standard</small></dd></div></dl><div class="card-config"><label for="grade-7">Grade<select id="grade-7" class="grade-select"><option>Standard</option></select></label><label for="pack-7">Pack size<select id="pack-7" class="pack-select"><option value="5 mL" data-code="ZN01">5 mL</option><option value="10 mL" data-code="ZN02">10 mL</option><option value="25 mL" data-code="ZN03">25 mL</option><option value="50 mL" data-code="ZN04">50 mL</option><option value="100 mL" data-code="ZN05">100 mL</option><option value="250 mL" data-code="ZN06">250 mL</option><option value="500 mL" data-code="ZN07">500 mL</option><option value="1 L" data-code="ZN08">1 L</option><option value="Bulk (custom)" data-code="ZN09">Bulk (custom)</option></select></label></div><div class="card-bottom"><label class="compare"><input type="checkbox" class="compare-check">Compare</label><button class="btn compact add-rfq" type="button"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg>Add to RFQ</button></div></article><article class="product-card" data-name="Protein A Agarose" data-mode="Affinity" data-availability="Made to order" data-grades="Standard" data-exchanger="Recombinant Protein A · IgG capture"><div class="card-top"><span class="label">Affinity</span><span class="status mto">Made to order</span></div><h3><a href="/products/protein-a-agarose">Protein A Agarose</a></h3><p class="description">Recombinant Protein A · IgG capture</p><div class="label muted" style="font-size:8px;letter-spacing:.4px">Reference specs / Standard</div><dl class="card-specs"><div><dt>DBC</dt><dd>≤20<small>mg human IgG/mL</small></dd></div><div><dt>Max flow / range</dt><dd style="font-size:11px">[Not specified]<small>Linear flow</small></dd></div></dl><div class="card-config"><label for="grade-8">Grade<select id="grade-8" class="grade-select"><option>Standard</option></select></label><label for="pack-8">Pack size<select id="pack-8" class="pack-select"><option value="5 mL" data-code="on request">5 mL</option><option value="25 mL" data-code="on request">25 mL</option><option value="100 mL" data-code="on request">100 mL</option><option value="Bulk (custom)" data-code="on request">Bulk (custom)</option></select></label></div><div class="card-bottom"><label class="compare"><input type="checkbox" class="compare-check">Compare</label><button class="btn compact add-rfq" type="button"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg>Add to RFQ</button></div></article><article class="product-card" data-name="Agarose SEC Resin" data-mode="Size exclusion" data-availability="Available" data-grades="Standard · 6% Standard · 4% Standard · 2% Precise HR" data-exchanger="Cross-linked 2%, 4% or 6% agarose"><div class="card-top"><span class="label">Size exclusion</span><span class="status">Available</span></div><h3><a href="/products/agarose-sec-resin">Agarose SEC Resin</a></h3><p class="description">Cross-linked 2%, 4% or 6% agarose</p><div class="label muted" style="font-size:8px;letter-spacing:.4px">Reference specs / Standard · 6%</div><dl class="card-specs"><div><dt>Working range</dt><dd>~15–150<small>kDa · 6% working range</small></dd></div><div><dt>Max flow / range</dt><dd>≤700<small>cm/h · 6% standard</small></dd></div></dl><div class="card-config"><label for="grade-9">Grade<select id="grade-9" class="grade-select"><option>Standard · 6%</option><option>Standard · 4%</option><option>Standard · 2%</option><option>Precise</option><option>HR</option></select></label><label for="pack-9">Pack size<select id="pack-9" class="pack-select"><option value="50 mL" data-code="AC01">50 mL</option><option value="100 mL" data-code="AC02">100 mL</option><option value="250 mL" data-code="AC03">250 mL</option><option value="500 mL" data-code="AC04">500 mL</option><option value="1 L" data-code="AC05">1 L</option><option value="5 L" data-code="AC06">5 L</option><option value="10 L" data-code="AC07">10 L</option><option value="25 L" data-code="AC08">25 L</option><option value="Bulk (custom)" data-code="AC09">Bulk (custom)</option></select></label></div><div class="card-bottom"><label class="compare"><input type="checkbox" class="compare-check">Compare</label><button class="btn compact add-rfq" type="button"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg>Add to RFQ</button></div></article><article class="product-card" data-name="Phenyl Agarose" data-mode="HIC" data-availability="Available" data-grades="Standard" data-exchanger="Phenyl · Hydrophobic interaction"><div class="card-top"><span class="label">HIC</span><span class="status">Available</span></div><h3><a href="/products/phenyl-agarose">Phenyl Agarose</a></h3><p class="description">Phenyl · Hydrophobic interaction</p><div class="label muted" style="font-size:8px;letter-spacing:.4px">Reference specs / Standard</div><dl class="card-specs"><div><dt>DBC</dt><dd>25–30<small>mg BSA/mL</small></dd></div><div><dt>Max flow / range</dt><dd>200–300<small>cm/h · &lt;0.1 MPa</small></dd></div></dl><div class="card-config"><label for="grade-10">Grade<select id="grade-10" class="grade-select"><option>Standard</option></select></label><label for="pack-10">Pack size<select id="pack-10" class="pack-select"><option value="50 mL" data-code="PH01">50 mL</option><option value="100 mL" data-code="PH02">100 mL</option><option value="250 mL" data-code="PH03">250 mL</option><option value="500 mL" data-code="PH04">500 mL</option><option value="1 L" data-code="PH05">1 L</option><option value="5 L" data-code="PH06">5 L</option><option value="10 L" data-code="PH07">10 L</option><option value="25 L" data-code="PH08">25 L</option><option value="Bulk (custom)" data-code="PH09">Bulk (custom)</option></select></label></div><div class="card-bottom"><label class="compare"><input type="checkbox" class="compare-check">Compare</label><button class="btn compact add-rfq" type="button"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg>Add to RFQ</button></div></article><article class="product-card" data-name="Hy-Ionic™ DP" data-mode="Mixed-mode" data-availability="Available" data-grades="Standard" data-exchanger="DEAE + phenyl · Dual functionality"><div class="card-top"><span class="label">Mixed-mode</span><span class="status">Available</span></div><h3><a href="/products/hy-ionic-dp">Hy-Ionic™ DP</a></h3><p class="description">DEAE + phenyl · Dual functionality</p><div class="label muted" style="font-size:8px;letter-spacing:.4px">Reference specs / Standard</div><dl class="card-specs"><div><dt>DBC</dt><dd>100 / 30<small>mg BSA/mL · DEAE / phenyl</small></dd></div><div><dt>Max flow / range</dt><dd style="font-size:11px">[Not specified]<small>Linear flow</small></dd></div></dl><div class="card-config"><label for="grade-11">Grade<select id="grade-11" class="grade-select"><option>Standard</option></select></label><label for="pack-11">Pack size<select id="pack-11" class="pack-select"><option value="5 mL" data-code="HY01">5 mL</option><option value="25 mL" data-code="HY02">25 mL</option><option value="100 mL" data-code="HY03">100 mL</option><option value="1 L" data-code="HY04">1 L</option><option value="Custom packs" data-code="on request">Custom packs</option></select></label></div><div class="card-bottom"><label class="compare"><input type="checkbox" class="compare-check">Compare</label><button class="btn compact add-rfq" type="button"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg>Add to RFQ</button></div></article><article class="product-card" data-name="CNBr-Activated Agarose" data-mode="Activated & coupling" data-availability="Available" data-grades="Standard" data-exchanger="4% agarose · Custom ligand coupling"><div class="card-top"><span class="label">Activated & coupling</span><span class="status">Available</span></div><h3><a href="/products/cnbr-activated-agarose">CNBr-Activated Agarose</a></h3><p class="description">4% agarose · Custom ligand coupling</p><div class="label muted" style="font-size:8px;letter-spacing:.4px">Reference specs / Standard</div><dl class="card-specs"><div><dt>Ligand density</dt><dd>&gt;85<small>µmol cyanate ester/mL</small></dd></div><div><dt>Max flow / range</dt><dd style="font-size:11px">[Not specified]<small>Linear flow</small></dd></div></dl><div class="card-config"><label for="grade-12">Grade<select id="grade-12" class="grade-select"><option>Standard</option></select></label><label for="pack-12">Pack size<select id="pack-12" class="pack-select"><option value="25 g" data-code="BR01">25 g</option><option value="100 g" data-code="BR02">100 g</option><option value="500 g" data-code="BR03">500 g</option><option value="Bulk (custom)" data-code="BR04">Bulk (custom)</option></select></label></div><div class="card-bottom"><label class="compare"><input type="checkbox" class="compare-check">Compare</label><button class="btn compact add-rfq" type="button"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg>Add to RFQ</button></div></article><article class="product-card" data-name="Ni-NTA Pre-packed Columns" data-mode="Pre-packed columns" data-availability="Available" data-grades="Ni-NTA" data-exchanger="Ni-NTA Agarose · FPLC or syringe"><div class="card-top"><span class="label">Pre-packed columns</span><span class="status">Available</span></div><h3><a href="/products/ni-nta-prepacked-columns">Ni-NTA Pre-packed Columns</a></h3><p class="description">Ni-NTA Agarose · FPLC or syringe</p><div class="label muted" style="font-size:8px;letter-spacing:.4px">Reference specs / Ni-NTA</div><dl class="card-specs"><div><dt>Binding capacity</dt><dd>≤40<small>mg His-tagged protein / 1 mL</small></dd></div><div><dt>Max flow / range</dt><dd>&lt;4<small>mL/min · 1 mL column</small></dd></div></dl><div class="card-config"><label for="grade-13">Grade<select id="grade-13" class="grade-select"><option>Ni-NTA</option></select></label><label for="pack-13">Pack size<select id="pack-13" class="pack-select"><option value="1 mL × 5 columns" data-code="LN01">1 mL × 5 columns</option><option value="5 mL × 1 column" data-code="LN05">5 mL × 1 column</option><option value="10 mL × 1 column" data-code="LN10">10 mL × 1 column</option><option value="20 mL × 1 column" data-code="LN20">20 mL × 1 column</option></select></label></div><div class="card-bottom"><label class="compare"><input type="checkbox" class="compare-check">Compare</label><button class="btn compact add-rfq" type="button"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg>Add to RFQ</button></div></article><article class="product-card" data-name="MR Agarose Evaluation Kit" data-mode="Kits & tools" data-availability="Available" data-grades="Evaluation kit" data-exchanger="Transition metal removal · 10 reactions"><div class="card-top"><span class="label">Kits & tools</span><span class="status">Available</span></div><h3><a href="/products/mr-agarose-kit">MR Agarose Evaluation Kit</a></h3><p class="description">Transition metal removal · 10 reactions</p><div class="label muted" style="font-size:8px;letter-spacing:.4px">Reference specs / Evaluation kit</div><dl class="card-specs"><div><dt>Metal capacity</dt><dd>15–18<small>µmol metal ions/mL</small></dd></div><div><dt>Format</dt><dd>10<small>reactions / kit</small></dd></div></dl><div class="card-config"><label for="grade-14">Grade<select id="grade-14" class="grade-select"><option>Evaluation kit</option></select></label><label for="pack-14">Pack size<select id="pack-14" class="pack-select"><option value="Evaluation kit (10 reactions)" data-code="MRK01">Evaluation kit (10 reactions)</option><option value="MR Agarose bulk resin" data-code="MR01">MR Agarose bulk resin</option></select></label></div><div class="card-bottom"><label class="compare"><input type="checkbox" class="compare-check">Compare</label><button class="btn compact add-rfq" type="button"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg>Add to RFQ</button></div></article><article class="product-card" data-name="Ni-NTA Magnetic Agarose" data-mode="Magnetic beads" data-availability="Available" data-grades="Magnetic" data-exchanger="Ni-NTA · Column-free His-tag screening"><div class="card-top"><span class="label">Magnetic beads</span><span class="status">Available</span></div><h3><a href="/products/ni-nta-magnetic-agarose">Ni-NTA Magnetic Agarose</a></h3><p class="description">Ni-NTA · Column-free His-tag screening</p><div class="label muted" style="font-size:8px;letter-spacing:.4px">Reference specs / Magnetic</div><dl class="card-specs"><div><dt>DBC</dt><dd style="font-size:11px">[Not specified]<small>DBC</small></dd></div><div><dt>Format</dt><dd>25%<small>slurry format</small></dd></div></dl><div class="card-config"><label for="grade-15">Grade<select id="grade-15" class="grade-select"><option>Magnetic</option></select></label><label for="pack-15">Pack size<select id="pack-15" class="pack-select"><option value="1 mL" data-code="MG01">1 mL</option><option value="5 mL" data-code="MG02">5 mL</option><option value="10 mL" data-code="MG03">10 mL</option></select></label></div><div class="card-bottom"><label class="compare"><input type="checkbox" class="compare-check">Compare</label><button class="btn compact add-rfq" type="button"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg>Add to RFQ</button></div></article></div><p class="catalogue-note">Reference specifications stay tied to the grade named on each card. Compare product-specific grades and test conditions before qualification. [Not specified] indicates a value to confirm with the technical team.</p><p id="compare-status" class="notice" aria-live="polite">Select products to compare their reference specifications.</p><div id="compare-table"></div></div></div></main><footer class="footer"><div class="wrap"><div class="footer-grid"><div><a class="brand" href="home.html"><img class="logo" src="protpure-logo.png" alt="ProtPure"></a><p>Protpure Tech Pvt. Ltd.<br>Developed, manufactured and supported<br>in Anand, Gujarat, India.</p><a href="mailto:info@protpure.com">info@protpure.com</a></div><div><h4>Explore</h4><a href="catalogue.html">Resin catalogue</a><a href="home.html#platform">Particle platform</a><a href="home.html#services">Downstream services</a><a href="product.html#documents">Technical documents</a></div><div><h4>Connect</h4><a href="home.html#company">Our company</a><a href="mailto:info@protpure.com">Distribution enquiries</a><a href="https://www.linkedin.com/company/protpure-tech-pvt-ltd/">LinkedIn</a><a href="#rfq">Request a quote</a></div><div><h4>Notes from the bench</h4><p>Technical data, application notes<br>and updates from Protpure.</p><form class="newsletter demo-form"><label class="label" hidden="hidden" for="newsletter-email">Email address</label><input id="newsletter-email" type="email" placeholder="Your work email" required="required" aria-label="Newsletter email"><button type="submit" aria-label="Subscribe"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h16m-6-6 6 6-6 6"></path></svg></button></form><p class="form-feedback" aria-live="polite"></p></div></div><div class="footer-bottom"><span>© 2026 PROTPURE TECH PVT. LTD.</span><span>AGAROSE CHROMATOGRAPHY MEDIA / ANAND, GUJARAT</span></div></div></footer><aside class="rfq-overlay" id="rfq" aria-label="RFQ basket"><div class="rfq-panel"><div class="drawer-heading"><h3>Your RFQ <span class="mono basket-count">0</span></h3><a class="rfq-close" href="#" aria-label="Close basket"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 6 12 12M6 18 18 6"></path></svg></a></div><div id="basket-items"><p class="empty-rfq">Add products, grades and pack sizes from the catalogue. Send them together as one quote request.</p><a class="textlink" href="catalogue.html">Browse resins <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h16m-6-6 6 6-6 6"></path></svg></a></div><form class="drawer-form demo-form"><label>Work email<input type="email" required="required" placeholder="name@company.com"></label><label>Company<input type="text" required="required" placeholder="Company or institution"></label><label>Destination<input type="text" required="required" placeholder="Country / city"></label><label>Process or evaluation notes<textarea rows="3" placeholder="Target protein, scale, timing"></textarea></label><button type="submit" class="btn">Send one quote request <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h16m-6-6 6 6-6 6"></path></svg></button><p class="small" style="margin-top:14px">A scientist replies within 1–2 business days. Pricing, lead time and shipping in one response.</p><p class="form-feedback notice" aria-live="polite"></p></form></div></aside>
+<script>
+
+const basket = [];
+const renderBasket = () => {
+  document.querySelectorAll('.basket-count').forEach(el => el.textContent = basket.length);
+  const container = document.getElementById('basket-items');
+  container.replaceChildren();
+  if (!basket.length) {
+    const p = document.createElement('p');
+    p.className = 'empty-rfq';
+    p.textContent = 'Your RFQ is empty. Add a product or describe your requirements below.';
+    container.append(p);
+  }
+  basket.forEach((item, index) => {
+    const line = document.createElement('div');
+    line.className = 'drawer-item';
+    const heading = document.createElement('h4');
+    heading.textContent = item.name;
+    const facts = document.createElement('p');
+    facts.textContent = item.grade + ' · ' + item.pack + ' · ' + item.code + ' · Qty ' + item.qty;
+    const remove = document.createElement('button');
+    remove.type = 'button';
+    remove.className = 'btn secondary compact';
+    remove.style.marginTop = '12px';
+    remove.textContent = 'Remove';
+    remove.addEventListener('click', () => {
+      basket.splice(index, 1);
+      renderBasket();
+    });
+    line.append(heading, facts, remove);
+    container.append(line);
+  });
+};
+const addItem = item => {
+  const existing = basket.find(i => i.name === item.name && i.grade === item.grade && i.pack === item.pack);
+  if (existing) existing.qty += item.qty;
+  else basket.push(item);
+  renderBasket();
+  location.hash = 'rfq';
+};
+document.querySelectorAll('.add-rfq').forEach(button => button.addEventListener('click', () => {
+  const card = button.closest('.product-card');
+  const pack = card.querySelector('.pack-select');
+  addItem({ name:card.dataset.name, grade:card.querySelector('.grade-select').value, pack:pack.value, code:pack.selectedOptions[0].dataset.code, qty:1 });
+}));
+document.querySelectorAll('.add-order').forEach(button => button.addEventListener('click', () => {
+  const row = button.closest('tr');
+  const quantity = row.querySelector('input');
+  if (!quantity.reportValidity()) return;
+  addItem({ name:row.dataset.name, grade:document.getElementById('order-grade').value, pack:row.dataset.pack, code:row.dataset.code, qty:Number(quantity.value) });
+}));
+document.querySelectorAll('.demo-form').forEach(form => form.addEventListener('submit', event => {
+  event.preventDefault();
+  const feedback = form.querySelector('.form-feedback') || form.nextElementSibling;
+  feedback.textContent = 'Design preview — your information has not been sent.';
+}));
+document.addEventListener('keydown', event => {
+  if (event.key === 'Escape' && location.hash === '#rfq') location.hash = '';
+});
+const grid = document.getElementById('product-grid');
+if (grid) {
+  const cards = Array.from(grid.children);
+  const controls = Array.from(document.querySelectorAll('[data-filter]'));
+  const applyFilters = () => {
+    cards.forEach(card => {
+      card.hidden = ['mode','exchanger','grades','availability'].some(group => {
+        const values = controls.filter(c => c.checked && c.dataset.filter === group).map(c => c.value.toLowerCase());
+        return values.length > 0 && !values.some(value => card.dataset[group].toLowerCase().includes(value));
+      });
+    });
+    document.getElementById('result-count').textContent = cards.filter(card => !card.hidden).length;
+  };
+  controls.forEach(c => c.addEventListener('change', applyFilters));
+  document.getElementById('reset-filters').addEventListener('click', () => {
+    controls.forEach(c => c.checked = false);
+    applyFilters();
+  });
+  document.getElementById('sort').addEventListener('change', event => {
+    const sorted = cards.slice();
+    if (event.target.value !== 'default') sorted.sort((a,b) => a.dataset.name.localeCompare(b.dataset.name) * (event.target.value === 'za' ? -1 : 1));
+    sorted.forEach(card => grid.append(card));
+  });
+  document.querySelectorAll('.compare-check').forEach(box => box.addEventListener('change', () => {
+    const selected = cards.filter(card => card.querySelector('.compare-check').checked);
+    document.getElementById('compare-status').textContent = selected.length + ' products selected. Reference grades and specifications shown below.';
+    const region = document.getElementById('compare-table');
+    region.replaceChildren();
+    if (!selected.length) return;
+    const table = document.createElement('table');
+    const caption = document.createElement('caption');
+    caption.textContent = 'Reference specification comparison';
+    table.append(caption);
+    selected.forEach(card => {
+      const row = document.createElement('tr');
+      [card.dataset.name, card.querySelector('.label.muted').textContent, ...Array.from(card.querySelectorAll('.card-specs dd')).map(el => el.textContent)].forEach(value => {
+        const cell = document.createElement('td');
+        cell.textContent = value;
+        row.append(cell);
+      });
+      table.append(row);
+    });
+    region.append(table);
+  }));
+}
+
+</script>
+</body>
+</html>
