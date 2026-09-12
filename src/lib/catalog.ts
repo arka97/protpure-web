@@ -55,7 +55,7 @@ const specLabel = (parameter: string) => shortType(parameter.replace(/\s*\(.*\)\
  * The two or three figures a buyer scans on a card: a binding / product metric (DBC for the
  * reference grade — Fast Flow when present — or the closest thing the specs offer: metal capacity,
  * cyanate-ester content, fractionation range…), the highest stated flow, and the grade list with
- * d50 values. Figures that are not on file stay visibly bracketed rather than invented.
+ * d50 values. Figures that are not on file read "On request" rather than being invented.
  */
 export function cardSpecs(p: Pick<Product, 'grades' | 'specs'>): CardSpec[] {
   const grades = p.grades ?? []
@@ -67,7 +67,7 @@ export function cardSpecs(p: Pick<Product, 'grades' | 'specs'>): CardSpec[] {
   if (dbcGrade?.dynamicBindingCapacity) out.push({ label: 'DBC', value: dbcGrade.dynamicBindingCapacity, note: many ? gradeLabel(dbcGrade.grade) : null })
   else {
     const spec = specs.find((s) => /binding|capacity|fractionation|cyanate|activation/i.test(s.parameter))
-    out.push(spec ? { label: specLabel(spec.parameter), value: spec.value } : { label: 'DBC', value: '[DBC: to confirm]', missing: true })
+    out.push(spec ? { label: specLabel(spec.parameter), value: spec.value } : { label: 'DBC', value: 'On request', missing: true })
   }
 
   const flowGrades = grades.filter((g) => g.maxFlowVelocity)
@@ -76,7 +76,7 @@ export function cardSpecs(p: Pick<Product, 'grades' | 'specs'>): CardSpec[] {
     out.push({ label: 'Max flow', value: best.maxFlowVelocity!, note: many ? gradeLabel(best.grade) : null })
   } else {
     const spec = specs.find((s) => /flow/i.test(s.parameter))
-    out.push(spec ? { label: specLabel(spec.parameter), value: spec.value } : { label: 'Max flow', value: '[Flow: to confirm]', missing: true })
+    out.push(spec ? { label: specLabel(spec.parameter), value: spec.value } : { label: 'Max flow', value: 'On request', missing: true })
   }
 
   if (grades.length) {

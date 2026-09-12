@@ -89,7 +89,7 @@ export function RangeBars({
                     {d50 != null || range ? <span className="range-median" /> : null}
                   </>
                 ) : (
-                  <span className="range-label top-4! mono text-[11px]">[range: to confirm]</span>
+                  <span className="range-label top-4! text-[11px]">Range on request</span>
                 )}
               </div>
               <div className="col-start-2 row-start-1 text-right lg:col-start-auto lg:row-start-auto lg:text-left">
@@ -100,7 +100,7 @@ export function RangeBars({
                     <span className="mt-1.5 block font-sans text-[9px] normal-case text-text-2-dark lg:text-[11px]">{[flow.unit, isSymbolPrefix(flow.prefix) ? '' : flow.prefix].filter(Boolean).join(' · ')}</span>
                   </p>
                 ) : (
-                  <p className="mono text-[11px] text-text-2-dark">[flow: to confirm]</p>
+                  <p className="text-[11px] text-text-2-dark">On request</p>
                 )}
               </div>
               <p className="col-span-2 text-[11px] text-text-2-dark lg:col-span-1 lg:text-[13px]">{g.badge || g.text}</p>

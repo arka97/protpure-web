@@ -107,10 +107,10 @@ describe('cardSpecs', () => {
   })
   it('keeps missing figures bracketed and uses the specs for products without grades', () => {
     expect(cardSpecs(cnbr)[0]).toEqual({ label: 'DBC', value: '> 85 µmol cyanate ester/mL resin', note: null })
-    expect(cardSpecs(cnbr)[1]).toEqual({ label: 'Max flow', value: '[Flow: to confirm]', missing: true })
+    expect(cardSpecs(cnbr)[1]).toEqual({ label: 'Max flow', value: 'On request', missing: true })
     expect(cardSpecs(magnetic)).toEqual([
-      { label: 'DBC', value: '[DBC: to confirm]', missing: true },
-      { label: 'Max flow', value: '[Flow: to confirm]', missing: true },
+      { label: 'DBC', value: 'On request', missing: true },
+      { label: 'Max flow', value: 'On request', missing: true },
       { label: 'Format', value: 'Magnetic agarose beads, 25% slurry' },
     ])
   })

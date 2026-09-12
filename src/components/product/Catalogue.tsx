@@ -101,7 +101,7 @@ export function Catalogue({
         <div className="mt-6 max-w-[720px] space-y-2 text-[11px] leading-[1.6] text-text-2">
           <p>
             DBC values refer to the stated model protein and grade; flow values refer to the stated grade and conditions. See each product’s specifications before comparing.
-            {anyMissing ? ' [DBC: to confirm] and [Flow: to confirm] mark data awaiting confirmation.' : ''}
+            {anyMissing ? ' “On request” marks figures we confirm with your quotation.' : ''}
           </p>
           <p>
             {settings.leadTime ? `Standard products: ${settings.leadTime}. ` : ''}
