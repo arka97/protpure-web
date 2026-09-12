@@ -273,6 +273,61 @@ Products are warranted to meet their certificate of analysis at the time of ship
 The laws of India; courts at Anand, Gujarat have jurisdiction.`) },
     ],
   },
+  // ---------- Listing routes ----------
+  // These slugs are reserved by their own route files (src/app/(frontend)/<slug>/page.tsx): the CMS
+  // page supplies the hero copy and any blocks rendered after the listing, never the listing itself.
+  {
+    slug: 'applications',
+    title: 'Applications',
+    hero: { style: 'standard', eyebrow: 'Applications', heading: 'Purification workflows\n*we support.*', highlight: 'we support.', text: 'From capture to polishing, our resins are used across biologics, vaccines, diagnostics and research. Explore typical workflows and the resins we recommend for each.' },
+    layout: [
+      { blockType: 'cta', style: 'dark', eyebrow: 'Your process', heading: 'Not sure which resin fits your workflow?', text: 'Send us your target, feedstock and scale. A scientist replies with a recommended chemistry and grade — or screens it for you.', links: [{ label: 'Discuss your process', href: '/request-quote?type=technical', appearance: 'primary' }, { label: 'Resin screening service', href: '/services#resin-screening', appearance: 'secondary' }] },
+    ],
+  },
+  {
+    slug: 'services',
+    title: 'Downstream bioprocessing services',
+    hero: { style: 'standard', eyebrow: 'Services', heading: 'We don’t just\n*supply resin.*', highlight: 'supply resin.', text: 'Our scientists pack columns, screen resins against your feedstock, develop methods and purify proteins for you — from 5 mL to 1 L columns, with a documented report every time.' },
+    layout: [
+      { blockType: 'cta', style: 'dark', eyebrow: 'Scope a service', heading: 'Tell us about the protein and the scale.', text: 'Every service is quoted individually after a short technical discussion. Share your target, feedstock and timeline and we will propose a scope and a report format.', links: [{ label: 'Discuss a service', href: '/request-quote?type=technical', appearance: 'primary' }, { label: 'Technical documents', href: '/resources', appearance: 'secondary' }] },
+    ],
+  },
+  {
+    slug: 'resources',
+    title: 'Technical library',
+    hero: { style: 'standard', eyebrow: 'Resources', heading: 'The technical\n*library.*', highlight: 'library.', text: 'Datasheets, performance data, case studies and posters — everything you need to evaluate and qualify Protpure resins. Certificates of analysis ship with every lot.' },
+    layout: [
+      { blockType: 'cta', style: 'dark', eyebrow: 'Qualification documents', heading: 'Need a document that is not here?', text: 'Extractables information, cleaning validation support and product-change notification are available on request; regulatory documentation under a confidentiality agreement.', links: [{ label: 'Request documents', href: '/request-quote?type=technical', appearance: 'primary' }] },
+    ],
+  },
+  {
+    slug: 'blog',
+    title: 'Blog',
+    hero: { style: 'standard', eyebrow: 'Blog', heading: 'Notes from\n*the bench.*', highlight: 'the bench.', text: 'Chromatography science, performance data and company news from Dr. Rucha Desai and the Protpure team.' },
+    layout: [],
+  },
+  {
+    slug: 'updates',
+    title: 'Updates',
+    hero: { style: 'standard', eyebrow: 'Updates', heading: 'Latest from\n*Protpure.*', highlight: 'Protpure.', text: 'Posters, performance data, product launches and company milestones as we share them on LinkedIn.' },
+    layout: [],
+  },
+  {
+    slug: 'faq',
+    title: 'Frequently asked questions',
+    hero: { style: 'standard', eyebrow: 'FAQ', heading: 'Questions from\n*the bench.*', highlight: 'the bench.', text: 'Straight answers on products, ordering, export and documentation. Not covered? Ask a scientist directly.' },
+    layout: [
+      { blockType: 'cta', style: 'dark', eyebrow: 'Still a question?', heading: 'Ask a scientist, not a call centre.', text: 'Technical, ordering and documentation questions are answered by the people who make the resin — within 1–2 business days.', links: [{ label: 'Ask a question', href: '/contact', appearance: 'primary' }, { label: 'Request a quote', href: '/request-quote', appearance: 'secondary' }] },
+    ],
+  },
+  {
+    slug: 'contact',
+    title: 'Contact',
+    hero: { style: 'standard', eyebrow: 'Contact', heading: 'Talk to a scientist,\n*not a call centre.*', highlight: 'not a call centre.', text: 'Questions about a resin, an evaluation, documentation or distribution — write to us and a member of the technical team replies within 1–2 business days. For pricing, use the RFQ basket.' },
+    layout: [
+      { blockType: 'faqBlock', eyebrow: 'Before you write', heading: 'Answered already?', category: 'technical' },
+    ],
+  },
 ]
 
 export const posts = [

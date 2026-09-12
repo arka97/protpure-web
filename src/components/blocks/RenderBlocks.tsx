@@ -12,6 +12,7 @@ import { InquiryForm } from '@/components/forms/InquiryForm'
 import { NewsletterForm } from '@/components/forms/NewsletterForm'
 import { BeadField } from '@/components/visual/BeadField'
 import { Chapter, ChapterEyebrow, type ChapterTone } from '@/components/visual/Chapter'
+import { Heading } from '@/components/visual/Heading'
 import { RangeBars } from '@/components/visual/RangeBars'
 import { Reveal } from '@/components/visual/Reveal'
 import { ArrowIcon, CheckIcon } from '@/components/visual/icons'
@@ -145,28 +146,6 @@ export async function RenderBlocks({ blocks }: { blocks?: Page['layout'] | null 
 /* ------------------------------------------------------------------------------------------------
  * Small helpers
  * ---------------------------------------------------------------------------------------------- */
-
-/** Headings may italicise a short proposition with *asterisks*: "Four bead sizes. *One chemistry.*" */
-function Heading({ text, dark }: { text?: string | null; dark?: boolean }) {
-  if (!text) return null
-  // Typed line breaks are deliberate breaks (segments still wrap naturally when narrow).
-  const parts = text.trim().split(/(\*[^*]+\*|\n)/g).filter(Boolean)
-  return (
-    <>
-      {parts.map((p, i) =>
-        p === '\n' ? (
-          <br key={i} />
-        ) : p.startsWith('*') && p.endsWith('*') ? (
-          <em key={i} className={cn('italic', dark ? 'text-teal-lum' : 'text-teal-deep')}>
-            {p.slice(1, -1)}
-          </em>
-        ) : (
-          <React.Fragment key={i}>{p}</React.Fragment>
-        ),
-      )}
-    </>
-  )
-}
 
 function Paragraphs({ text, className }: { text?: string | null; className?: string }) {
   if (!text) return null
