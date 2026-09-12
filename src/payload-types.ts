@@ -279,6 +279,10 @@ export interface Product {
   leadTime?: string | null;
   bulkAvailable?: boolean | null;
   /**
+   * Copy for the "Paid evaluation packs — qualify before you scale" callout under the ordering table. State the pack sizes and how the cost is credited; evaluation packs are paid, never free samples.
+   */
+  evaluationNote?: string | null;
+  /**
    * Datasheets and other PDFs for this product.
    */
   documents?: (number | Document)[] | null;
@@ -2018,6 +2022,7 @@ export interface ProductsSelect<T extends boolean = true> {
       };
   leadTime?: T;
   bulkAvailable?: T;
+  evaluationNote?: T;
   documents?: T;
   relatedProducts?: T;
   meta?:

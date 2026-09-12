@@ -1,5 +1,8 @@
 import * as React from 'react'
+import { isSymbolPrefix, parseFigure, parseNumber, parseRange } from '@/lib/figures'
 import { cn } from '@/lib/utils'
+
+export { parseFigure, parseNumber, parseRange }
 
 /**
  * The four-grade particle platform as a quantitative range plot (HTML/CSS, labels stay text).
@@ -21,30 +24,6 @@ export type RangeGrade = {
   maxFlow?: string | null
   pressure?: string | null
   text?: string | null
-}
-
-const NUM = /(\d+(?:[.,]\d+)?)/
-const RANGE = /(\d+(?:[.,]\d+)?)\s*(?:–|-|—|to)\s*(\d+(?:[.,]\d+)?)/
-
-const toNumber = (s: string) => Number(s.replace(',', '.'))
-
-export function parseRange(s?: string | null): [number, number] | null {
-  const m = s?.match(RANGE)
-  return m ? [toNumber(m[1]), toNumber(m[2])] : null
-}
-export function parseNumber(s?: string | null): number | null {
-  const m = s?.match(NUM)
-  return m ? toNumber(m[1]) : null
-}
-/** "up to 1000 cm/h" → { value: "1000", prefix: "up to", unit: "cm/h" } */
-export function parseFigure(s?: string | null): { value: string; prefix: string; unit: string } | null {
-  if (!s) return null
-  const m = s.match(NUM)
-  if (!m || m.index == null) return null
-  const value = m[1]
-  const prefix = s.slice(0, m.index).replace(/[–-]\s*$/, '').trim()
-  const unit = s.slice(m.index + value.length).trim()
-  return { value, prefix, unit }
 }
 
 function beadSize(d50: number | null) {
@@ -91,7 +70,7 @@ export function RangeBars({
           // Numerals in mono, words/units in sans: "100–240 µm · d50V ~163 µm".
           const labelParts = rangeLabel.split(/(\d[\d.,]*(?:\s*[–—-]\s*\d[\d.,]*)?|~\d[\d.,]*)/g).filter(Boolean)
           return (
-            <li key={g.id ?? i} className={cn('grid min-h-[106px] grid-cols-[minmax(0,1fr)_94px] items-center gap-x-3 gap-y-2 border-b border-rule-dark py-5 lg:gap-8', cols)}>
+            <li key={g.id ?? i} className={cn('grid min-h-[106px] grid-cols-[minmax(0,1fr)_110px] items-center gap-x-3 gap-y-2 border-b border-rule-dark py-5 lg:gap-8', cols)}>
               <div className="flex items-center gap-3 lg:gap-4">
                 <span className="flex w-[42px] justify-center lg:w-12" aria-hidden>
                   <span className="bead-mark" style={{ '--size': `${beadSize(d50)}px` } as React.CSSProperties} />
@@ -115,9 +94,10 @@ export function RangeBars({
               </div>
               <div className="col-start-2 row-start-1 text-right lg:col-start-auto lg:row-start-auto lg:text-left">
                 {flow ? (
-                  <p className="mono text-[26px] leading-[1.1] text-teal-lum lg:text-[27px]">
+                  <p className={cn('mono leading-[1.1] text-teal-lum lg:text-[27px]', flow.value.length > 6 ? 'text-[20px]' : 'text-[26px]')}>
+                    {isSymbolPrefix(flow.prefix) ? flow.prefix : ''}
                     {flow.value}
-                    <span className="mt-1.5 block font-sans text-[9px] normal-case text-text-2-dark lg:text-[11px]">{[flow.unit, flow.prefix].filter(Boolean).join(' · ')}</span>
+                    <span className="mt-1.5 block font-sans text-[9px] normal-case text-text-2-dark lg:text-[11px]">{[flow.unit, isSymbolPrefix(flow.prefix) ? '' : flow.prefix].filter(Boolean).join(' · ')}</span>
                   </p>
                 ) : (
                   <p className="mono text-[11px] text-text-2-dark">[flow: to confirm]</p>

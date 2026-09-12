@@ -34,6 +34,7 @@ export function publicProduct(p: Product, opts?: { full?: boolean }) {
     packSizes: (p.packSizes ?? []).map((ps) => ({ size: ps.size, grade: ps.grade ?? null, catalogNumber: ps.catalogNumber ?? null })),
     leadTime: p.leadTime ?? null,
     bulkAvailable: Boolean(p.bulkAvailable),
+    evaluationNote: p.evaluationNote ?? null,
     documents: (p.documents ?? []).filter((d): d is Document => typeof d === 'object').map(publicDocument),
     relatedProducts: (p.relatedProducts ?? []).filter((r): r is Product => typeof r === 'object').map((r) => ({ slug: r.slug, name: r.name })),
   }

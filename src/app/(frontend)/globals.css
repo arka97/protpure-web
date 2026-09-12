@@ -111,6 +111,7 @@ body {
 .heading-1,
 .heading-2,
 .heading-2-sm,
+.heading-2-md,
 .heading-2-xs,
 .heading-company,
 .heading-evaluation,
@@ -328,6 +329,19 @@ input[type='radio'] {
   @media (width >= 64rem) {
     font-size: 58px;
     line-height: 1.03;
+  }
+}
+@utility heading-2-md {
+  /* Product content heading: 52/54 → 40/42 */
+  font-family: var(--font-display);
+  font-weight: 400;
+  letter-spacing: -0.035em;
+  font-size: 40px;
+  line-height: 1.05;
+  text-wrap: balance;
+  @media (width >= 64rem) {
+    font-size: 52px;
+    line-height: 1.04;
   }
 }
 @utility heading-2-xs {
@@ -805,6 +819,47 @@ input[type='radio'] {
   letter-spacing: 0.08em;
   font-size: 11px;
 }
+/* Product-page grade table and /compare: scroll sideways on phones with the first column pinned. */
+@media (width < 64rem) {
+  .compare-products thead th:first-child,
+  .compare-products tbody th[scope='row'],
+  .grade-table th[scope='row'] {
+    position: sticky;
+    left: 0;
+    z-index: 1;
+    background: var(--color-surface);
+    box-shadow: 1px 0 0 var(--color-rule);
+  }
+}
+/* Product-page ordering table: denser rows, controls vertically centred; on phones it keeps its
+   natural column widths and scrolls sideways with the pack-size column pinned. */
+.ordering-table th,
+.ordering-table td {
+  padding: 10px 12px;
+  vertical-align: middle;
+}
+.ordering-table thead th {
+  padding: 12px 12px;
+  white-space: nowrap;
+}
+@media (width < 40rem) {
+  .ordering-table {
+    table-layout: auto;
+    min-width: 540px;
+  }
+  .ordering-table th,
+  .ordering-table td {
+    overflow-wrap: normal;
+    padding: 8px 10px;
+  }
+  .ordering-table th[scope='row'] {
+    position: sticky;
+    left: 0;
+    z-index: 1;
+    background: var(--color-surface);
+    box-shadow: 1px 0 0 var(--color-rule);
+  }
+}
 .table-note {
   margin-top: 14px;
   font-size: 11px;
@@ -880,29 +935,32 @@ input[type='radio'] {
 }
 
 /* ---------- Forms ---------- */
-.field-control {
-  display: block;
-  width: 100%;
-  min-height: 44px;
-  padding: 10px 12px;
-  border: 1px solid var(--color-rule);
-  border-radius: 2px;
-  background: var(--color-surface-white);
-  color: var(--color-ink);
-  font-size: 14px;
-  line-height: 1.4;
-  transition: border-color 160ms var(--ease-out-soft);
-}
-.field-control:focus {
-  outline: 2px solid var(--color-teal-deep);
-  outline-offset: 0;
-  border-color: var(--color-teal-deep);
-}
-.field-control[aria-invalid='true'] {
-  border-color: var(--color-error);
-}
-.field-control::placeholder {
-  color: #7a8c90;
+/* In the components layer so utilities (pl-10, w-auto, sm:min-h-9…) can adjust a control. */
+@layer components {
+  .field-control {
+    display: block;
+    width: 100%;
+    min-height: 44px;
+    padding: 10px 12px;
+    border: 1px solid var(--color-rule);
+    border-radius: 2px;
+    background: var(--color-surface-white);
+    color: var(--color-ink);
+    font-size: 14px;
+    line-height: 1.4;
+    transition: border-color 160ms var(--ease-out-soft);
+  }
+  .field-control:focus {
+    outline: 2px solid var(--color-teal-deep);
+    outline-offset: 0;
+    border-color: var(--color-teal-deep);
+  }
+  .field-control[aria-invalid='true'] {
+    border-color: var(--color-error);
+  }
+  .field-control::placeholder {
+    color: #7a8c90;
+  }
 }
 
 /* ---------- Prose (rich text) ---------- */

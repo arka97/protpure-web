@@ -1,30 +1,77 @@
 import Link from 'next/link'
 import { AddToBasketButton } from '@/components/rfq/AddToBasketButton'
+import { CardControls } from './CardControls'
 import { CmsImage, StatusBadge } from '@/components/ui'
 import { ArrowIcon, DocumentIcon, DownloadIcon, ModeEmblem } from '@/components/visual/icons'
-import { GRADE_LABELS, toBasketProduct } from '@/lib/rfq'
+import { GRADE_LABELS, toBasketProduct, type GradeValue } from '@/lib/rfq'
 import { cn, formatDate } from '@/lib/utils'
-import { categoryOf } from '@/lib/catalog'
+import { cardSpecs, categoryOf, referenceGrade, type CardSpec } from '@/lib/catalog'
+import { splitFigure } from '@/lib/figures'
 import type { Application, Document, Product, ProductCategory, Service } from '@/payload-types'
 
 const GRADE_SHORT: Record<string, string> = GRADE_LABELS
 
+/** Split a value for the "mono number, sans unit" treatment; text values stay whole and in sans. */
+export function figureParts(v: string) {
+  const [head, tail] = splitFigure(v)
+  const isFigure = Boolean(tail) || /^[\d≈~≥≤<>±]/.test(head)
+  return isFigure ? { head, tail, isFigure } : { head: v, tail: '', isFigure }
+}
+
+/**
+ * Table value: a figure ("≈100 mg lysozyme/mL", "45–165 µm") is set as a mono number with the unit
+ * in sans beneath it; text ("Yes", "Stable in 1.0 M NaOH…") stays in sans with tabular numerals.
+ */
+export function TableFigure({ value, className }: { value?: string | null; className?: string }) {
+  if (!value) return <span className="text-text-2">—</span>
+  const { head, tail, isFigure } = figureParts(value)
+  if (!isFigure) return <span className={cn('num block text-[13px] leading-[1.5] text-inherit', className)}>{value}</span>
+  return (
+    <span className={cn('block', className)}>
+      <span className="mono text-[13px] text-inherit">{head}</span>
+      {tail ? <small className="mt-1 block text-[10px] leading-[1.4] text-text-2">{tail}</small> : null}
+    </span>
+  )
+}
+
+/** A scanned figure: the number in mono, the unit / grade qualifier in sans beneath it. */
+export function SpecFigure({ spec, className }: { spec: CardSpec; className?: string }) {
+  if (spec.missing) return <span className={cn('mono text-[12px] leading-[1.5] text-text-2', className)}>{spec.value}</span>
+  const [head, tail] = splitFigure(spec.value)
+  const small = [tail, spec.note].filter(Boolean).join(' · ')
+  return (
+    <span className={className}>
+      <span className="mono block text-[12px] font-medium leading-[1.5] text-ink [text-wrap:balance]">{head}</span>
+      {small ? <small className="block font-sans text-[10px] font-normal leading-[1.45] text-text-2">{small}</small> : null}
+    </span>
+  )
+}
+
+/** "Sulfopropyl · Strong cation exchanger": a short ligand name in front of the subtitle when it adds something. */
+function cardLine(p: Product) {
+  const subtitle = p.subtitle || p.chemistry?.functionalType || p.summary || ''
+  const ligand = (p.chemistry?.ligand ?? '').replace(/\s*\(.*\)\s*$/, '').trim()
+  if (!ligand || ligand.length > 24 || /^none\b/i.test(ligand) || subtitle.toLowerCase().includes(ligand.toLowerCase())) return subtitle
+  return `${ligand} · ${subtitle}`
+}
+
 /**
  * Product card in the Deep Field system: white card, 2 px corners, category eyebrow + availability
- * word-and-dot, serif title, scanned specs in mono and one Add to RFQ action. The catalogue agent
- * will extend the spec lines (DBC, flow, grades + d50) and add the grade / pack selects.
+ * word-and-dot, serif title, the two or three scanned specs in mono (DBC, max flow, grades + d50),
+ * then grade / pack-size selects, a Compare checkbox and Add to RFQ. `compact` (homepage, blog,
+ * application pages) drops the selects and the compare checkbox and keeps one Add to RFQ action.
  */
 export function ProductCard({ product, compact }: { product: Product; compact?: boolean }) {
   const cat = categoryOf(product)
-  const grades = (product.grades ?? []).map((g) => GRADE_SHORT[g.grade] ?? g.grade)
-  const d50s = (product.grades ?? []).map((g) => g.d50).filter(Boolean)
+  const specs = cardSpecs(product)
   const href = `/products/${product.slug}`
+  const basketProduct = toBasketProduct(product)
   // The card is an <article> with a stretched title link (a button cannot live inside an <a>);
-  // the basket button sits above the stretched link via `relative z-10`.
+  // the controls sit above the stretched link via `relative z-10`.
   return (
-    <article className="card-hover group relative flex h-full flex-col px-5 pb-[18px] pt-[22px] focus-within:border-rule-strong">
+    <article className={cn('card-hover group relative flex h-full flex-col px-5 pb-[18px] pt-[22px] focus-within:border-rule-strong', !compact && 'lg:min-h-[393px]')}>
       <div className="mb-4 flex items-center justify-between gap-2">
-        <p className="eyebrow text-[9px] tracking-[0.08em]">{cat?.shortName || cat?.name}</p>
+        <p className="eyebrow truncate text-[9px] tracking-[0.08em]">{cat?.name}</p>
         <StatusBadge status={product.availability} className="text-[10px]" />
       </div>
       <h3 className="font-display text-[29px] leading-[1.08] tracking-[-0.03em] text-ink group-hover:text-teal-deep">
@@ -32,38 +79,27 @@ export function ProductCard({ product, compact }: { product: Product; compact?: 
           {product.name}
         </Link>
       </h3>
-      {product.subtitle ? <p className="mt-2 min-h-[35px] text-[12px] leading-[1.45] text-text-2">{product.subtitle}</p> : null}
-      {!compact && product.summary ? <p className="mt-3 line-clamp-3 text-[13px] leading-relaxed text-text-2">{product.summary}</p> : null}
-      {!compact && product.image && typeof product.image === 'object' ? (
-        <div className="relative mt-4 aspect-[4/3] w-full bg-white p-4">
-          <CmsImage media={product.image} size="card" className="mx-auto h-full w-full object-contain" sizes="(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 100vw" />
-        </div>
-      ) : null}
-      <dl className="mt-4 grid gap-2.5">
-        {grades.length ? (
-          <div className="grid grid-cols-[72px_1fr] gap-2">
-            <dt className="text-[10px] text-text-2">Grades</dt>
-            <dd className="mono text-[12px] font-medium leading-[1.5]">
-              {grades.join(' · ')}
-              {d50s.length ? <small className="block font-sans text-[10px] font-normal text-text-2">d50V {d50s.join(' / ')}</small> : null}
+      <p className="mt-2 line-clamp-2 min-h-[35px] text-[12px] leading-[1.45] text-text-2">{cardLine(product)}</p>
+      <dl className="mb-4 mt-4 grid gap-2.5">
+        {specs.map((spec) => (
+          <div key={spec.label} className="grid grid-cols-[72px_1fr] gap-2">
+            <dt className="text-[10px] leading-[1.5] text-text-2">{spec.label}</dt>
+            <dd className="m-0 min-w-0">
+              <SpecFigure spec={spec} />
             </dd>
           </div>
-        ) : null}
-        {product.leadTime ? (
-          <div className="grid grid-cols-[72px_1fr] gap-2">
-            <dt className="text-[10px] text-text-2">Lead time</dt>
-            <dd className="mono text-[12px] font-medium leading-[1.5]">{product.leadTime}</dd>
-          </div>
-        ) : null}
+        ))}
       </dl>
-      <div className="mt-auto flex items-center justify-between gap-3 border-t border-rule pt-3.5">
-        <span className="inline-flex items-center gap-2 text-[12px] font-medium text-ink">
-          Details <ArrowIcon className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
-        </span>
-        <div className="relative z-10">
-          <AddToBasketButton product={toBasketProduct(product)} appearance="teal" size="xs" />
+      {compact ? (
+        <div className="relative z-10 mt-auto flex items-center justify-between gap-3 border-t border-rule pt-3.5">
+          <span className="inline-flex items-center gap-2 text-[12px] font-medium text-ink">
+            Details <ArrowIcon className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
+          </span>
+          <AddToBasketButton product={basketProduct} appearance="teal" size="xs" />
         </div>
-      </div>
+      ) : (
+        <CardControls product={basketProduct} defaultGrade={(referenceGrade(product.grades)?.grade as GradeValue | undefined) ?? null} />
+      )}
     </article>
   )
 }
