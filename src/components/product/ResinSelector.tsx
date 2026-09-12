@@ -59,7 +59,7 @@ export function ResinSelector({ categories, products }: { categories: Cat[]; pro
 
   return (
     <div className="grid gap-6 lg:grid-cols-[minmax(0,1.3fr)_minmax(0,1fr)] lg:gap-10">
-      <div className="grid gap-6">
+      <div className="grid content-start gap-6">
         <Step n={1} title="What are you purifying?" options={TARGETS} value={target} onChange={setTarget} />
         <Step n={2} title="Purification stage" options={STAGES} value={stage} onChange={setStage} />
         <Step n={3} title="Throughput need" options={THROUGHPUT} value={thr} onChange={setThr} />

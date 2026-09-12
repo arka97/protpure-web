@@ -819,8 +819,10 @@ input[type='radio'] {
   letter-spacing: 0.08em;
   font-size: 11px;
 }
-/* Product-page grade table: scrolls sideways on phones with the grade column pinned. */
+/* Product-page grade table and /compare: scroll sideways on phones with the first column pinned. */
 @media (width < 64rem) {
+  .compare-products thead th:first-child,
+  .compare-products tbody th[scope='row'],
   .grade-table th[scope='row'] {
     position: sticky;
     left: 0;
