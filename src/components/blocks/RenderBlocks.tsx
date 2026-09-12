@@ -322,7 +322,7 @@ async function RenderBlock({ block, meta }: { block: Block; meta: Meta }) {
       return (
         <Chapter tone={tone} attached={attached} tight={tight} id={block.eyebrow ? undefined : undefined}>
           <div className={SPREAD}>
-            <div className={cn(!left && 'lg:order-2')}>
+            <div className={cn(!left && 'lg:order-2', !hasSecond && !block.secondImageText && 'lg:sticky lg:top-[96px] lg:self-start')}>
               {hasImage ? (
                 <figure>
                   <div className="relative h-[245px] overflow-hidden lg:h-[338px]">
@@ -632,9 +632,10 @@ async function RenderBlock({ block, meta }: { block: Block; meta: Meta }) {
         )
       }
       if (!logos.length) {
-        // Standalone with no publishable logos yet: the statement sits beside the heading; editors see the slot.
+        // Standalone with no publishable logos yet: the statement sits beside the heading and the
+        // chapter closes right under it (no empty body); editors see the slot in preview.
         return (
-          <Chapter tone={tone} number={number} eyebrow={block.eyebrow} heading={<Heading text={block.heading} dark={dark} />} intro={statement} tight={tight}>
+          <Chapter tone={tone} number={number} eyebrow={block.eyebrow} heading={<Heading text={block.heading} dark={dark} />} intro={statement} tight={tight} headClassName={isDraft ? undefined : 'mb-0 lg:mb-0'}>
             {isDraft ? <div className="placeholder-slot min-h-[75px]">[CUSTOMER LOGOS — add customers with a logo under Sales → Customers and tick “Show logo”. Visitors do not see this slot.]</div> : null}
           </Chapter>
         )

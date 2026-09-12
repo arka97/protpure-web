@@ -61,10 +61,11 @@ export function productToMarkdown(p: Product, opts?: { brief?: boolean }): strin
 /** Headings may carry deliberate line breaks for the screen; Markdown wants them on one line. */
 const flat = (t?: string | null) => (t ?? '').replace(/\s*\n\s*/g, ' ').trim()
 
-export function pageToMarkdown(page: Page): string {
-  const out: string[] = [`# ${flat(page.hero?.heading) || page.title}`]
-  if (page.hero?.text) out.push('', page.hero.text)
-  for (const b of page.layout ?? []) {
+/** `part`: 'hero' renders only the title and intro, 'layout' only the blocks (listing routes put their list in between). */
+export function pageToMarkdown(page: Page, part: 'all' | 'hero' | 'layout' = 'all'): string {
+  const out: string[] = part === 'layout' ? [] : [`# ${flat(page.hero?.heading) || page.title}`]
+  if (part !== 'layout' && page.hero?.text) out.push('', page.hero.text)
+  for (const b of part === 'hero' ? [] : (page.layout ?? [])) {
     switch (b.blockType) {
       case 'richText':
         out.push('', lexicalToMarkdown(b.content as never))
