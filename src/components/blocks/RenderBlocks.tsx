@@ -12,6 +12,7 @@ import { InquiryForm } from '@/components/forms/InquiryForm'
 import { NewsletterForm } from '@/components/forms/NewsletterForm'
 import { BeadField } from '@/components/visual/BeadField'
 import { Chapter, ChapterEyebrow, type ChapterTone } from '@/components/visual/Chapter'
+import { Heading } from '@/components/visual/Heading'
 import { RangeBars } from '@/components/visual/RangeBars'
 import { Reveal } from '@/components/visual/Reveal'
 import { ArrowIcon, CheckIcon } from '@/components/visual/icons'
@@ -39,11 +40,14 @@ type Block = NonNullable<Page['layout']>[number]
 const CHAPTER_BLOCKS = new Set<Block['blockType']>([
   'productCategories', 'gradesPlatform', 'featureGrid', 'twoColumn', 'resinSelector', 'featuredProducts', 'teamGrid', 'timeline', 'testimonials',
   'latestPosts', 'linkedInFeed', 'applicationsGrid', 'servicesGrid', 'documentList', 'formBlock', 'faqBlock', 'cta', 'comparisonTable', 'logoWall',
+  'gallery', 'publications',
 ])
 
 function opensChapter(b: Block): boolean {
   if (!('eyebrow' in b) || !b.eyebrow) return false
   if (b.blockType === 'cta' && b.style !== 'evaluation') return false
+  // An empty gallery is only a slot editors see in preview; visitors must not get a numbering gap.
+  if (b.blockType === 'gallery' && !b.items?.length) return false
   return CHAPTER_BLOCKS.has(b.blockType)
 }
 
@@ -143,28 +147,6 @@ export async function RenderBlocks({ blocks }: { blocks?: Page['layout'] | null 
  * Small helpers
  * ---------------------------------------------------------------------------------------------- */
 
-/** Headings may italicise a short proposition with *asterisks*: "Four bead sizes. *One chemistry.*" */
-function Heading({ text, dark }: { text?: string | null; dark?: boolean }) {
-  if (!text) return null
-  // Typed line breaks are deliberate breaks (segments still wrap naturally when narrow).
-  const parts = text.trim().split(/(\*[^*]+\*|\n)/g).filter(Boolean)
-  return (
-    <>
-      {parts.map((p, i) =>
-        p === '\n' ? (
-          <br key={i} />
-        ) : p.startsWith('*') && p.endsWith('*') ? (
-          <em key={i} className={cn('italic', dark ? 'text-teal-lum' : 'text-teal-deep')}>
-            {p.slice(1, -1)}
-          </em>
-        ) : (
-          <React.Fragment key={i}>{p}</React.Fragment>
-        ),
-      )}
-    </>
-  )
-}
-
 function Paragraphs({ text, className }: { text?: string | null; className?: string }) {
   if (!text) return null
   return (
@@ -198,11 +180,12 @@ async function RenderBlock({ block, meta }: { block: Block; meta: Meta }) {
 
   switch (block.blockType) {
     case 'richText':
+      // Reading layout: 680 px measure when narrow; `numbered` counts the H2s like chapters (legal pages).
       return (
-        <section className="py-10 lg:py-[60px]">
+        <section className="py-10 lg:py-[64px]">
           <div className="container-x">
-            <div className={cn(block.width === 'narrow' && 'max-w-[840px]')}>
-              <RichText data={block.content} />
+            <div className={cn(block.width === 'narrow' && 'max-w-[680px]')}>
+              <RichText data={block.content} className={cn(block.numbered && 'prose-numbered')} />
             </div>
           </div>
         </section>
@@ -339,7 +322,7 @@ async function RenderBlock({ block, meta }: { block: Block; meta: Meta }) {
       return (
         <Chapter tone={tone} attached={attached} tight={tight} id={block.eyebrow ? undefined : undefined}>
           <div className={SPREAD}>
-            <div className={cn(!left && 'lg:order-2')}>
+            <div className={cn(!left && 'lg:order-2', !hasSecond && !block.secondImageText && 'lg:sticky lg:top-[96px] lg:self-start')}>
               {hasImage ? (
                 <figure>
                   <div className="relative h-[245px] overflow-hidden lg:h-[338px]">
@@ -645,6 +628,15 @@ async function RenderBlock({ block, meta }: { block: Block; meta: Meta }) {
         return (
           <Chapter tone={tone} attached={attached} tight={tight}>
             {wall}
+          </Chapter>
+        )
+      }
+      if (!logos.length) {
+        // Standalone with no publishable logos yet: the statement sits beside the heading and the
+        // chapter closes right under it (no empty body); editors see the slot in preview.
+        return (
+          <Chapter tone={tone} number={number} eyebrow={block.eyebrow} heading={<Heading text={block.heading} dark={dark} />} intro={statement} tight={tight} headClassName={isDraft ? undefined : 'mb-0 lg:mb-0'}>
+            {isDraft ? <div className="placeholder-slot min-h-[75px]">[CUSTOMER LOGOS — add customers with a logo under Sales → Customers and tick “Show logo”. Visitors do not see this slot.]</div> : null}
           </Chapter>
         )
       }
@@ -955,13 +947,13 @@ async function RenderBlock({ block, meta }: { block: Block; meta: Meta }) {
 
     // ---------- Trust & proof (src/components/blocks/trust/*) ----------
     case 'certificationsStrip':
-      return <CertificationsStrip block={block} />
+      return <CertificationsStrip block={block} meta={meta} />
 
     case 'gallery':
-      return <Gallery block={block} />
+      return <Gallery block={block} meta={meta} />
 
     case 'publications':
-      return <Publications block={block} />
+      return <Publications block={block} meta={meta} />
 
     case 'proofBar':
       return <ProofBar block={block} />

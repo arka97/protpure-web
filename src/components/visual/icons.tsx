@@ -121,6 +121,110 @@ export const DocumentIcon = (p: IconProps) => (
     <path d="M6 3h8l4 4v14H6V3ZM14 3v4h4M9 12h6M9 16h6" />
   </Svg>
 )
+export const ExternalLinkIcon = (p: IconProps) => (
+  <Svg {...p}>
+    <path d="M14 4h6v6M20 4l-9 9M18 13v7H4V6h7" />
+  </Svg>
+)
+export const MailIcon = (p: IconProps) => (
+  <Svg {...p}>
+    <path d="M3 6h18v12H3V6Zm0 1 9 6 9-6" />
+  </Svg>
+)
+export const PhoneIcon = (p: IconProps) => (
+  <Svg {...p}>
+    <path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2Z" />
+  </Svg>
+)
+export const ChatIcon = (p: IconProps) => (
+  <Svg {...p}>
+    <path d="M4 5h16v11h-9l-5 4v-4H4V5Z" />
+  </Svg>
+)
+export const MapPinIcon = (p: IconProps) => (
+  <Svg {...p}>
+    <path d="M12 21s-7-6.2-7-11a7 7 0 0 1 14 0c0 4.8-7 11-7 11Z" />
+    <circle cx="12" cy="10" r="2.5" />
+  </Svg>
+)
+export const CheckCircleIcon = (p: IconProps) => (
+  <Svg {...p}>
+    <circle cx="12" cy="12" r="9" />
+    <path d="m8.5 12 2.5 2.5 5-5" />
+  </Svg>
+)
+export const RssIcon = (p: IconProps) => (
+  <Svg {...p}>
+    <path d="M5 11a8 8 0 0 1 8 8M5 5a14 14 0 0 1 14 14" />
+    <circle cx="6" cy="18" r="1" />
+  </Svg>
+)
+
+/**
+ * CMS-selectable icons (the `icon` select of feature-grid items, see ICON_OPTIONS in src/blocks/config.ts),
+ * drawn in the same 24-grid stroke language. Unknown names fall back to a single bead.
+ */
+const CMS_ICONS: Record<string, React.ReactNode> = {
+  purity: <path d="M12 3s6 7 6 11a6 6 0 0 1-12 0c0-4 6-11 6-11Z" />,
+  reproducible: (
+    <>
+      <circle cx="12" cy="12" r="9" />
+      <path d="m8.5 12 2.5 2.5 5-5" />
+    </>
+  ),
+  flow: <path d="M3 8c2-2 4-2 6 0s4 2 6 0 4-2 6 0M3 16c2-2 4-2 6 0s4 2 6 0 4-2 6 0" />,
+  delivery: (
+    <>
+      <path d="M3 7h11v9H3V7Zm11 3h4l3 3v3h-7v-6Z" />
+      <circle cx="7" cy="18" r="1.5" />
+      <circle cx="17" cy="18" r="1.5" />
+    </>
+  ),
+  factory: <path d="M3 20V9l5 3V9l5 3V9l5 3v8H3ZM17 9V4h3v5" />,
+  cost: <path d="m3 17 5-5 4 4 8-8M15 8h5v5" />,
+  globe: (
+    <>
+      <circle cx="12" cy="12" r="9" />
+      <path d="M3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18" />
+    </>
+  ),
+  shield: <path d="m12 3 7 3v5c0 5-3 8-7 10-4-2-7-5-7-10V6l7-3Zm-3 9 2 2 4-4" />,
+  support: (
+    <>
+      <circle cx="9" cy="8" r="3" />
+      <path d="M3 20c0-3 3-5 6-5s6 2 6 5M16 5a3 3 0 0 1 0 6M21 20c0-2.5-2-4.5-5-5" />
+    </>
+  ),
+  scale: <path d="m12 4 9 5-9 5-9-5 9-5ZM3 14l9 5 9-5" />,
+  beaker: <path d="M9 3h6M10 3v6l-5 9a2 2 0 0 0 2 3h10a2 2 0 0 0 2-3l-5-9V3M7 16h10" />,
+  document: <path d="M6 3h8l4 4v14H6V3ZM14 3v4h4M9 12h6M9 16h6" />,
+  microscope: <path d="M6 18h12M9 21h6M10 3l5 5-5 5-5-5 5-5ZM12.5 10.5 15 13a5 5 0 0 1-3 7" />,
+  chart: (
+    <>
+      <path d="M4 15a8 8 0 1 1 16 0M12 15l4-5" />
+      <circle cx="12" cy="15" r="1" />
+    </>
+  ),
+  handshake: <path d="m3 9 4-3 4 3 4-3 4 3M3 9l5 6 4 3 4-3 5-6M9 12l3 3 3-3" />,
+  clock: (
+    <>
+      <circle cx="12" cy="12" r="9" />
+      <path d="M12 7v5l3 2" />
+    </>
+  ),
+  timer: (
+    <>
+      <circle cx="12" cy="13" r="8" />
+      <path d="M12 9v4l2 2M10 3h4" />
+    </>
+  ),
+}
+
+export function CmsIcon({ name, className }: { name?: string | null; className?: string }) {
+  if (name && EMBLEMS[name]) return <ModeEmblem icon={name} className={className ?? 'h-5 w-5'} />
+  const shape = (name && CMS_ICONS[name]) || <circle cx="12" cy="12" r="7" />
+  return <Svg className={className}>{shape}</Svg>
+}
 
 /**
  * Chemistry emblems: the same circle construction at 60 × 60 with a 1.1 px stroke. Keyed by the

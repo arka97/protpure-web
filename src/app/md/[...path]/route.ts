@@ -1,5 +1,6 @@
-import { getApplication, getPage, getPost, getProduct, getCategory, getProducts, getServices } from '@/lib/data'
-import { applicationToMarkdown, companyMarkdown, faqMarkdown, pageToMarkdown, postToMarkdown, productToMarkdown, serviceToMarkdown } from '@/lib/markdown'
+import { getApplication, getApplications, getDocuments, getPage, getPost, getPosts, getProduct, getCategory, getProducts, getServices, getUpdates } from '@/lib/data'
+import { applicationToMarkdown, companyMarkdown, faqMarkdown, pageToMarkdown, postToMarkdown, productToMarkdown, serviceToMarkdown, updateToMarkdown } from '@/lib/markdown'
+import { absoluteUrl } from '@/lib/utils'
 import { SITE_URL } from '@/lib/utils'
 
 export const dynamic = 'force-dynamic'
@@ -41,6 +42,18 @@ export async function GET(_req: Request, { params }: { params: Promise<{ path: s
     if (head === 'blog' && second) {
       const post = await getPost(second)
       return post ? md(postToMarkdown(post)) : md('Not found', 404)
+    }
+    // Listing routes: the CMS page supplies the hero copy, the collection supplies the list.
+    if (!second && ['applications', 'blog', 'resources', 'updates'].includes(head)) {
+      const page = await getPage(head)
+      const intro = page ? pageToMarkdown(page, 'hero') : `# ${head[0].toUpperCase()}${head.slice(1)}`
+      const tail = page?.layout?.length ? ['', pageToMarkdown(page, 'layout')] : []
+      let list: string[]
+      if (head === 'applications') list = (await getApplications()).map((a) => `- [${a.name}](${SITE_URL}/md/applications/${a.slug}): ${a.summary}`)
+      else if (head === 'blog') list = (await getPosts({ limit: 100 })).docs.map((p) => `- [${p.title}](${SITE_URL}/md/blog/${p.slug}): ${p.excerpt}`)
+      else if (head === 'resources') list = (await getDocuments()).map((d) => `- [${d.title}](${absoluteUrl(d.url ?? '')}): ${d.type}${d.revision ? `, ${d.revision}` : ''}${d.summary ? ` — ${d.summary}` : ''}`)
+      else list = (await getUpdates(60)).map(updateToMarkdown)
+      return md([intro, '', ...list, ...tail].join('\n'))
     }
     const page = await getPage(head === 'index' ? 'home' : head)
     if (page && !second) return md(pageToMarkdown(page))

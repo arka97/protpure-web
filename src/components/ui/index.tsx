@@ -1,48 +1,13 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import * as React from 'react'
-import {
-  Atom, BadgeCheck, Beaker, Boxes, ChartNoAxesCombined, Clock, Cpu, Factory, FileText, FlaskConical, Gauge, Globe, Handshake, Layers, Magnet,
-  Microscope, Package, Ruler, ShieldCheck, Sparkles, Timer, Truck, Users, Waves, Zap, Droplets, Columns3, type LucideIcon,
-} from 'lucide-react'
+import { CmsIcon } from '@/components/visual/icons'
 import { cn, mediaUrl, mediaAlt, resolveLink, type LinkValue } from '@/lib/utils'
 import type { Media } from '@/payload-types'
 
-/* ---------- Icons (CMS-selectable names → Lucide, drawn at the system's 1.5 px stroke) ---------- */
-export const ICONS: Record<string, LucideIcon> = {
-  purity: Sparkles,
-  reproducible: BadgeCheck,
-  flow: Waves,
-  delivery: Truck,
-  factory: Factory,
-  cost: ChartNoAxesCombined,
-  globe: Globe,
-  shield: ShieldCheck,
-  support: Users,
-  scale: Layers,
-  beaker: FlaskConical,
-  document: FileText,
-  microscope: Microscope,
-  chart: Gauge,
-  handshake: Handshake,
-  clock: Clock,
-  // category icons
-  'ion-exchange': Zap,
-  affinity: Magnet,
-  sec: Ruler,
-  hic: Droplets,
-  'mixed-mode': Atom,
-  activated: Cpu,
-  column: Columns3,
-  kit: Package,
-  magnetic: Boxes,
-  timer: Timer,
-  beakerAlt: Beaker,
-}
-
+/* ---------- Icons (CMS-selectable names → stroke icons in src/components/visual/icons.tsx) ---------- */
 export function Icon({ name, className }: { name?: string | null; className?: string }) {
-  const C = (name && ICONS[name]) || Beaker
-  return <C className={cn('h-5 w-5', className)} strokeWidth={1.5} aria-hidden />
+  return <CmsIcon name={name} className={cn('h-5 w-5', className)} />
 }
 
 /* ---------- Buttons / links ---------- */

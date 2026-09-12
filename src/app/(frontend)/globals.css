@@ -983,11 +983,11 @@ input[type='radio'] {
   text-wrap: balance;
 }
 .prose-protpure h3 {
-  font-family: var(--font-sans);
-  font-weight: 500;
+  font-family: var(--font-display);
+  font-weight: 400;
   letter-spacing: -0.02em;
   color: var(--color-ink);
-  font-size: 21px;
+  font-size: 26px;
   line-height: 1.2;
   margin-top: 1.9rem;
 }
@@ -1046,25 +1046,41 @@ input[type='radio'] {
   border: 0;
   border-top: 1px solid var(--color-rule);
 }
-.prose-protpure table {
+/* Tables inside rich text render on .spec-table (see components/RichText.tsx); the wrapper scrolls on phones. */
+.prose-protpure .spec-table {
+  margin: 0;
+}
+.prose-protpure figure {
+  margin: 1.6em 0;
+}
+.prose-protpure figure img {
   width: 100%;
-  border-collapse: collapse;
-  font-size: 14px;
-  font-variant-numeric: tabular-nums;
+  height: auto;
 }
-.prose-protpure th,
-.prose-protpure td {
-  border-bottom: 1px solid var(--color-rule);
-  padding: 10px 12px;
-  text-align: left;
-  vertical-align: top;
+.prose-protpure figcaption {
+  margin-top: 12px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  line-height: 1.5;
+  color: var(--color-text-2);
 }
-.prose-protpure th {
-  background: var(--color-surface-recessed);
-  border-top: 1px solid var(--color-rule-strong);
-  font-weight: 500;
+/* Numbered rich text (legal pages): a mono chapter index above each H2, counted in document order. */
+.prose-numbered {
+  counter-reset: prose-chapter;
+}
+.prose-numbered h2 {
+  counter-increment: prose-chapter;
+}
+.prose-numbered h2::before {
+  content: counter(prose-chapter, decimal-leading-zero);
+  display: block;
+  margin-bottom: 10px;
+  font-family: var(--font-mono);
   font-size: 12px;
-  color: var(--color-ink);
+  line-height: 1.4;
+  letter-spacing: 0;
+  color: var(--color-teal-deep);
+  font-variant-numeric: tabular-nums;
 }
 .prose-protpure code {
   border-radius: 2px;
@@ -1081,7 +1097,7 @@ input[type='radio'] {
     font-size: 28px;
   }
   .prose-protpure h3 {
-    font-size: 19px;
+    font-size: 22px;
   }
 }
 .prose-invert-protpure {
@@ -1104,13 +1120,23 @@ input[type='radio'] {
 .prose-invert-protpure li::marker {
   color: var(--color-teal-lum);
 }
-.prose-invert-protpure th {
-  background: var(--color-field-raised);
+.prose-invert-protpure .spec-table th,
+.prose-invert-protpure .spec-table td {
   border-color: var(--color-rule-dark);
+  color: var(--color-text-2-dark);
+}
+.prose-invert-protpure .spec-table thead th,
+.prose-invert-protpure .spec-table tbody th,
+.prose-invert-protpure .spec-table td:first-child {
+  background: var(--color-field-raised);
   color: var(--color-surface);
 }
-.prose-invert-protpure td {
-  border-color: var(--color-rule-dark);
+.prose-invert-protpure .spec-table td:first-child {
+  background: transparent;
+}
+.prose-invert-protpure figcaption,
+.prose-invert-protpure h2::before {
+  color: var(--color-teal-lum);
 }
 .prose-invert-protpure code {
   background: var(--color-field-raised);
